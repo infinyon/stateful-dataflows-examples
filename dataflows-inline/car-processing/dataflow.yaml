@@ -189,7 +189,7 @@ services:
     sinks:
       - type: topic
         id: saratoga
-        steps:
+        transforms:
           - operator: filter
             run: |
               fn is_saratoga(cl: CarLocation) -> Result<bool, String> {
@@ -197,7 +197,7 @@ services:
               }
       - type: topic
         id: sunnyvale
-        steps:
+        transforms:
           - operator: filter
             run: |
               fn is_sunnyvale(cl: CarLocation) -> Result<bool, String> {
