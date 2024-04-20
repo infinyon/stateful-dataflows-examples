@@ -1,5 +1,5 @@
 .DS_Store
-.ssdk
+.sdf
 **.ipkg
 http-source*
 rust

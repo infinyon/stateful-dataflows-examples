@@ -28,7 +28,7 @@ jobs:
             "dataflows-inline/word-counter",
             "dataflows-inline/word-probe",
           ]
-          ssdk-version: [ssdk-preview7]
+          sdf-version: [sdf-preview8-dev]
       steps:
         - name: Checkout
           uses: actions/checkout@v3
@@ -44,18 +44,18 @@ jobs:
         - name: Setup fvm bin path
           run:  echo "~/.fvm/bin" >> $GITHUB_PATH
 
-        - name: Install SSDK version
+        - name: Install SDF version
           run: |
-            fvm install ${{ matrix.ssdk-version }}
+            fvm install ${{ matrix.sdf-version }}
 
-        - name: Run ssdk setup
+        - name: Run sdf setup
           run: |
-            ssdk setup
+            sdf setup
         
-        - name: Run ssdk generate
+        - name: Run sdf generate
           working-directory: ./${{ matrix.example_path }}
           run: |
-            ssdk run --skip-running
+            sdf run --skip-running
 
     done:
       name: Done
