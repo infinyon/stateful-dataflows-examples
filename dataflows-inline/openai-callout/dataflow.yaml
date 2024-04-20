@@ -118,7 +118,7 @@ services:
         - operator: map
           dependencies:
             - name: ssdk-http
-              git: "https://github.com/infinyon/ssdk-guest-http"
+              git: "https://github.com/infinyon/sdf-http-guest"
               tag: "v0.3.0"
           run: |
             fn invoke_openai(req: ChatRequest) -> Result<ChatCount, String> {
