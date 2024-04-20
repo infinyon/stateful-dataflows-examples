@@ -36,7 +36,7 @@ fluvio consume questions -Bd
 What time is it?
 ```
 
-Show states in the SDF runtime `>>` terminal:
+Display stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
 show state filter-service/filter-questions/metrics --table

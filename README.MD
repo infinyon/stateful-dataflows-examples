@@ -4,7 +4,7 @@ This repository offers a comprehensive range of dataflow examples from basic to 
 
 ## Prerequisites
 
-#### Install & update Rust
+#### Install & Update Rust
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
