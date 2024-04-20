@@ -7,7 +7,7 @@ The connector configuration file is located at [car-callout-connector.yaml](car-
 ### 1. Download HTTP Source Connector
 
 ```bash
-cdk hub download infinyon/http-source@0.3.2
+cdk hub download infinyon/http-source@0.3.3
 ```
 
 ### 2. Start the connector

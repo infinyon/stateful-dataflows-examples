@@ -7,7 +7,7 @@ The connector configuration file is located at [sentence-connector.yaml](sentenc
 ### 1. Download HTTP Source Connector
 
 ```bash
-cdk hub download infinyon/http-source@0.3.2
+cdk hub download infinyon/http-source@0.3.3
 ```
 
 ### 2. Load JOLT Smartmodule to the Cluster
