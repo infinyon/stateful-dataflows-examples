@@ -1,0 +1,47 @@
+apiVersion: 0.4.0
+meta:
+  name: map-example
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+
+types:
+  user:
+    type: object
+    properties:
+      name:
+        type: string
+      ssn:
+        type: string
+
+topics:
+  users:
+    schema:
+      value:
+        type: user
+
+  users-public:
+    schema:
+      value:
+        type: user
+
+services:
+  map-service:
+    sources:
+      - type: topic
+        id: users
+
+    transforms:
+      - operator: map
+        run: |
+          fn mask_ssn(user: User) -> Result<User, String> {
+            let mut u = user.clone();
+            u.ssn = u.ssn.replace(|c: char| c.is_digit(10), "*");
+            Ok(u)
+          }
+
+    sinks:
+      - type: topic
+        id: users-public

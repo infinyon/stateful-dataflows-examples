@@ -1,0 +1,64 @@
+apiVersion: 0.4.0
+meta:
+  name: update-state-example
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+
+types:
+  temp:
+    type: object
+    properties:
+      id:
+        type: u64
+      sensor:
+        type: string
+      temperature:
+        type: f32
+
+topics:
+  temp-sensor:
+    schema:
+      value:
+        type: temp
+
+services:
+  save-temperature:
+    sources:
+      - type: topic
+        id: temp-sensor
+    states:
+      - name: temperature
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: arrow-row
+            properties:
+              sensor:
+                type: string
+              temperature:
+                type: f32
+
+    partition:
+      assign-key:
+        run: |
+          fn key_by_id(event: Temp) -> Result<u64, String> {
+            Ok(event.id)
+          }
+
+      transforms:
+        - operator: update-state
+          run: |
+            fn update_temperature(event: Temp) -> Result<(), String> {
+              let mut temp = temperature();
+              
+              temp.sensor = event.sensor;
+              temp.temperature = event.temperature;
+              temp.update();
+
+              Ok(())
+            }

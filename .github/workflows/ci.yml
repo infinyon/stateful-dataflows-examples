@@ -1,0 +1,84 @@
+name: CI
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  merge_group:
+  pull_request:
+
+jobs:
+    build-and-generate:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          example_path: [
+            "primitives/filter",
+            "primitives/filter-map",
+            "primitives/flat-map",
+            "primitives/map",
+            "primitives/merge",
+            "primitives/split",
+            "primitives/update-state",
+            "dataflows-inline/bank-processing",
+            "dataflows-inline/car-processing",
+            "dataflows-inline/http-callout",
+            "dataflows-inline/openai-callout",
+            "dataflows-inline/word-counter",
+            "dataflows-inline/word-probe",
+          ]
+          ssdk-version: [ssdk-preview7]
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+  
+        - name: Install stable CLI and start Fluvio cluster
+          timeout-minutes: 10
+          run: |
+            curl -fsS https://hub.infinyon.cloud/install/install.sh | bash
+
+        - name: Setup fluvio bin path
+          run:  echo "~/.fluvio/bin" >> $GITHUB_PATH
+
+        - name: Setup fvm bin path
+          run:  echo "~/.fvm/bin" >> $GITHUB_PATH
+
+        - name: Install SSDK version
+          run: |
+            fvm install ${{ matrix.ssdk-version }}
+
+        - name: Run ssdk setup
+          run: |
+            ssdk setup
+        
+        - name: Run ssdk generate
+          working-directory: ./${{ matrix.example_path }}
+          run: |
+            ssdk run --skip-running
+
+    done:
+      name: Done
+      needs:
+        - build-and-generate
+      runs-on: ubuntu-latest
+      if: always()
+      steps:
+      - name: Dump needs context
+        env:
+          CONTEXT: ${{ toJson(needs) }}
+        run: |
+          echo -e "\033[33;1;4mDump context\033[0m"
+          echo -e "$CONTEXT\n"
+      - name: Report failure on cancellation
+        if: ${{ contains(needs.*.result, 'cancelled') || cancelled() }}
+        run: exit 1
+      - name: Failing test and build
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+      - name: Don't allow skipped
+        if: ${{ contains(needs.*.result, 'skipped') }}
+        run: exit 1
+      - name: Successful test and build
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0

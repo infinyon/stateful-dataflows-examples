@@ -1,0 +1,17 @@
+{
+  "iban": "GB56DVTE70858022060682",
+  "timestamp": "2023-10-01T10:15:21",
+  "operation": {
+    "AddAccount": {
+      "amount": 1000,
+      "currency": "USD",
+      "account": {
+        "name": "Duncan Taylor"
+      },
+      "bank": {
+        "swift": "BOFAUS3N",
+        "name": "Bank of America"
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+apiVersion: 0.4.0
+meta:
+  name: regex-mask
+  version: 0.1.0
+  namespace: example
+
+config:
+  converter: raw
+
+topics:
+  person:
+    schema:
+      value:
+        type: string
+  gen-z:
+    schema:
+      value:
+        type: string
+
+
+services:
+  regex:
+    sources:
+      - type: topic
+        id: person
+
+    transforms:
+      - operator: filter
+        dependencies:
+          - name: regex
+            version: "1.10.0"
+
+        run: |
+          fn filter_ssn(input: String) -> Result<bool, String> {
+            use std::sync::OnceLock;
+            use regex::Regex;
+
+            static REGEX: OnceLock<Regex> = OnceLock::new();
+
+            let re = REGEX.get_or_init(|| Regex::new(r"(199[7-9])|(200[0-9])|(201[0-2])").unwrap());
+            Ok(re.is_match(&input))
+          }
+
+    sinks:
+      - type: topic
+        id: gen-z

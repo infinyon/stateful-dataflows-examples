@@ -1,0 +1,217 @@
+apiVersion: 0.4.0
+meta:
+  name: openai-example
+  version: 0.1.0
+  namespace: myorg
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  sentence:
+    type: string
+
+  chat-request:
+    type: object
+    properties:
+      input:
+        type: string
+      model:
+        type: string
+
+  chat-count:
+    type: object
+    properties:
+      output:
+        type: string
+      model:
+        type: string
+      total_attempts:
+        type: u32
+
+  openai-request:
+    type: object
+    properties:
+      model:
+        type: string
+      messages:
+        type: messages
+
+  messages:
+    type: list
+    items:
+      type: message
+
+  message:
+    type: object
+    properties:
+      role:
+        type: string
+      content:
+        type: string
+
+topics:
+  sentence:
+    name: sentence
+    schema:
+      value:
+        type: string
+        converter: raw
+  output:
+    name: output
+    schema:
+      value:
+        type: chat-count
+
+services:
+  openai-service:
+    sources:
+      - type: topic
+        id: sentence
+    states:
+      - name: count-per-model
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: u32
+
+    transforms:
+      - operator: map
+        run: |
+          fn parse_model(input: String) -> Result<ChatRequest, String> {
+            let words: Vec<String> = input.split_whitespace().map(String::from).collect();
+            let model = &words[0];
+            // check list of accepted models
+            if model == "gpt-3.5-turbo" || 
+              model == "gpt-3.5-turbo-0125" || 
+              model == "gpt-3.5-turbo-1106" ||
+              model == "gpt-3.5-turbo-1106-0125" ||
+              model == "gpt-4-turbo-preview" ||
+              model == "gpt-4" ||
+              model == "gpt-4-turbo-preview-0125" {
+              Ok(ChatRequest {
+               // input: words[1..].join(" "),
+                input: input,
+                model: model.to_owned()
+              })
+            } else {
+              Ok(ChatRequest {
+                input: input,
+                model: "gpt-3.5-turbo".to_owned()
+              })
+            }
+            
+          }
+    partition:
+      assign-key:
+        run: |
+          fn assign_key_word(input: ChatRequest) -> Result<String, String> {
+             Ok(input.model)
+          }
+      transforms:
+        - operator: map
+          dependencies:
+            - name: ssdk-http
+              git: "https://github.com/infinyon/ssdk-guest-http"
+              tag: "v0.3.0"
+          run: |
+            fn invoke_openai(req: ChatRequest) -> Result<ChatCount, String> {
+
+            use serde::Serialize;
+
+            let auth_key = std::env::var("OPENAI_API_KEY").map_err(|e| e.to_string())?;
+            let auth_bearer = format!("Bearer {}", auth_key);
+             
+            // hack we define types inline here
+            #[derive(serde::Serialize)]
+            struct OpenAIRequest {
+              model: String,
+              messages: Vec<Message>
+            }
+
+            #[derive(serde::Serialize, serde::Deserialize)]
+            struct Message {
+              role: String,
+              content: String
+            }
+
+            #[derive(serde::Deserialize)]
+            struct OpenAIResponse {
+              id: String,
+              object: String,
+              created: u64,
+              model: String,
+              choices: Vec<Choice>,
+              usage: Usage
+            }
+
+
+            #[derive(serde::Deserialize)]
+            struct Choice {
+              index: u64,
+              message: Message,
+              finish_reason: String
+            }
+
+
+
+            #[derive(serde::Deserialize)]
+            struct Usage {
+              prompt_tokens: u64,
+              completion_tokens: u64,
+              total_tokens: u64
+            }
+
+
+
+            let req = OpenAIRequest {
+              model: req.model.to_owned(),
+              messages: vec![
+                Message {
+                  role: "user".to_string(),
+                  content: req.input
+                }
+              ]
+            };
+
+            let body = serde_json::to_string(&req).map_err(|e| e.to_string())?;
+            println!("request body: {}", body);
+
+            let request = ssdk_http::http::Request::builder()
+              .uri("https://api.openai.com/v1/chat/completions")
+              .method("POST")
+              .header("Content-Type", "application/json")
+              .header("Authorization", auth_bearer)
+              .body(body)
+              .map_err(|e| e.to_string())?;
+
+            let response = ssdk_http::blocking::send(request).map_err(|e| e.to_string())?;
+            let body: Vec<u8> = response.into_body();
+
+            let ai_response: OpenAIResponse = serde_json::from_slice(&body).map_err(|e| e.to_string())?;
+            println!("output: {}", String::from_utf8(body).map_err(|e| e.to_string())?);
+
+
+            let counter = count_per_model();
+
+            let total_attempts = counter.increment(1);
+
+            let chat_output = ai_response.choices[0].message.content.to_owned();
+
+            Ok(ChatCount {
+              output: chat_output,
+              model: req.model,
+              total_attempts: total_attempts as u32
+            })
+
+
+            }
+    sinks:
+      - type: topic
+        id: output

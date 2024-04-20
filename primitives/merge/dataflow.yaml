@@ -1,0 +1,63 @@
+apiVersion: 0.4.0
+meta:
+  name: merge
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+
+types:
+  truck:
+    type: object
+    properties:
+      truck:
+        type: string
+      license:
+        type: string
+  sedan:
+    type: object
+    properties:
+      sedan:
+        type: string
+      license:
+        type: string
+
+topics:
+  trucks:
+    schema:
+      value:
+        type: truck
+  sedans:
+    schema:
+      value:
+        type: sedan
+  licenses:
+    converter: raw
+    schema:
+      value:
+        type: string
+
+services:
+  merge-service:
+    sources:
+      - type: topic
+        id: trucks
+        steps:
+          - operator: map
+            run: |
+              fn truck_license(truck: Truck) -> Result<String, String> {
+                Ok(truck.license)
+              }
+      - type: topic
+        id: sedans
+        steps:
+          - operator: map
+            run: |
+              fn sedan_license(sedan: Sedan) -> Result<String, String> {
+                Ok(sedan.license)
+              }
+
+    sinks:
+      - type: topic
+        id: licenses

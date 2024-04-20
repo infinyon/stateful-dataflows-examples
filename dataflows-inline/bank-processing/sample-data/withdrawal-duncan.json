@@ -1,0 +1,21 @@
+{
+  "txid": "T00000003",
+  "timestamp": "2023-11-02T12:50:00",
+  "operation": {
+    "Withdrawal": {
+      "amount": 780,
+      "currency": "USD",
+      "iban": "GB56DVTE70858022060682",
+      "account": {
+        "name": "Duncan Taylor"
+      },
+      "bank": {
+        "swift": "BOFAUS3N",
+        "name": "Bank of America"
+      },
+      "atm": {
+        "id": "LD23423"
+      }
+    }
+  }
+}

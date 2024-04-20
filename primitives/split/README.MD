@@ -1,0 +1,78 @@
+# Split Example
+
+Here's an example of how to split traffic from one to multiple topics.
+
+The example splits car events into trucks and sedans based on their category while converting the record format to conform to the schema of the receiving topics. 
+
+* Checkout the [dataflow.yaml](./dataflow.yaml).
+* Make sure to [Install SSDK and start a Fluvio cluster].
+
+### Run DataFlow
+
+With the `dataflow.yaml` file in the current directory, run the following commands:
+
+```bash
+ssdk run
+```
+
+### Test DataFlow
+
+Produce to `cars`:
+
+```bash
+fluvio produce cars
+```
+
+```bash
+{"car":"Honda Accord","category":"sedan","license":"4GCF223"}
+{"car":"Ford f-150","category":"truck","license":"6FAF434"}
+{"car":"BMW 330","category":"sedan","license":"5JAC844"}
+{"car":"Dodge RAM","category":"truck","license":"6DUA684"}
+```
+
+Consume from `trucks` to see trucks:
+
+```bash
+fluvio consume trucks -Bd
+```
+
+```bash
+{"license":"6FAF434","truck":"Ford f-150"}
+{"license":"6DUA684","truck":"Dodge RAM"}
+```
+
+Consume from `sedans` to see sedans:
+
+```bash
+fluvio consume sedans -Bd
+```
+
+```bash
+{"license":"4GCF223","sedan":"Honda Accord"}
+{"license":"5JAC844","sedan":"BMW 330"}
+```
+
+Display the stateful service stats in the ssdk `>>` terminal:
+
+```bash
+show state trucks/to-truck/metrics --table
+```
+
+```bash
+Key    Window  succeeded  failed 
+stats  *       4          0    
+```
+
+Feel free to checkout the other metrics.
+
+### Clean-up
+
+Exit `ssdk` terminal and remove the topics:
+
+```bash
+fluvio topic delete cars
+fluvio topic delete trucks
+fluvio topic delete sedans
+```
+
+[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites

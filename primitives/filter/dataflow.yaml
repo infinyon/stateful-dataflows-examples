@@ -1,0 +1,36 @@
+apiVersion: 0.4.0
+meta:
+  name: filter-example
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: raw
+
+topics:
+  sentences:
+    schema:
+      value:
+        type: string
+
+  questions:
+    schema:
+      value:
+        type: string
+
+services:
+  filter-service:
+    sources:
+      - type: topic
+        id: sentences
+
+    transforms:
+      - operator: filter
+        run: |
+          fn filter_questions(input: String) -> Result<bool, String> {
+            Ok(input.contains("?"))
+          }
+
+    sinks:
+      - type: topic
+        id: questions

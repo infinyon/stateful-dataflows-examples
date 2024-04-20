@@ -1,0 +1,76 @@
+apiVersion: 0.4.0
+meta:
+  name: http-callout
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  car:
+    type: object
+    properties:
+      maker:
+        type: string
+      model:
+        type: string
+
+  maker:
+    type: object
+    properties:
+      maker:
+        type: string
+      country:
+        type: string
+      continent:
+        type: string
+
+topics:
+  cars:
+    schema:
+      value:
+        type: car
+
+  makers:
+    schema:
+      value:
+        type: maker
+
+services:
+  lookup-car-maker:
+    sources:
+      - type: topic
+        id: cars
+
+    transforms:
+      - operator: map
+        dependencies:
+          - name: ssdk-http
+            git: "https://github.com/infinyon/ssdk-guest-http"
+            tag: "v0.3.0"
+          - name: serde_json
+            version: "1"
+        run: |
+          fn get_car_maker(car: Car) -> Result<Maker, String> {
+            // Build Request
+            let maker = car.maker.replace(" ", "%20");
+            let url = format!("https://demo-data.infinyon.com/api/maker/{maker}");
+            let request = ssdk_http::http::Request::builder().uri(url).body("")
+              .map_err(|e| e.to_string())?;
+
+            // Handle Reponse
+            let response = ssdk_http::blocking::send(request).map_err(|e| e.to_string())?;
+            let body = response.into_body();
+            let m: Maker = serde_json::from_slice(&*body).map_err(|err| err.to_string())?;
+
+            Ok(m)
+          }
+
+    sinks:
+      - type: topic
+        id: makers

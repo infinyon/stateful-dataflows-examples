@@ -1,0 +1,51 @@
+apiVersion: 0.4.0
+
+meta:
+  name: split-sentence
+  version: 0.1.0
+  namespace: example
+
+imports:
+  - pkg: example/sentence-pkg@0.1.0
+    path: ./pkgs/sentence
+    functions:
+      - name: sentence-to-words
+      - name: augment-count
+
+config:
+  converter: raw
+
+topics:
+  sentence:
+    schema:
+      value:
+        type: string
+        converter: raw
+  words:
+    schema:
+      value:
+        type: string
+        converter: raw
+
+services:
+  sentence-words:
+    sources:
+      - type: topic
+        id: sentence
+
+    transforms:
+      - operator: flat-map
+        uses: sentence-to-words
+      - operator: map
+        uses: augment-count
+
+    sinks:
+      - type: topic
+        id: words
+
+
+# Development only, it does not get published to hub
+dev:
+  imports:
+    - pkg: example/sentence-pkg@0.1.0
+      path: ./pkgs/sentence

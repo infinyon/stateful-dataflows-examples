@@ -1,0 +1,533 @@
+apiVersion: 0.4.0
+meta:
+  name: banking-app
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  # Schema for admin events: add-account
+  admin-event:
+    type: object
+    properties:
+      iban:
+        type: string
+      timestamp:
+        type: string
+      operation:
+        type: admin-operation
+
+  admin-operation:
+    type: enum
+    oneOf:
+      add-account:
+        type: add-account
+
+  add-account:
+    type: object
+    properties:
+      amount:
+        type: float32
+      currency:
+        type: string
+      account:
+        type: user-account
+      bank:
+        type: bank
+
+  # Schema for business events: deposit, withdrawal, transfer
+  business-event:
+    type: object
+    properties:
+      txid:
+        type: string
+      timestamp:
+        type: string
+      operation:
+        type: business-operation
+
+  business-operation:
+    type: enum
+    oneOf:
+      deposit:
+        type: deposit-withdrawal
+      withdrawal:
+        type: deposit-withdrawal
+      transfer:
+        type: transfer
+
+  deposit-withdrawal:
+    type: object
+    properties:
+      amount:
+        type: float32
+      currency:
+        type: string
+      iban:
+        type: string
+      account:
+        type: user-account
+      bank:
+        type: bank
+      atm:
+        type: atm
+
+  transfer:
+    type: object
+    properties:
+      amount:
+        type: float32
+      currency:
+        type: string
+      sender:
+        type: business-account
+      beneficiary:
+        type: business-account
+
+  # Schema for data events: credit-account, debit-account
+  data-event:
+    type: object
+    properties:
+      iban:
+        type: string
+      name:
+        type: string
+      timestamp:
+        type: string
+      operation:
+        type: data-operation
+
+  data-operation:
+    type: enum
+    oneOf:
+      credit-account:
+        type: amount
+      debit-account:
+        type: amount
+
+  #  Schema for overdraft events:
+  overdraft-event:
+    type: object
+    properties:
+      iban:
+        type: string
+      name:
+        type: string
+      timestamp:
+        type: string
+      withdrawal:
+        type: amount
+      balance:
+        type: amount
+
+  # Schema for shared objects
+  business-account:
+    type: object
+    properties:
+      iban:
+        type: string
+      account:
+        type: user-account
+      bank:
+        type: bank
+
+  user-account:
+    type: object
+    properties:
+      name:
+        type: string
+
+  amount:
+    type: object
+    properties:
+      amount:
+        type: float32
+      currency:
+        type: string
+
+  bank:
+    type: object
+    properties:
+      swift:
+        type: string
+      name:
+        type: string
+
+  atm:
+    type: object
+    properties:
+      id:
+        type: string
+
+topics:
+  admin-events:
+    schema:
+      value:
+        type: admin-event
+
+  business-events:
+    schema:
+      value:
+        type: business-event
+
+  data-events:
+    schema:
+      value:
+        type: data-event
+
+  debit-events:
+    schema:
+      value:
+        type: data-event
+
+  credit-events:
+    schema:
+      value:
+        type: data-event
+
+  overdraft-events:
+    schema:
+      value:
+        type: overdraft-event
+
+services:
+  # Convert Add Account admin events to Credit data events
+  admin-service:
+    sources:
+      - type: topic
+        id: admin-events
+
+    transforms:
+      - operator: map
+        run: |
+          fn admin_create_credit_events(event: AdminEvent) -> Result<DataEvent, String> {
+            match event.operation {
+              AdminOperation::AddAccount(ev) => {
+                let e = DataEvent {
+                  iban: event.iban,
+                  name: ev.account.name,
+                  timestamp: event.timestamp,
+                  operation: DataOperation::CreditAccount(
+                    Amount {
+                        amount: ev.amount,
+                        currency:ev.currency,
+                    })
+                };
+                Ok(e)
+              }
+              _ => Err("Unexpected admin event".to_string())
+            }           
+          }
+
+    sinks:
+      - type: topic
+        id: data-events
+
+  # Convert Withdrawal business events to Debit data events
+  withdrawal-service:
+    sources:
+      - type: topic
+        id: business-events
+
+    states:
+      - from: balance-manager.account-balance
+
+    transforms:
+      - operator: filter-map
+        run: |
+          fn create_debit_events(event: BusinessEvent) -> Result<Option<DataEvent>, String> {
+            match event.operation {
+              BusinessOperation::Withdrawal(ev) => {
+                let e = DataEvent {
+                  iban: ev.iban,
+                  name: ev.account.name,
+                  timestamp: event.timestamp,
+                  operation: DataOperation::DebitAccount(
+                    Amount {
+                        amount: ev.amount,
+                        currency:ev.currency,
+                    })
+                };
+                Ok(Some(e))
+              },
+              _ => Ok(None)
+            }
+          }
+
+    sinks:
+      - type: topic
+        id: data-events
+      - type: topic
+        id: overdraft-events
+        steps:
+          - operator: filter-map
+            run: |
+              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
+                use polars::prelude::{col,lit,IntoLazy};
+
+                let withdrawal = match ev.operation {
+                  DataOperation::CreditAccount(_) => return Ok(None),
+                  DataOperation::DebitAccount(debit) => debit,
+                }; 
+
+                let accounts = account_balance();
+                let Ok(account) = accounts
+                    .clone()
+                    .lazy()
+                    .filter(col("name").eq(lit(ev.name.clone())))
+                    .collect() else {
+                  return Ok(None)  
+                };
+
+                let account_balance = account.column("balance").map_err(|err | err.to_string())?.f32()
+                  .map_err(|err | err.to_string())?.get(0).ok_or("Failed to get balance")?;
+                let new_balance = account_balance - withdrawal.amount;
+                
+                if new_balance < 0.0 {
+                  Ok(Some(
+                    OverdraftEvent {
+                      iban: ev.iban,
+                      name: ev.name,
+                      timestamp: ev.timestamp,
+                      withdrawal: withdrawal.clone(),
+                      balance: Amount {
+                        amount: new_balance,
+                        currency: withdrawal.currency
+                      },
+                    }
+                  ))
+                } else {
+                  Ok(None)
+                }
+              }
+
+  # Convert Deposit business events to Credit data events
+  deposit-service:
+    sources:
+      - type: topic
+        id: business-events
+
+    transforms:
+      - operator: filter
+        run: |
+          fn filter_credit_events(event: BusinessEvent) -> Result<bool, String> {
+            match event.operation {
+              BusinessOperation::Deposit(_) => Ok(true),
+              _ => Ok(false)
+            }
+          }
+
+      - operator: map
+        run: |
+          fn create_credit_events(event: BusinessEvent) -> Result<DataEvent, String> {
+            match event.operation {
+              BusinessOperation::Deposit(ev) => {
+                let e = DataEvent {
+                  iban: ev.iban,
+                  name: ev.account.name,
+                  timestamp: event.timestamp,
+                  operation: DataOperation::CreditAccount(
+                    Amount {
+                        amount: ev.amount,
+                        currency:ev.currency,
+                    })
+                };
+                Ok(e)
+              }
+              _ => Err("Unexpected credit event".to_string())
+            }           
+          }
+
+    sinks:
+      - type: topic
+        id: data-events
+
+  # Convert Transfer business events to Credit & Debit data events
+  transfer-service:
+    sources:
+      - type: topic
+        id: business-events
+
+    states:
+      - from: balance-manager.account-balance
+
+    transforms:
+      - operator: filter
+        run: |
+          fn filter_transfer_events(event: BusinessEvent) -> Result<bool, String> {
+            match event.operation {
+              BusinessOperation::Transfer(_) => Ok(true),
+              _ => Ok(false)
+            }
+          }
+
+      - operator: flat-map
+        run: |
+          fn create_credit_debit_events(event: BusinessEvent) -> Result<Vec<DataEvent>, String> {
+            match event.operation {
+              BusinessOperation::Transfer(ev) => {
+                let debit = DataEvent {
+                  iban: ev.sender.iban,
+                  name: ev.sender.account.name,
+                  timestamp: event.timestamp.clone(),
+                  operation: DataOperation::DebitAccount(
+                    Amount {
+                        amount: ev.amount,
+                        currency:ev.currency.clone(),
+                    })
+                };
+                let credit = DataEvent {
+                  iban: ev.beneficiary.iban,
+                  name: ev.beneficiary.account.name,
+                  timestamp: event.timestamp,
+                  operation: DataOperation::CreditAccount(
+                    Amount {
+                        amount: ev.amount,
+                        currency:ev.currency,
+                    })
+                };
+                Ok(vec![debit, credit])
+              }
+              _ => Err("Unexpected operation".to_string())
+            }           
+          }
+
+    sinks:
+      - type: topic
+        id: data-events
+      - type: topic
+        id: overdraft-events
+        steps:
+          - operator: filter-map
+            run: |
+              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
+                use polars::prelude::{col,lit,IntoLazy};
+
+                let withdrawal = match ev.operation {
+                  DataOperation::CreditAccount(_) => return Ok(None),
+                  DataOperation::DebitAccount(debit) => debit,
+                }; 
+
+                let accounts = account_balance();
+                let Ok(account) = accounts
+                    .clone()
+                    .lazy()
+                    .filter(col("name").eq(lit(ev.name.clone())))
+                    .collect() else {
+                  return Ok(None)  
+                };
+
+                let account_balance = account.column("balance").map_err(|err | err.to_string())?.f32()
+                  .map_err(|err | err.to_string())?.get(0).ok_or("Failed to get balance")?;
+                let new_balance = account_balance - withdrawal.amount;
+                
+                if new_balance < 0.0 {
+                  Ok(Some(
+                    OverdraftEvent {
+                      iban: ev.iban,
+                      name: ev.name,
+                      timestamp: ev.timestamp,
+                      withdrawal: withdrawal.clone(),
+                      balance: Amount {
+                        amount: new_balance,
+                        currency: withdrawal.currency
+                      },
+                    }
+                  ))
+                } else {
+                  Ok(None)
+                }
+              }
+
+  # Save the balance for each account in account-balance state object
+  balance-manager:
+    sources:
+      - type: topic
+        id: data-events
+    states:
+      - name: account-balance
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: arrow-row
+            properties:
+              balance:
+                type: float32
+              name:
+                type: string
+
+    partition:
+      assign-key:
+        run: |
+          fn key_by_iban(event: DataEvent) -> Result<String, String> {
+            Ok(event.iban)
+          }
+
+      transforms:
+        - operator: update-state
+          run: |
+            fn update_account_balance(event: DataEvent) -> Result<(), String> {
+              match event.operation {
+                DataOperation::CreditAccount(ac) => {
+                  let mut account_balance = account_balance();
+                  account_balance.name = event.name;
+                  account_balance.balance += ac.amount;
+                  account_balance.update();
+                }
+                DataOperation::DebitAccount(ac) => {
+                  let mut account_balance = account_balance();
+                  account_balance.balance -=  ac.amount;
+                  account_balance.update();
+                }
+                _ => ()
+              }
+              Ok(())
+            }
+
+  # Copy Debit events to debit-events topic
+  get-debit-events:
+    sources:
+      - type: topic
+        id: data-events
+
+    transforms:
+      - operator: filter
+        run: |
+          fn get_debit_events(event: DataEvent) -> Result<bool, String> {
+            match event.operation {
+              DataOperation::DebitAccount(_) => Ok(true),
+              _ => Ok(false)
+            }
+          }
+
+    sinks:
+      - type: topic
+        id: debit-events
+
+  # Copy Credit events to credit-events topic
+  get-credit-events:
+    sources:
+      - type: topic
+        id: data-events
+
+    transforms:
+      - operator: filter
+        run: |
+          fn get_credit_events(event: DataEvent) -> Result<bool, String> {
+            match event.operation {
+              DataOperation::CreditAccount(_) => Ok(true),
+              _ => Ok(false)
+            }
+          }
+
+    sinks:
+      - type: topic
+        id: credit-events

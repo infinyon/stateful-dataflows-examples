@@ -1,0 +1,21 @@
+{
+  "txid": "T00000004",
+  "timestamp": "2023-11-02T16:55:21",
+  "operation": {
+    "Withdrawal": {
+      "amount": 40,
+      "currency": "USD",
+      "iban": "GB36MWIE43141216656969",
+      "account": {
+        "name": "Lucy Cechtelar"
+      },
+      "bank": {
+        "swift": "CHASUS33XXX",
+        "name": "Chase Bank"
+      },
+      "atm": {
+        "id": "LV23448"
+      }
+    }
+  }
+}

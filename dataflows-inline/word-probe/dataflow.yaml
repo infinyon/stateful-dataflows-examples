@@ -1,0 +1,104 @@
+apiVersion: 0.4.0
+meta:
+  name: word-probe
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: raw
+
+types:
+  word-count:
+    type: object
+    properties:
+      word:
+        type: string
+      count:
+        type: i32
+
+topics:
+  sentences:
+    schema:
+      value:
+        type: string
+  words:
+    schema:
+      value:
+        type: string
+  word-counts:
+    schema:
+      value:
+        converter: json
+        type: word-count
+
+services:
+  count-words:
+    sources:
+      - type: topic
+        id: sentences
+
+    states:
+      - name: count-per-word
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: arrow-row
+            properties:
+              count:
+                type: i32
+
+    transforms:
+      - operator: flat-map
+        run: |
+          fn split_sequence(sentence: String) -> Result<Vec<String>, String> {
+            Ok(sentence.split_whitespace().map(String::from).collect())
+          }
+    partition:
+      assign-key:
+        run: |
+          fn key_by_word(word: String) -> Result<String, String> {
+            Ok(word.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect())
+          }
+
+      transforms:
+        - operator: update-state
+          run: |
+            fn increment_word_count(_word: String) -> Result<(), String> {
+              let mut state = count_per_word();
+              state.count += 1;
+              state.update();
+              Ok(())
+            }
+
+  lookup-word:
+    sources:
+      - type: topic
+        id: words
+
+    states:
+      - name: count-per-word
+        from: count-words.count-per-word
+
+    transforms:
+      - operator: map
+        run: |
+          fn query_word_count(word: String) -> Result<WordCount, String> {
+            use polars::prelude::{col,lit,IntoLazy};
+
+            let df = count_per_word();
+            let val = df.clone().lazy()
+                .filter(col("_key").eq(lit(word.clone())))
+                .collect().expect("parse");
+
+            if let Some(count) = val.column("count").unwrap().i32().unwrap().get(0) {
+              Ok(WordCount{word, count})
+            } else {
+              Ok(WordCount{word, count: 0})
+            }
+          }
+
+    sinks:
+      - type: topic
+        id: word-counts

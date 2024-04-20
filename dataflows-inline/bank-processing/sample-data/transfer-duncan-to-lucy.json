@@ -1,0 +1,30 @@
+{
+  "txid": "T00000011",
+  "timestamp": "2023-11-11T08:36:21",
+  "operation": {
+    "Transfer": {
+      "amount": 50,
+      "currency": "USD",
+      "sender": {
+        "iban": "GB56DVTE70858022060682",
+        "account": {
+          "name": "Duncan Taylor"
+        },
+        "bank": {
+          "swift": "BOFAUS3N",
+          "name": "Bank of America"
+        }
+      },
+      "beneficiary": {
+        "iban": "GB36MWIE43141216656969",
+        "account": {
+          "name": "Lucy Cechtelar"
+        },
+        "bank": {
+          "swift": "CHASUS33XXX",
+          "name": "Chase Bank"
+        }
+      }
+    }
+  }
+}

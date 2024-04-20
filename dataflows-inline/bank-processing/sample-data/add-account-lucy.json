@@ -1,0 +1,17 @@
+{
+  "iban": "GB36MWIE43141216656969",
+  "timestamp": "2023-10-01T10:15:23",
+  "operation": {
+    "AddAccount": {
+      "amount": 2500,
+      "currency": "USD",
+      "account": {
+        "name": "Lucy Cechtelar"
+      },
+      "bank": {
+        "swift": "CHASUS33XXX",
+        "name": "Chase Bank"
+      }
+    }
+  }
+}
