@@ -5,14 +5,14 @@ Here's an example of how to split traffic from one to multiple topics.
 The example splits car events into trucks and sedans based on their category while converting the record format to conform to the schema of the receiving topics. 
 
 * Checkout the [dataflow.yaml](./dataflow.yaml).
-* Make sure to [Install SSDK and start a Fluvio cluster].
+* Make sure to [Install SDF and start a Fluvio cluster].
 
 ### Run DataFlow
 
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-ssdk run
+sdf run
 ```
 
 ### Test DataFlow
@@ -52,7 +52,7 @@ fluvio consume sedans -Bd
 {"license":"5JAC844","sedan":"BMW 330"}
 ```
 
-Display the stateful service stats in the ssdk `>>` terminal:
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
 show state trucks/to-truck/metrics --table
@@ -67,7 +67,7 @@ Feel free to checkout the other metrics.
 
 ### Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete cars
@@ -75,4 +75,4 @@ fluvio topic delete trucks
 fluvio topic delete sedans
 ```
 
-[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites
