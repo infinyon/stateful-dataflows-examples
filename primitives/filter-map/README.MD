@@ -36,7 +36,7 @@ fluvio consume capitalized -Bd
 SAY HELLO WORLD
 ```
 
-Display stateful dataflow stats in the `sdf` runtime `>>` terminal:
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
 show state filter-map-service/long-sentence-to-uppercase/metrics --table
