@@ -58,7 +58,7 @@ fluvio consume masked -Bd
 
 ## Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete user-info
