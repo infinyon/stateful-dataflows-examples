@@ -2,11 +2,10 @@
 
 This is an example of building and testing a package that masks Social Security Numbers (SSNs) in a record.
 
-
 ### Prerequisites
 
-* Checkout the [ssdk-package.yaml](./ssdk-package.yaml).
-* Make sure to [Install SSDK].
+* Checkout the [sdf-package.yaml](./sdf-package.yaml).
+* Make sure to [Install SDF].
 
 
 ### Generate the Package Sandbox
@@ -14,7 +13,7 @@ This is an example of building and testing a package that masks Social Security 
 Use the `generate` scaffold to create the package sandbox:
 
 ```bash
-ssdk generate
+sdf generate
 ```
 
 The generator creates all necessary glue logic for a reusable package.
@@ -70,7 +69,7 @@ regex = "1"
 To build the code, run:
 
 ```bash
-ssdk build
+sdf build
 ```
 
 **Tips**: In rust you may use `cargo component build` to compile, then `cargo test` to run the tests.
@@ -81,7 +80,7 @@ ssdk build
 Test the code with:
 
 ```bash
-ssdk test
+sdf test
 ```
 
 ```bash
@@ -93,4 +92,4 @@ The package is ready to use in the [dataflow](../../).
 
 
 
-[Install SSDK]: /README.MD#prerequisites
+[Install SDF]: /README.MD#prerequisites
