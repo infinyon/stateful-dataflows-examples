@@ -65,7 +65,7 @@ The connector sends events to `licenses` topic.
 
 Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're doing.
 
-Make sure to [Install SDF & Start a Cluster].
+Make sure to [Install SDF  Start a Cluster].
 
 ### 1. Run the Pipeline
 

@@ -50,9 +50,9 @@ services:
     transforms:
       - operator: map
         dependencies:
-          - name: ssdk-http
+          - name: sdf-http
             git: "https://github.com/infinyon/sdf-http-guest"
-            tag: "v0.3.0"
+            tag: "v0.4.0"
           - name: serde_json
             version: "1"
         run: |
@@ -60,11 +60,11 @@ services:
             // Build Request
             let maker = car.maker.replace(" ", "%20");
             let url = format!("https://demo-data.infinyon.com/api/maker/{maker}");
-            let request = ssdk_http::http::Request::builder().uri(url).body("")
+            let request = sdf_http::http::Request::builder().uri(url).body("")
               .map_err(|e| e.to_string())?;
 
             // Handle Reponse
-            let response = ssdk_http::blocking::send(request).map_err(|e| e.to_string())?;
+            let response = sdf_http::blocking::send(request).map_err(|e| e.to_string())?;
             let body = response.into_body();
             let m: Maker = serde_json::from_slice(&*body).map_err(|err| err.to_string())?;
 

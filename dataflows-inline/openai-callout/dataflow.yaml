@@ -117,9 +117,9 @@ services:
       transforms:
         - operator: map
           dependencies:
-            - name: ssdk-http
+            - name: sdf-http
               git: "https://github.com/infinyon/sdf-http-guest"
-              tag: "v0.3.0"
+              tag: "v0.4.0"
           run: |
             fn invoke_openai(req: ChatRequest) -> Result<ChatCount, String> {
 
@@ -183,7 +183,7 @@ services:
             let body = serde_json::to_string(&req).map_err(|e| e.to_string())?;
             println!("request body: {}", body);
 
-            let request = ssdk_http::http::Request::builder()
+            let request = sdf_http::http::Request::builder()
               .uri("https://api.openai.com/v1/chat/completions")
               .method("POST")
               .header("Content-Type", "application/json")
@@ -191,7 +191,7 @@ services:
               .body(body)
               .map_err(|e| e.to_string())?;
 
-            let response = ssdk_http::blocking::send(request).map_err(|e| e.to_string())?;
+            let response = sdf_http::blocking::send(request).map_err(|e| e.to_string())?;
             let body: Vec<u8> = response.into_body();
 
             let ai_response: OpenAIResponse = serde_json::from_slice(&body).map_err(|e| e.to_string())?;
