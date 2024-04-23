@@ -7,8 +7,8 @@ The `sentence` package offers a couple of functions to work with sentences:
 
 ### Prerequisites
 
-* Checkout the [ssdk-package.yaml](./ssdk-package.yaml).
-* Make sure to [Install SSDK].
+* Checkout the [sdf-package.yaml](./sdf-package.yaml).
+* Make sure to [Install SDF].
 
 
 ### Generate the Package Sandbox
@@ -16,7 +16,7 @@ The `sentence` package offers a couple of functions to work with sentences:
 Use the `generate` scaffold to create the package sandbox:
 
 ```bash
-ssdk generate
+sdf generate
 ```
 
 The generator creates all necessary glue logic for a reusable package.
@@ -61,15 +61,15 @@ mod test {
 To build the code, run:
 
 ```bash
-ssdk build
+sdf build
 ```
 
 ### Test the Functions
 
-Test the code with using the `ssdk` toolchain:
+Test the code with `sdf`:
 
 ```bash
-ssdk test
+sdf test
 ```
 
 Show the functions avaialble for testing:
@@ -105,4 +105,4 @@ cargo test
 
 The package is ready to use in the [dataflow](../../).
 
-[Install SSDK]: /README.MD#prerequisites
+[Install SDF]: /README.MD#prerequisites
