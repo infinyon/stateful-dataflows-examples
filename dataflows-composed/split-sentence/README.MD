@@ -69,4 +69,4 @@ fluvio topic delete words
 ```
 
 [Install SDF & Start a Cluster]: /README.MD#prerequisites
-[sentence]: ./pkgs/sentence
+[sentence]: ./packages/sentence

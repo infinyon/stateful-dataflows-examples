@@ -7,7 +7,7 @@ meta:
 
 imports:
   - pkg: example/mask-ssn-pkg@0.1.0
-    path: ./pkgs/mask-ssn
+    path: ./packages/mask-ssn
     functions:
       - name: mask-ssn
 
@@ -42,4 +42,4 @@ services:
 dev:
   imports:
     - pkg: example/mask-ssn-pkg@0.1.0
-      path: ./pkgs/mask-ssn
+      path: ./packages/mask-ssn

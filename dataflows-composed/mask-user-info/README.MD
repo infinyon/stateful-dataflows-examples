@@ -67,4 +67,4 @@ fluvio topic delete masked
 
 
 [Install SDF & Start a Cluster]: /README.MD#prerequisites
-[mask-ssn]: ./pkgs/mask-ssn
+[mask-ssn]: ./packages/mask-ssn
