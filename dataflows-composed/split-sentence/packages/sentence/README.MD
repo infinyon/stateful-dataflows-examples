@@ -37,12 +37,14 @@ fn sentence_to_words(sentence: String) -> Result<Vec<String>, String> {
 In `rust/augment-count/src/lib.rs` replace the the function and add tests:
 
 ```rust
-impl GuestInterface for Component {
-    fn augment_count(word: String) -> Result<String, String> {
-        Ok(format!("{}({})", word, word.chars().count()))
-    }
+fn augment_count(word: String) -> Result<String, String> {
+    Ok(format!("{}({})", word, word.chars().count()))
 }
+```
 
+Let's add some tests as well:
+
+```rust
 #[cfg(test)]
 mod test {
     use super::*;
@@ -102,6 +104,7 @@ cd rust/augment-count
 cargo test
 ```
 
+**Tips**: If you get an error, you may need to use `cargo component build` to compile, then `cargo test` to run the tests.
 
 The package is ready to use in the [dataflow](../../).
 

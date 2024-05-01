@@ -59,6 +59,23 @@ Hi(2)
 there(5)
 ```
 
+## Show State
+
+Check the counters `sdf` terminal:
+
+```bash
+>> show state sentence-words/sentence-to-words/metrics --table
+ Key    Window  succeeded  failed 
+ stats  *       2          0  
+```
+
+```bash
+>> show state sentence-words/augment-count/metrics --table
+ Key    Window  succeeded  failed 
+ stats  *       4          0   
+```
+
+
 ## Clean-up
 
 Exit `sdf` terminal and remove the topics:

@@ -28,7 +28,7 @@ jobs:
             "dataflows-inline/word-counter",
             "dataflows-inline/word-probe",
           ]
-          sdf-version: [sdf-preview8-dev]
+          sdf-version: [sdf-preview8]
       steps:
         - name: Checkout
           uses: actions/checkout@v3
