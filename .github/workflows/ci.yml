@@ -53,6 +53,7 @@ jobs:
           run: |
             which ls
             which ssdk
+            which ssdk
             pwd
             ssdk setup
 
