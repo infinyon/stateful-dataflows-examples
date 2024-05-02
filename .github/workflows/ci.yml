@@ -52,7 +52,6 @@ jobs:
         - name: Run ssdk setup
           run: |
             whereis ssdk
-            pwd
             ssdk setup
 
         - name: test
