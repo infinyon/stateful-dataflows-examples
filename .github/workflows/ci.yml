@@ -51,9 +51,7 @@ jobs:
 
         - name: Run ssdk setup
           run: |
-            which ls
-            which ssdk
-            which ssdk
+            whereis ssdk
             pwd
             ssdk setup
 
