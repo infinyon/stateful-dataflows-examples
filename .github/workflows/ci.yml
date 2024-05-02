@@ -52,11 +52,11 @@ jobs:
         - name: Run ssdk setup
           run: |
             ssdk setup
-        
-        - name: Run ssdk generate
+
+        - name: test
           working-directory: ./${{ matrix.example_path }}
           run: |
-            ssdk run --skip-running
+            make e2e
 
     done:
       name: Done
