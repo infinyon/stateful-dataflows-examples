@@ -51,13 +51,11 @@ jobs:
 
         - name: Run ssdk setup
           run: |
-            whereis ssdk
             ssdk setup
 
         - name: test
           working-directory: ./${{ matrix.example_path }}
           run: |
-            echo $PATH
             make e2e
 
     done:
