@@ -1,5 +1,5 @@
 
 e2e:
-	./../../ssdk run --skip-running
+	./home/runner/work/stateful-dataflows-examples/stateful-dataflows-examples/ssdk run --skip-running
 
 
