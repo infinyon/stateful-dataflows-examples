@@ -1,5 +1,5 @@
 
 e2e:
-	ssdk run --skip-running
+	./../../ssdk run --skip-running
 
 
