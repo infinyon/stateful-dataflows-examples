@@ -16,18 +16,18 @@ jobs:
         matrix:
           example_path: [
             "primitives/filter",
-            # "primitives/filter-map",
-            # "primitives/flat-map",
-            # "primitives/map",
-            # "primitives/merge",
-            # "primitives/split",
-            # "primitives/update-state",
-            # "dataflows-inline/bank-processing",
-            # "dataflows-inline/car-processing",
-            # "dataflows-inline/http-callout",
-            # "dataflows-inline/openai-callout",
-            # "dataflows-inline/word-counter",
-            # "dataflows-inline/word-probe",
+            "primitives/filter-map",
+            "primitives/flat-map",
+            "primitives/map",
+            "primitives/merge",
+            "primitives/split",
+            "primitives/update-state",
+            "dataflows-inline/bank-processing",
+            "dataflows-inline/car-processing",
+            "dataflows-inline/http-callout",
+            "dataflows-inline/openai-callout",
+            "dataflows-inline/word-counter",
+            "dataflows-inline/word-probe",
           ]
           ssdk-version: [ssdk-preview7]
       steps:

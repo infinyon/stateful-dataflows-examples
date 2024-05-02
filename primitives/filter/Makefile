@@ -3,5 +3,3 @@ include $(BASE_DIR)/Makefile
 
 e2e:
 	$(SDF_BIN) run --skip-running
-
-
