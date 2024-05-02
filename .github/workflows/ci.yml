@@ -8,6 +8,11 @@ on:
   merge_group:
   pull_request:
 
+on:
+  pull_request:
+    types: [ready_for_review,converted_to_draft,opened, reopened, synchronize]
+    branches: [main]
+
 jobs:
     build-and-generate:
       runs-on: ubuntu-latest
