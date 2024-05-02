@@ -1,5 +1,7 @@
+BASE_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../../)
+include $(BASE_DIR)/Makefile
 
 e2e:
-	~/.fluvio/bin/ssdk run --skip-running
+	$(SDF_BIN) run --skip-running
 
 
