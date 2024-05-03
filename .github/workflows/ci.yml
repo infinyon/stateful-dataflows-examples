@@ -22,7 +22,7 @@ jobs:
             "primitives/merge",
             "primitives/split",
             "primitives/update-state",
-            # "dataflows-inline/bank-processing",
+            "dataflows-inline/bank-processing",
             "dataflows-inline/car-processing",
             "dataflows-inline/http-callout",
             "dataflows-inline/openai-callout",
