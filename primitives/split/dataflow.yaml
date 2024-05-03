@@ -55,7 +55,7 @@ services:
     sinks:
       - type: topic
         id: trucks
-        steps:
+        transforms:
           - operator: filter-map
             run: |
               fn to_truck(car: Car) -> Result<Option<Truck>, String> {
@@ -68,7 +68,7 @@ services:
               }
       - type: topic
         id: sedans
-        steps:
+        transforms:
           - operator: filter-map
             run: |
               fn to_sedan(car: Car) -> Result<Option<Sedan>, String> {

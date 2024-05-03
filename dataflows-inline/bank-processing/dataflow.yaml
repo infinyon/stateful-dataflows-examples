@@ -266,7 +266,7 @@ services:
         id: data-events
       - type: topic
         id: overdraft-events
-        steps:
+        transforms:
           - operator: filter-map
             run: |
               fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
@@ -405,7 +405,7 @@ services:
         id: data-events
       - type: topic
         id: overdraft-events
-        steps:
+        transforms:
           - operator: filter-map
             run: |
               fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
