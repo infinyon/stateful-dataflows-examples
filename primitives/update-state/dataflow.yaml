@@ -30,7 +30,7 @@ services:
       - type: topic
         id: temp-sensor
     states:
-      - name: temperature
+      temperature:
         type: keyed-state
         properties:
           key:

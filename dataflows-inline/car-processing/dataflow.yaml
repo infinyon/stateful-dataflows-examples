@@ -211,7 +211,7 @@ services:
         id: sunnyvale
 
     states:
-      - name: count-by-color
+      count-by-color:
         type: keyed-state
         properties:
           key:
@@ -261,7 +261,7 @@ services:
         id: licenses
 
     states:
-      - name: licence-plates
+      licence-plates:
         type: keyed-state
         properties:
           key:
@@ -306,7 +306,7 @@ services:
         id: cars
 
     states:
-      - name: licence-plates
+      licence-plates:
         from: save-license-plates.licence-plates
 
     transforms:

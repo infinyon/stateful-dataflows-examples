@@ -236,7 +236,8 @@ services:
         id: business-events
 
     states:
-      - from: balance-manager.account-balance
+      account-balance:
+        from: balance-manager.account-balance
 
     transforms:
       - operator: filter-map
@@ -355,7 +356,8 @@ services:
         id: business-events
 
     states:
-      - from: balance-manager.account-balance
+      account-balance:
+        from: balance-manager.account-balance
 
     transforms:
       - operator: filter
@@ -451,7 +453,7 @@ services:
       - type: topic
         id: data-events
     states:
-      - name: account-balance
+      account-balance:
         type: keyed-state
         properties:
           key:
