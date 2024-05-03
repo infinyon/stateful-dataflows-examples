@@ -1,0 +1,1 @@
+SDF_BIN=~/.fluvio/bin/ssdk

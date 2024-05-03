@@ -5,8 +5,9 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  merge_group:
   pull_request:
+    types: [ready_for_review,converted_to_draft,opened, reopened, synchronize]
+    branches: [main]
 
 jobs:
     build-and-generate:
@@ -51,11 +52,11 @@ jobs:
         - name: Run ssdk setup
           run: |
             ssdk setup
-        
-        - name: Run ssdk generate
+
+        - name: test
           working-directory: ./${{ matrix.example_path }}
           run: |
-            ssdk run --skip-running
+            make e2e
 
     done:
       name: Done
