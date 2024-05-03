@@ -27,14 +27,14 @@ It also shows the ability to split traffic, by sending records to different topi
 ## Step-by-step
 
 * Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're doing.
-* Make sure to [Install SSDK & Start a Cluster].
+* Make sure to [Install SDF & Start a Cluster].
 
 ### 1. Run the Pipeline
 
 Run the pipeline:
 
 ```bash
- ssdk run --ui
+ sdf run --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -70,7 +70,7 @@ Add `lucy`:
 fluvio produce admin-events --raw --file ./sample-data/add-account-lucy.json
 ```
 
-Check state in `ssdk` terminal:
+Check state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
@@ -107,7 +107,7 @@ Deposit `lucy`:
 fluvio produce business-events --raw --file ./sample-data/deposit-lucy.json
 ```
 
-Check state in `ssdk` terminal:
+Check state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
@@ -136,7 +136,7 @@ Withdrawal `lucy`:
 fluvio produce business-events --raw --file ./sample-data/withdrawal-lucy.json  
 ```
 
-Check state in `ssdk` terminal:
+Check state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
@@ -159,7 +159,7 @@ Transfer from `duncan` to `lucy`:
 fluvio produce business-events --raw --file ./sample-data/transfer-duncan-to-lucy.json 
 ```
 
-Check state in `ssdk` terminal:
+Check state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
@@ -177,7 +177,7 @@ Transfer from `lucy` to `duncan`:
 fluvio produce business-events --raw --file ./sample-data/transfer-lucy-to-duncan.json 
 ```
 
-Check state in `ssdk` terminal:
+Check state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
@@ -206,7 +206,7 @@ Withdrawal `duncan`:
 fluvio produce business-events --raw --file ./sample-data/withdrawal-duncan.json 
 ```
 
-Check state in `ssdk` terminal:
+Check state in `sdf` terminal:
 
 ```bash
 >> show state balance-manager/account-balance/state --table
@@ -226,7 +226,7 @@ fluvio consume overdraft-events -Bd -O json
 
 ## Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete admin-events
@@ -237,4 +237,4 @@ fluvio topic delete credit-events
 fluvio topic delete overdraft-events
 ```
 
-[Install SSDK & Start a Cluster]: /README.MD#prerequisites
+[Install SDF & Start a Cluster]: /README.MD#prerequisites

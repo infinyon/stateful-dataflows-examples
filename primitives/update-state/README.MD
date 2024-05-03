@@ -3,14 +3,14 @@
 In this example, we use the `update-state` operator to collect the `temperature` values from multiple sensors into a table. The dataflow uses `arrow-row` for the table representation.
 
 * Checkout the [dataflow.yaml](./dataflow.yaml).
-* Make sure to [Install SSDK and start a Fluvio cluster].
+* Make sure to [Install SDF and start a Fluvio cluster].
 
 ### Run DataFlow
 
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-ssdk run
+sdf run
 ```
 
 ### Test DataFlow
@@ -28,7 +28,7 @@ fluvio produce temp-sensor
 {"id": 0, "sensor": "SF", "temperature": 47}
 ```
 
-Check the result in the ssdk run `>>` terminal:
+Check the result in the sdf run `>>` terminal:
 
 ```bash
 show state save-temperature/temperature/state --table
@@ -43,10 +43,10 @@ show state save-temperature/temperature/state --table
 
 ### Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete temp-sensor
 ```
 
-[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

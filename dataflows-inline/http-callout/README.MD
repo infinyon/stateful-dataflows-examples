@@ -20,14 +20,14 @@ The pipeline uses the following primitives:
 
 Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're doing.
 
-Make sure to [Install SSDK & Start a Cluster].
+Make sure to [Install SDF & Start a Cluster].
 
 ### 1. Run the Pipeline
 
 Run the pipeline:
 
 ```bash
- ssdk run --ui
+ sdf run --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -67,11 +67,11 @@ Note that your connector will continue to run in the background until you shut t
 cdk deploy shutdown --name car-callout
 ```
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete cars
 fluvio topic delete makers
 ```
 
-[Install SSDK & Start a Cluster]: /README.MD#prerequisites
+[Install SDF & Start a Cluster]: /README.MD#prerequisites

@@ -24,7 +24,7 @@ You must have account at [OpenApi](https://platform.openai.com/docs/overview) an
 
 Before you start:
 * Checkout the [dataflow.yaml](./dataflow.yaml).
-* Make sure to [Install SSDK and start a Fluvio cluster].
+* Make sure to [Install SDF and start a Fluvio cluster].
 
 
 ## Running
@@ -32,7 +32,7 @@ Before you start:
 Assume you have an OpenAI API key in the environment variable `OPENAI_API_KEY`
 
 ```bash
-SSDK run -e OPENAI_API_KEY=$OPENAI_API_KEY
+SDF run -e OPENAI_API_KEY=$OPENAI_API_KEY
 ```
 
 ### Inputing text
@@ -61,11 +61,11 @@ fluvio consume output -B
 
 ## Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete sentence
 fluvio topic delete output
 ```
 
-[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

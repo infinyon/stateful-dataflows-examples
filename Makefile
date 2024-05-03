@@ -1,1 +1,1 @@
-SDF_BIN=~/.fluvio/bin/ssdk
+SDF_BIN=~/.fluvio/bin/sdf

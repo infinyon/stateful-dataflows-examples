@@ -3,14 +3,14 @@
 Example of how to use the `map` operator. In this example, the map operator transforms masks SSN numbers in a user record.
 
 * Checkout the [dataflow.yaml](./dataflow.yaml).
-* Make sure to [Install SSDK and start a Fluvio cluster].
+* Make sure to [Install SDF and start a Fluvio cluster].
 
 ### Run DataFlow
 
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-ssdk run
+sdf run
 ```
 
 ### Test DataFlow
@@ -37,7 +37,7 @@ fluvio consume users-public -Bd
 {"name":"Bob","ssn":"***-***-****"}
 ```
 
-Display the stateful service stats in the ssdk `>>` terminal:
+Display the stateful service stats in the sdf `>>` terminal:
 
 ```bash
 show state map-service/mask-ssn/metrics --table
@@ -50,11 +50,11 @@ stats  *       2          0
 
 ### Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete users
 fluvio topic delete users-public
 ```
 
-[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites
