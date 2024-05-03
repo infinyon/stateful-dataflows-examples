@@ -15,7 +15,7 @@ rustup update
 
 ```bash
 curl -fsS https://hub.infinyon.cloud/install/install.sh | bash
-fvm install sdf-preview7
+fvm install sdf-preview8
 ```
 
 #### Start a cluster
