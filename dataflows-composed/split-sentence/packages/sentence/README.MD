@@ -34,7 +34,7 @@ fn sentence_to_words(sentence: String) -> Result<Vec<String>, String> {
 }
 ```
 
-In `rust/augment-count/src/lib.rs` replace the the function and add tests:
+In `rust/augment-count/src/lib.rs` replace the function body:
 
 ```rust
 fn augment_count(word: String) -> Result<String, String> {
