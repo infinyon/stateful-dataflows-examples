@@ -73,7 +73,7 @@ services:
       - type: topic
         id: sentence
     states:
-      - name: count-per-model
+      count-per-model:
         type: keyed-state
         properties:
           key:
