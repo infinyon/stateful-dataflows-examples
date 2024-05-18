@@ -59,7 +59,7 @@ services:
       - type: topic
         id: sentence
     states:
-      - name: count-per-word
+      count-per-word:
         type: keyed-state
         properties:
           key:
