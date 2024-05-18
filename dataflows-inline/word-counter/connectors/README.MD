@@ -7,19 +7,19 @@ The connector configuration file is located at [sentence-connector.yaml](sentenc
 ### 1. Download HTTP Source Connector
 
 ```bash
-cdk hub download infinyon/http-source@0.3.3
+cdk hub download infinyon/http-source@0.3.6
 ```
 
 ### 2. Load JOLT Smartmodule to the Cluster
 
 ```bash
-fluvio hub smartmodule download infinyon/jolt@0.3.0 
+fluvio hub smartmodule download infinyon/jolt@0.4.1 
 ```
 
 ### 3. Start the connector
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.3.3.ipkg -c sentence-connector.yaml
+cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c sentence-connector.yaml
 ```
 
 ### 4. Stop the connector

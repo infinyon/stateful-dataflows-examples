@@ -18,7 +18,7 @@ InfinyOn provides several data sets that you can use to generate synthetic data,
 Use `CDK` to download the http-sink connector to your local machine.
 
 ```bash
-cdk hub download infinyon/http-source@0.3.3
+cdk hub download infinyon/http-source@0.3.6
 ```
 
 ### Start HTTP-Source Pull Connector
@@ -29,7 +29,7 @@ The following configuration reads a `quote` periodically (every two seconds):
 # quotes-periodic.yaml
 apiVersion: 0.2.0
 meta:
-  version: 0.3.3
+  version: 0.3.6
   name: quotes-periodic
   type: http-source
   topic: quotes
@@ -41,7 +41,7 @@ http:
 Copy the configuration to a file and star the connector on your local machine:
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.3.3.ipkg -c quotes-periodic.yaml
+cdk deploy start --ipkg infinyon-http-source-0.6.ipkg -c quotes-periodic.yaml
 ```
 
 Checkout the result:
@@ -64,7 +64,7 @@ The following configuration streams from the `stream-quote` endpoint, which is p
 # quotes-stream.yaml
 apiVersion: 0.2.0
 meta:
-  version: 0.3.3
+  version: 0.3.6
   name: quotes-stream
   type: http-source
   topic: quotes
@@ -78,7 +78,7 @@ http:
 Copy the configuration to a file and star the connector on your local machine:
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.3.3.ipkg -c quotes-stream.yaml
+cdk deploy start --ipkg infinyon-http-source-0.6.ipkg -c quotes-stream.yaml
 ```
 
 Checkout the result:
