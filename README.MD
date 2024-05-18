@@ -17,7 +17,7 @@ SDF if the abreviation for Stateful Dataflows.
 
 ```bash
 curl -fsS https://hub.infinyon.cloud/install/install.sh | bash
-fvm install sdf-preview8
+fvm install sdf-preview9
 ```
 
 #### Start a cluster
