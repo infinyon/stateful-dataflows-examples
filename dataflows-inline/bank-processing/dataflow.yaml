@@ -451,7 +451,7 @@ services:
       - type: topic
         id: data-events
     states:
-      - name: account-balance
+      account-balance:
         type: keyed-state
         properties:
           key:
