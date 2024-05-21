@@ -13,7 +13,7 @@ rustup update
 
 #### Install Fluvio & SDF
 
-SDF if the abreviation for Stateful Dataflows.
+SDF is the abreviation for Stateful Dataflows.
 
 ```bash
 curl -fsS https://hub.infinyon.cloud/install/install.sh | bash
