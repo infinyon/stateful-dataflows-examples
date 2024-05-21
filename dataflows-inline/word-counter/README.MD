@@ -23,14 +23,14 @@ The pipeline uses the following primitives:
 
 Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're doing.
 
-Make sure to [Install SSDK and start a Fluvio cluster].
+Make sure to [Install SDF and start a Fluvio cluster].
 
 ### 1. Run the Pipeline
 
 Run the pipeline:
 
 ```bash
- ssdk run --ui
+ sdf run --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -93,7 +93,7 @@ Depending when the 20 second window triggered, you'll see the top 3 words:
 
 #### Check the state
 
-SSDK window allows you to watch the internal states:
+SDF window allows you to watch the internal states:
 
 ```bash
 show state
@@ -105,11 +105,11 @@ You may also look at windows that have not yet been flushed:
 show state word-processing-window/count-per-word/state
 ```
 
-**Note:** The dataflow stops processing records when you close the intractive editor. To resume processing, run `ssdk run` again.
+**Note:** The dataflow stops processing records when you close the intractive editor. To resume processing, run `sdf run` again.
 
 ## Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete sentence
@@ -123,4 +123,4 @@ You may also start an http-source connector that continuously feed data to the `
 
 
 
-[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

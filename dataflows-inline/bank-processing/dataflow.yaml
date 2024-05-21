@@ -236,7 +236,8 @@ services:
         id: business-events
 
     states:
-      - from: balance-manager.account-balance
+      account-balance:
+        from: balance-manager.account-balance
 
     transforms:
       - operator: filter-map
@@ -265,7 +266,7 @@ services:
         id: data-events
       - type: topic
         id: overdraft-events
-        steps:
+        transforms:
           - operator: filter-map
             run: |
               fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
@@ -355,7 +356,8 @@ services:
         id: business-events
 
     states:
-      - from: balance-manager.account-balance
+      account-balance:
+        from: balance-manager.account-balance
 
     transforms:
       - operator: filter
@@ -403,7 +405,7 @@ services:
         id: data-events
       - type: topic
         id: overdraft-events
-        steps:
+        transforms:
           - operator: filter-map
             run: |
               fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
@@ -451,7 +453,7 @@ services:
       - type: topic
         id: data-events
     states:
-      - name: account-balance
+      account-balance:
         type: keyed-state
         properties:
           key:

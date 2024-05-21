@@ -129,8 +129,8 @@ services:
     transforms:
       - operator: map
         dependencies:
-          - name: ssdk-http
-            git: "https://github.com/infinyon/ssdk-guest-http"
+          - name: sdf-http
+            git: "https://github.com/infinyon/sdf-guest-http"
             tag: "v0.3.0"
           - name: serde_json
             version: "1"
@@ -138,10 +138,10 @@ services:
           fn get_car_maker(car: Car) -> Result<Maker, String> {
             let maker = car.maker.replace(" ", "%20");
             let url = format!("https://demo-data.infinyon.com/api/maker/{maker}");
-            let request = ssdk_http::http::Request::builder().uri(url).body("")
+            let request = sdf_http::http::Request::builder().uri(url).body("")
               .map_err(|e| e.to_string())?;
 
-            let response = ssdk_http::blocking::send(request).map_err(|e| e.to_string())?;
+            let response = sdf_http::blocking::send(request).map_err(|e| e.to_string())?;
             let body = response.into_body();
 
             let m: Maker = serde_json::from_slice(&*body).map_err(|err| err.to_string())?;
@@ -189,7 +189,7 @@ services:
     sinks:
       - type: topic
         id: saratoga
-        steps:
+        transforms:
           - operator: filter
             run: |
               fn is_saratoga(cl: CarLocation) -> Result<bool, String> {
@@ -197,7 +197,7 @@ services:
               }
       - type: topic
         id: sunnyvale
-        steps:
+        transforms:
           - operator: filter
             run: |
               fn is_sunnyvale(cl: CarLocation) -> Result<bool, String> {
@@ -211,7 +211,7 @@ services:
         id: sunnyvale
 
     states:
-      - name: count-by-color
+      count-by-color:
         type: keyed-state
         properties:
           key:
@@ -261,7 +261,7 @@ services:
         id: licenses
 
     states:
-      - name: licence-plates
+      licence-plates:
         type: keyed-state
         properties:
           key:
@@ -306,7 +306,7 @@ services:
         id: cars
 
     states:
-      - name: licence-plates
+      licence-plates:
         from: save-license-plates.licence-plates
 
     transforms:

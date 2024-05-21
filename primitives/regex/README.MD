@@ -3,14 +3,14 @@
 In this example, we'll import the `regex` crate to demonstrate adding external `dependencies` for inline functions. We'll use the regex function to identify generation-z based on their year of birth.
 
 * Checkout the [dataflow.yaml](./dataflow.yaml).
-* Make sure to [Install SSDK and start a Fluvio cluster].
+* Make sure to [Install SDF and start a Fluvio cluster].
 
 ### Run DataFlow
 
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-ssdk run
+sdf run
 ```
 
 ### Test DataFlow
@@ -41,11 +41,11 @@ fluvio consume gen-z -Bd
 
 ### Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete person
 fluvio topic delete gen-z
 ```
 
-[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

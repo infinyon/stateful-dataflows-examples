@@ -38,7 +38,7 @@ services:
         id: sentences
 
     states:
-      - name: count-per-word
+      count-per-word:
         type: keyed-state
         properties:
           key:
@@ -78,7 +78,7 @@ services:
         id: words
 
     states:
-      - name: count-per-word
+      count-per-word:
         from: count-words.count-per-word
 
     transforms:

@@ -5,14 +5,14 @@ Here's an example of how to merge events from multiple topics into a single topi
 The example reads events from the truck and sedan topics, converts them to a string format and sends the result to the licenses topic.
 
 * Checkout the [dataflow.yaml](./dataflow.yaml).
-* Make sure to [Install SSDK and start a Fluvio cluster].
+* Make sure to [Install SDF and start a Fluvio cluster].
 
 ### Run DataFlow
 
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-ssdk run
+sdf run
 ```
 
 ### Test DataFlow
@@ -52,7 +52,7 @@ fluvio consume licenses -Bd
 "5JAC844"
 ```
 
-Display the stateful service stats in the ssdk `>>` terminal:
+Display the stateful service stats in the sdf `>>` terminal:
 
 ```bash
 show state sedans/sedan-license/metrics --table
@@ -68,7 +68,7 @@ Feel free to checkout the other metrics.
 
 ### Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete trucks
@@ -76,4 +76,4 @@ fluvio topic delete sedans
 fluvio topic delete licenses
 ```
 
-[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

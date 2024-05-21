@@ -3,14 +3,14 @@
 Example of how to use the `filter` operator. In this example, the filter operation allows all sentences that have a question mark (`?`) and drops all others.
 
 * Checkout the [dataflow.yaml](./dataflow.yaml).
-* Make sure to [Install SSDK and start a Fluvio cluster].
+* Make sure to [Install SDF and start a Fluvio cluster].
 
 ### Run DataFlow
 
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-ssdk run
+sdf run
 ```
 
 ### Test DataFlow
@@ -36,7 +36,7 @@ fluvio consume questions -Bd
 What time is it?
 ```
 
-Display the stateful service stats in the ssdk `>>` terminal:
+Display the stateful service stats in the sdf `>>` terminal:
 
 ```bash
 show state filter-service/filter-questions/metrics --
@@ -50,11 +50,11 @@ stats  *       2          0
 
 ### Clean-up
 
-Exit `ssdk` terminal and remove the topics:
+Exit `sdf` terminal and remove the topics:
 
 ```bash
 fluvio topic delete sentences
 fluvio topic delete questions
 ```
 
-[Install SSDK and start a Fluvio cluster]: /README.MD#prerequisites
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

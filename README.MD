@@ -11,11 +11,11 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 rustup update
 ```
 
-#### Install Fluvio & SSDK
+#### Install Fluvio & SDF
 
 ```bash
 curl -fsS https://hub.infinyon.cloud/install/install.sh | bash
-fvm install ssdk-preview7
+fvm install sdf-preview8
 ```
 
 #### Start a cluster
