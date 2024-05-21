@@ -1,6 +1,6 @@
 # Overview
 
-Simple example of using the OpenAI API to generate text.  It counds the number of attempts by model. The input is a model followed by sentence. 
+Simple example of using the OpenAI API to generate text.  It counds the number of attempts by model. The input is a model followed by sentence.
 
 For example, the following input:
 
@@ -32,7 +32,7 @@ Before you start:
 Assume you have an OpenAI API key in the environment variable `OPENAI_API_KEY`
 
 ```bash
-SDF run -e OPENAI_API_KEY=$OPENAI_API_KEY
+sdf run -e OPENAI_API_KEY=$OPENAI_API_KEY
 ```
 
 ### Inputing text
@@ -58,6 +58,8 @@ fluvio consume output -B
 ```
 {"model":"gpt-4","output":"Once upon a time, there was a boy who cried wolf...", "total_attempts": 1}
 ```
+
+Congratulations! You've successfully built and run a dataflow!
 
 ## Clean-up
 

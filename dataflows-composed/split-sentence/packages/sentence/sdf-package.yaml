@@ -6,7 +6,6 @@ meta:
   namespace: example
 
 functions:
-
   sentence-to-words:
     operator: flat-map
     inputs:
@@ -14,14 +13,14 @@ functions:
         type: string
     output:
       type: string
-      
+
   augment-count:
     operator: map
     inputs:
       - name: word
         type: string
     output:
-      type: string    
+      type: string
 
 dev:
-  converter: raw    # options: raw, json      
+  converter: raw # options: raw, json

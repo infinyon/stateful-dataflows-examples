@@ -2,7 +2,6 @@
 
 This is an example of building and testing a package that masks Social Security Numbers (SSNs) in a record.
 
-
 ### Prerequisites
 
 * Checkout the [sdf-package.yaml](./sdf-package.yaml).
@@ -25,23 +24,13 @@ The generator creates all necessary glue logic for a reusable package.
 Let's update the content of `rust/mask-ssn/src/lib.rs` file that has been generated with the following code:
 
 ```rust
-mod bindings;
-
-use crate::bindings::exports::example::mask_ssn::mask_ssn_service::Guest as GuestInterface;
 use regex::Regex;
 use once_cell::sync::Lazy;
-
-struct Component;
-
-bindings::export!(Component with_types_in bindings);
-
 static SSN_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d{3}-\d{2}-\d{4}").unwrap());
 
-impl GuestInterface for Component {
-    fn mask_ssn(text: String) -> Result<String, String> {
-        let output = SSN_RE.replace_all(text.as_str(), "***-**-****").to_string();
-        Ok(output)
-    }   
+pub(crate) fn mask_ssn(text: String) -> Result<String, String> {
+    let output = SSN_RE.replace_all(text.as_str(), "***-**-****").to_string();
+    Ok(output)
 }
 
 #[cfg(test)]
@@ -51,7 +40,7 @@ mod test {
     #[test]
     fn test_mask_ssn() {
         let input = "123-45-6789".to_string();
-        let output = Component::mask_ssn(input);
+        let output = mask_ssn(input);
         assert_eq!(output.unwrap(), "***-**-****");
     }
 }
@@ -72,8 +61,6 @@ To build the code, run:
 ```bash
 sdf build
 ```
-
-**Tips**: In rust you may use `cargo component build` to compile, then `cargo test` to run the tests.
 
 
 ### Test the Code

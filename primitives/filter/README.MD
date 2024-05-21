@@ -36,16 +36,15 @@ fluvio consume questions -Bd
 What time is it?
 ```
 
-Display the stateful service stats in the sdf `>>` terminal:
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state filter-service/filter-questions/metrics --
-table
+show state filter-service/filter-questions/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       2          0    
+Key    Window  succeeded  failed
+stats  *       2          0
 ```
 
 ### Clean-up

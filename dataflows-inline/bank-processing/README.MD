@@ -1,6 +1,6 @@
 # Bank Processing DataFlow
 
-The bank processing dataflow ingests business events such as deposits, withdrawals, or transfers, transforms them into debit and credit events, computes the balance for each account.  
+The bank processing dataflow ingests business events such as deposits, withdrawals, or transfers, transforms them into debit and credit events, computes the balance for each account.
 
 In addition, the dataflow detects insufficient funds and sends an events to an `overdraft` topic.
 
@@ -34,7 +34,7 @@ It also shows the ability to split traffic, by sending records to different topi
 Run the pipeline:
 
 ```bash
- sdf run --ui
+sdf run --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -60,7 +60,7 @@ Use fluvio produce to publish `add-account` events to the `admin-events` topic :
 
 Add `duncan`:
 
-```bash 
+```bash
 fluvio produce admin-events --raw --file ./sample-data/add-account-duncan.json
 ```
 
@@ -70,20 +70,20 @@ Add `lucy`:
 fluvio produce admin-events --raw --file ./sample-data/add-account-lucy.json
 ```
 
-Check state in `sdf` terminal:
+Check the state in the `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
 ```
 
 ```bash
- Key                     Window  balance  name     
+ Key                     Window  balance  name
  GB36MWIE43141216656969  *       2500     Lucy Cechtelar
  GB56DVTE70858022060682  *       1000     Duncan Taylor
 
 ```
 
-Check the fluvio topics to see the processed records: 
+Check the fluvio topics to see the processed records:
 
 ```bash
 fluvio consume admin-events -Bd -O json
@@ -107,16 +107,16 @@ Deposit `lucy`:
 fluvio produce business-events --raw --file ./sample-data/deposit-lucy.json
 ```
 
-Check state in `sdf` terminal:
+Check the state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
 ```
 
 ```bash
- Key                     balance  name           
- GB36MWIE43141216656969  2700     Lucy Cechtelar 
- GB56DVTE70858022060682  1500     Duncan Taylor  
+ Key                     balance  name
+ GB36MWIE43141216656969  2700     Lucy Cechtelar
+ GB56DVTE70858022060682  1500     Duncan Taylor
 ```
 
 
@@ -127,25 +127,25 @@ Use fluvio produce to publish `withdrawal` events to the `business-events` topic
 Withdrawal `duncan`:
 
 ```bash
-fluvio produce business-events --raw --file ./sample-data/withdrawal-duncan.json 
+fluvio produce business-events --raw --file ./sample-data/withdrawal-duncan.json
 ```
 
 Withdrawal `lucy`:
 
 ```bash
-fluvio produce business-events --raw --file ./sample-data/withdrawal-lucy.json  
+fluvio produce business-events --raw --file ./sample-data/withdrawal-lucy.json
 ```
 
-Check state in `sdf` terminal:
+Check the state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
 ```
 
 ```bash
- Key                     balance  name           
- GB36MWIE43141216656969  2660     Lucy Cechtelar 
- GB56DVTE70858022060682  720      Duncan Taylor  
+ Key                     balance  name
+ GB36MWIE43141216656969  2660     Lucy Cechtelar
+ GB56DVTE70858022060682  720      Duncan Taylor
 ```
 
 
@@ -156,40 +156,40 @@ Use fluvio produce to publish `tranfer` events to the `business-events` topic :
 Transfer from `duncan` to `lucy`:
 
 ```bash
-fluvio produce business-events --raw --file ./sample-data/transfer-duncan-to-lucy.json 
+fluvio produce business-events --raw --file ./sample-data/transfer-duncan-to-lucy.json
 ```
 
-Check state in `sdf` terminal:
+Check the state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
 ```
 
 ```bash
- Key                     balance  name           
- GB36MWIE43141216656969  2710     Lucy Cechtelar 
- GB56DVTE70858022060682  670      Duncan Taylor 
+ Key                     balance  name
+ GB36MWIE43141216656969  2710     Lucy Cechtelar
+ GB56DVTE70858022060682  670      Duncan Taylor
 ```
 
 Transfer from `lucy` to `duncan`:
 
 ```bash
-fluvio produce business-events --raw --file ./sample-data/transfer-lucy-to-duncan.json 
+fluvio produce business-events --raw --file ./sample-data/transfer-lucy-to-duncan.json
 ```
 
-Check state in `sdf` terminal:
+Check the state in `sdf` terminal:
 
 ```bash
 show state balance-manager/account-balance/state --table
 ```
 
 ```bash
- Key                     balance  name           
- GB36MWIE43141216656969  2610     Lucy Cechtelar 
- GB56DVTE70858022060682  770      Duncan Taylor  
+ Key                     balance  name
+ GB36MWIE43141216656969  2610     Lucy Cechtelar
+ GB56DVTE70858022060682  770      Duncan Taylor
 ```
 
-Check the fluvio topics to see the processed records: 
+Check the fluvio topics to see the processed records:
 
 ```bash
 fluvio consume credit-events -Bd -O json
@@ -203,19 +203,19 @@ To trigger an overdraft, withdraw additinal funds from Duncan:
 Withdrawal `duncan`:
 
 ```bash
-fluvio produce business-events --raw --file ./sample-data/withdrawal-duncan.json 
+fluvio produce business-events --raw --file ./sample-data/withdrawal-duncan.json
 ```
 
-Check state in `sdf` terminal:
+Check the state in `sdf` terminal:
 
 ```bash
 >> show state balance-manager/account-balance/state --table
 ```
 
 ```bash
- Key                     balance  name           
- GB36MWIE43141216656969  2610     Lucy Cechtelar 
- GB56DVTE70858022060682  -10      Duncan Taylor  
+ Key                     balance  name
+ GB36MWIE43141216656969  2610     Lucy Cechtelar
+ GB56DVTE70858022060682  -10      Duncan Taylor
 ```
 
 Check the fluvio topic to see the ovedraft records:
@@ -223,6 +223,8 @@ Check the fluvio topic to see the ovedraft records:
 ```bash
 fluvio consume overdraft-events -Bd -O json
 ```
+
+Congratulations! You've successfully built and run a dataflow!
 
 ## Clean-up
 

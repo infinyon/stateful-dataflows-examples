@@ -52,15 +52,24 @@ fluvio consume licenses -Bd
 "5JAC844"
 ```
 
-Display the stateful service stats in the sdf `>>` terminal:
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
 show state sedans/sedan-license/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       2          0    
+Key    Window  succeeded  failed
+stats  *       2          0
+```
+
+```bash
+show state trucks/truck-license/metrics --table
+```
+
+```bash
+Key    Window  succeeded  failed
+stats  *       2          0
 ```
 
 Feel free to checkout the other metrics.

@@ -27,7 +27,7 @@ Make sure to [Install SDF and start a Fluvio cluster].
 Run the pipeline:
 
 ```bash
- sdf run --ui
+sdf run --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -78,7 +78,7 @@ You should see something like this:
 
 #### Check the state
 
-SDF window allows you to watch the internal states:
+Use the `show state` in `sdf` terminal to watch the internal state of the windows:
 
 ```bash
 show state count-words/count-per-word/state --table
@@ -87,19 +87,20 @@ show state count-words/count-per-word/state --table
 You should see something like this:
 
 ```text
- Key      count 
- a        1     
- and      2     
- behind   1     
- every    1     
- eyes     3     
- feet     1     
- great    1     
+ Key      count
+ a        1
+ and      2
+ behind   1
+ every    1
+ eyes     3
+ feet     1
+ great    1
 ...
 ```
 
 **Note:** The dataflow stops processing records when you close the intractive editor. To resume processing, run `sdf run` again.
 
+Congratulations! You've successfully built and run a dataflow!
 
 ## Clean-up
 

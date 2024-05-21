@@ -7,7 +7,7 @@ meta:
 
 imports:
   - pkg: example/sentence-pkg@0.1.0
-    path: ./pkgs/sentence
+    path: ./packages/sentence
     functions:
       - name: sentence-to-words
       - name: augment-count
@@ -48,4 +48,4 @@ services:
 dev:
   imports:
     - pkg: example/sentence-pkg@0.1.0
-      path: ./pkgs/sentence
+      path: ./packages/sentence

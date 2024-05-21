@@ -18,16 +18,16 @@ The pipeline uses the following primitives:
 
 ## Step-by-step
 
-Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're doing.
+* Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're doing.
 
-Make sure to [Install SDF & Start a Cluster].
+* Make sure to [Install SDF & Start a Cluster].
 
 ### 1. Run the Pipeline
 
 Run the pipeline:
 
 ```bash
- sdf run --ui
+sdf run --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -40,11 +40,11 @@ In a new terminal change direcotry to `./connectors`, download the connector bin
 
 ```bash
 cd ./connectors
-cdk hub download infinyon/http-source@0.3.3
-cdk deploy start --ipkg infinyon-http-source-0.3.3.ipkg -c car-callout-connector.yaml
+cdk hub download infinyon/http-source@0.3.6
+cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-callout-connector.yaml
 ```
 
-To see the events, run `fluvio consume cars`.  
+To see the events, run `fluvio consume cars`.
 
 For additional context, checkout [connectors](./connectors/).
 
@@ -58,6 +58,23 @@ fluvio consume makers
 ```
 
 Hit <Ctrl-C> to exit.
+
+#### Check Metrics
+
+The SDF engine will automatically collect metrics for the pipeline. In the `sdf` terminal, show the number of records processed by `get-car-maker`:
+
+```bash
+show state lookup-car-maker/get-car-maker/metrics --table
+```
+
+```bash
+Key    Window  succeeded  failed
+stats  *       36         0
+```
+
+Run `show state` to see the other parameters available.
+
+Congratulations! You've successfully built and run a dataflow!
 
 ## Clean-up
 
