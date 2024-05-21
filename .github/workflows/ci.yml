@@ -48,6 +48,10 @@ jobs:
         - name: Setup fvm bin path
           run:  echo "~/.fvm/bin" >> $GITHUB_PATH
 
+        - name: install wasm wasi target
+          run: |
+            rustup target add wasm32-wasi
+
         - name: Install SDF version
           run: |
             fvm install ${{ matrix.sdf-version }}
