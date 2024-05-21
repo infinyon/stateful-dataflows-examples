@@ -1,1 +1,0 @@
-SDF_BIN=~/.fluvio/bin/sdf

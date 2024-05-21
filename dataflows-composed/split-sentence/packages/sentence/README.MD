@@ -29,20 +29,22 @@ Update the code for the APIs defined.
 Replace the `sentence_to_words` function body in the `rust/sentence-to-words/src/lib.rs` with the following code:
 
 ```rust
-fn sentence_to_words(sentence: String) -> Result<Vec<String>, String> {
+pub(crate) fn sentence_to_words(sentence: String) -> Result<Vec<String>, String> {
     Ok(sentence.split_whitespace().map(String::from).collect())
 }
 ```
 
-In `rust/augment-count/src/lib.rs` replace the the function and add tests:
+In `rust/augment-count/src/lib.rs` replace the function body:
 
 ```rust
-impl GuestInterface for Component {
-    fn augment_count(word: String) -> Result<String, String> {
-        Ok(format!("{}({})", word, word.chars().count()))
-    }
+pub(crate) fn augment_count(word: String) -> Result<String, String> {
+    Ok(format!("{}({})", word, word.chars().count()))
 }
+```
 
+Let's add some tests as well:
+
+```rust
 #[cfg(test)]
 mod test {
     use super::*;
@@ -50,7 +52,7 @@ mod test {
     #[test]
     fn test_augment_count() {
         let input = "Hello".to_string();
-        let output = Component::augment_count(input);
+        let output = augment_count(input);
         assert_eq!(output.unwrap(), "Hello(5)");
     }
 }
@@ -66,7 +68,7 @@ sdf build
 
 ### Test the Functions
 
-Test the code with using the `sdf` toolchain:
+Test the code with `sdf`:
 
 ```bash
 sdf test
@@ -101,7 +103,6 @@ To test the `rust` code via Cargo, perform the following steps:
 cd rust/augment-count
 cargo test
 ```
-
 
 The package is ready to use in the [dataflow](../../).
 

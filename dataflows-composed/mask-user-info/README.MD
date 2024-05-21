@@ -10,7 +10,7 @@ The following diagram is a visual representation of these operations generated b
 
 ## Prequisites
 
-* Build imported packages:
+The packages below are imported by the datafow. You must build them first:
   * [mask-ssn]
 
 
@@ -56,6 +56,8 @@ fluvio consume masked -Bd
 {"name": "Bob", "ssn": "***-**-****"}
 ```
 
+Congratulations! You've successfully built and run a dataflow!
+
 ## Clean-up
 
 Exit `sdf` terminal and remove the topics:
@@ -67,4 +69,4 @@ fluvio topic delete masked
 
 
 [Install SDF & Start a Cluster]: /README.MD#prerequisites
-[mask-ssn]: ./pkgs/mask-ssn
+[mask-ssn]: ./packages/mask-ssn

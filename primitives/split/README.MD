@@ -52,7 +52,7 @@ fluvio consume sedans -Bd
 {"license":"5JAC844","sedan":"BMW 330"}
 ```
 
-Display the stateful service stats in the sdf `>>` terminal:
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
 show state trucks/to-truck/metrics --table

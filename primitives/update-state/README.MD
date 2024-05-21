@@ -28,7 +28,7 @@ fluvio produce temp-sensor
 {"id": 0, "sensor": "SF", "temperature": 47}
 ```
 
-Check the result in the sdf run `>>` terminal:
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
 show state save-temperature/temperature/state --table

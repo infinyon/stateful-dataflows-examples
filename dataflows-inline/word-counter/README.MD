@@ -30,7 +30,7 @@ Make sure to [Install SDF and start a Fluvio cluster].
 Run the pipeline:
 
 ```bash
- sdf run --ui
+sdf run --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -93,19 +93,21 @@ Depending when the 20 second window triggered, you'll see the top 3 words:
 
 #### Check the state
 
-SDF window allows you to watch the internal states:
+To watch how the window is gradually populated:
 
 ```bash
 show state
 ```
 
-You may also look at windows that have not yet been flushed:
+Then show the window state:
 
 ```bash
 show state word-processing-window/count-per-word/state
 ```
 
 **Note:** The dataflow stops processing records when you close the intractive editor. To resume processing, run `sdf run` again.
+
+Congratulations! You've successfully built and run a dataflow!
 
 ## Clean-up
 

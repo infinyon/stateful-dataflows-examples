@@ -38,7 +38,7 @@ a
 test
 ```
 
-Display the stateful service stats in the sdf `>>` terminal:
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
 show state flat-map-service/split-sentence/metrics --table

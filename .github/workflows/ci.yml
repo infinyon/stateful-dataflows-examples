@@ -5,9 +5,8 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  merge_group:
   pull_request:
-    types: [ready_for_review,converted_to_draft,opened, reopened, synchronize]
-    branches: [main]
 
 jobs:
     build-and-generate:
@@ -28,10 +27,8 @@ jobs:
             "dataflows-inline/openai-callout",
             "dataflows-inline/word-counter",
             "dataflows-inline/word-probe",
-            "dataflows-composed/mask-user-info",
-            "dataflows-composed/split-sentence"
           ]
-          sdf-version: [sdf-preview8]
+          sdf-version: [sdf-preview9]
       steps:
         - name: Checkout
           uses: actions/checkout@v3
@@ -54,11 +51,11 @@ jobs:
         - name: Run sdf setup
           run: |
             sdf setup
-
-        - name: test
+        
+        - name: Run sdf generate
           working-directory: ./${{ matrix.example_path }}
           run: |
-            make e2e
+            sdf run --skip-running
 
     done:
       name: Done

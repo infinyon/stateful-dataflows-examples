@@ -11,7 +11,7 @@ The following diagram is a visual representation of these operations generated b
 
 ## Prequisites
 
-* Build imported packages:
+The packages below are imported by the datafow. You must build them first:
   * [sentence]
 
 
@@ -59,6 +59,25 @@ Hi(2)
 there(5)
 ```
 
+## Show State
+
+Check the counters `sdf` terminal:
+
+```bash
+>> show state sentence-words/sentence-to-words/metrics --table
+ Key    Window  succeeded  failed 
+ stats  *       2          0  
+```
+
+```bash
+>> show state sentence-words/augment-count/metrics --table
+ Key    Window  succeeded  failed 
+ stats  *       4          0   
+```
+
+Congratulations! You've successfully built and run a dataflow!
+
+
 ## Clean-up
 
 Exit `sdf` terminal and remove the topics:
@@ -69,4 +88,4 @@ fluvio topic delete words
 ```
 
 [Install SDF & Start a Cluster]: /README.MD#prerequisites
-[sentence]: ./pkgs/sentence
+[sentence]: ./packages/sentence

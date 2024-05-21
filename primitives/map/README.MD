@@ -37,7 +37,7 @@ fluvio consume users-public -Bd
 {"name":"Bob","ssn":"***-***-****"}
 ```
 
-Display the stateful service stats in the sdf `>>` terminal:
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
 show state map-service/mask-ssn/metrics --table
