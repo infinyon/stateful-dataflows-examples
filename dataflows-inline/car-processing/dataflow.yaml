@@ -330,7 +330,7 @@ services:
                 .str().map_err(|e| e.to_string())?
                 .get(0).unwrap_or_default();
 
-              if (!maker.is_empty() && maker != car.maker.as_str()) || 
+              if (!maker.is_empty() && maker != car.maker.as_str()) ||
                  (!model.is_empty() && model != car.model.as_str()) {
                 return Ok(Some(StolenPlate {
                   license: car.license.clone(),

@@ -44,8 +44,8 @@ show state map-service/mask-ssn/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       2          0   
+Key    Window  succeeded  failed
+stats  *       2          0
 ```
 
 ### Clean-up

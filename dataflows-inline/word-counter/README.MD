@@ -13,7 +13,7 @@ The pipeline uses the following primitives:
   * _assign-timestamp_
   * _assign-key_
   * _update-state_
-  * _flush_ 
+  * _flush_
     * _aggregate_
 * _flat-map_
 * _states_

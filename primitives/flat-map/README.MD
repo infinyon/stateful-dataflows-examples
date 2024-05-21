@@ -45,8 +45,8 @@ show state flat-map-service/split-sentence/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       1          0   
+Key    Window  succeeded  failed
+stats  *       1          0
 ```
 
 ### Clean-up

@@ -7,7 +7,7 @@ meta:
   topic:
     version: 0.1.0
     meta:
-      name: licenses 
+      name: licenses
 http:
   endpoint: https://demo-data.infinyon.com/api/car/licenses
-  interval: 3600s  
+  interval: 3600s

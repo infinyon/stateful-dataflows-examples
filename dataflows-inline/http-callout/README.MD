@@ -44,7 +44,7 @@ cdk hub download infinyon/http-source@0.3.6
 cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-callout-connector.yaml
 ```
 
-To see the events, run `fluvio consume cars`.  
+To see the events, run `fluvio consume cars`.
 
 For additional context, checkout [connectors](./connectors/).
 
@@ -68,11 +68,11 @@ show state lookup-car-maker/get-car-maker/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       36         0      
+Key    Window  succeeded  failed
+stats  *       36         0
 ```
 
-Run `show state` to see the other parameters available. 
+Run `show state` to see the other parameters available.
 
 Congratulations! You've successfully built and run a dataflow!
 

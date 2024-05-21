@@ -87,14 +87,14 @@ show state count-words/count-per-word/state --table
 You should see something like this:
 
 ```text
- Key      count 
- a        1     
- and      2     
- behind   1     
- every    1     
- eyes     3     
- feet     1     
- great    1     
+ Key      count
+ a        1
+ and      2
+ behind   1
+ every    1
+ eyes     3
+ feet     1
+ great    1
 ...
 ```
 

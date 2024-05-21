@@ -43,8 +43,8 @@ show state filter-service/filter-questions/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       2          0    
+Key    Window  succeeded  failed
+stats  *       2          0
 ```
 
 ### Clean-up

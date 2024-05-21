@@ -43,8 +43,8 @@ show state filter-map-service/long-sentence-to-uppercase/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       2          0    
+Key    Window  succeeded  failed
+stats  *       2          0
 ```
 
 ### Clean-up

@@ -1,6 +1,6 @@
 # Connector to Generate Sentences
 
-Use an http-source streaming connector to read cars from the InfinyOn synthetic data server. 
+Use an http-source streaming connector to read cars from the InfinyOn synthetic data server.
 
 The connector configuration file is located at [car-callout-connector.yaml](car-callout-connector.yaml).
 

@@ -65,14 +65,14 @@ Check the counters `sdf` terminal:
 
 ```bash
 >> show state sentence-words/sentence-to-words/metrics --table
- Key    Window  succeeded  failed 
- stats  *       2          0  
+ Key    Window  succeeded  failed
+ stats  *       2          0
 ```
 
 ```bash
 >> show state sentence-words/augment-count/metrics --table
- Key    Window  succeeded  failed 
- stats  *       4          0   
+ Key    Window  succeeded  failed
+ stats  *       4          0
 ```
 
 Congratulations! You've successfully built and run a dataflow!

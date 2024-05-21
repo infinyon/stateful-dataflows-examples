@@ -13,7 +13,7 @@ cdk hub download infinyon/http-source@0.3.6
 ### 2. Load JOLT Smartmodule to the Cluster
 
 ```bash
-fluvio hub smartmodule download infinyon/jolt@0.4.1 
+fluvio hub smartmodule download infinyon/jolt@0.4.1
 ```
 
 ### 3. Start the connector

@@ -59,8 +59,8 @@ show state sedans/sedan-license/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       2          0    
+Key    Window  succeeded  failed
+stats  *       2          0
 ```
 
 ```bash
@@ -68,8 +68,8 @@ show state trucks/truck-license/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       2          0    
+Key    Window  succeeded  failed
+stats  *       2          0
 ```
 
 Feel free to checkout the other metrics.

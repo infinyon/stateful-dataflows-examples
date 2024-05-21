@@ -2,7 +2,7 @@
 
 Here's an example of how to split traffic from one to multiple topics.
 
-The example splits car events into trucks and sedans based on their category while converting the record format to conform to the schema of the receiving topics. 
+The example splits car events into trucks and sedans based on their category while converting the record format to conform to the schema of the receiving topics.
 
 * Checkout the [dataflow.yaml](./dataflow.yaml).
 * Make sure to [Install SDF and start a Fluvio cluster].
@@ -59,8 +59,8 @@ show state trucks/to-truck/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       4          0    
+Key    Window  succeeded  failed
+stats  *       4          0
 ```
 
 Feel free to checkout the other metrics.

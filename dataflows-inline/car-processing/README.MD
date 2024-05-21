@@ -92,7 +92,7 @@ cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c license-connector.yam
 cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-connector.yaml
 ```
 
-To see the events, run `fluvio consume cars`.  
+To see the events, run `fluvio consume cars`.
 
 For additional context, checkout [connectors](./connectors/).
 
@@ -108,10 +108,10 @@ show state
 We are intersted in the following:
 
 ```
- Namespace                                  Keys  Type      
- save-license-plates/licence-plates/state   100   u32       
- count-by-color/count-by-color/state        5     u32  
- count-by-color/count-by-color/watermark    1     timestamp 
+ Namespace                                  Keys  Type
+ save-license-plates/licence-plates/state   100   u32
+ count-by-color/count-by-color/state        5     u32
+ count-by-color/count-by-color/watermark    1     timestamp
 ```
 
 #### License Plates State
@@ -123,11 +123,11 @@ show state save-license-plates/licence-plates/state --table
 ```
 
 ```
- Key      maker          model          
- 0FDR715  Buick          Encore         
- 0FJV738  Ford           Explorer       
- 0FQP572  Tesla          Model S        
- 0GFX265  Volvo          V90            
+ Key      maker          model
+ 0FDR715  Buick          Encore
+ 0FJV738  Ford           Explorer
+ 0FQP572  Tesla          Model S
+ 0GFX265  Volvo          V90
  ...
 ```
 
@@ -142,16 +142,16 @@ show state count-by-color/count-by-color/state
 You'll notice the number of cars for each color in the active window. This window is still collecting data and it has not yet been closed and flushed.
 
 ```
- Key     Window                                     Value 
- beige   2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  6     
- black   2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  4     
- green   2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  3     
- grey    2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  4     
- orange  2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  2     
- perl    2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  4     
- red     2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  2     
- white   2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  4     
- yellow  2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  3  
+ Key     Window                                     Value
+ beige   2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  6
+ black   2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  4
+ green   2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  3
+ grey    2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  4
+ orange  2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  2
+ perl    2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  4
+ red     2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  2
+ white   2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  4
+ yellow  2024-04-16T01:38:00Z:2024-04-16T01:38:30Z  3
 ```
 
 The window is flushed to the `car-colors` topic every 30 seconds.
@@ -163,14 +163,14 @@ Watermark tracks the cutoff timestamp for tumbling windows.
 
 ```bash
 >> show state count-by-color/count-by-color/watermark
- Key      Value                     Window 
- default  2024-03-15T13:44:30.043Z  *   
+ Key      Value                     Window
+ default  2024-03-15T13:44:30.043Z  *
 ```
 
 This is used to determine when to flush window state for the tumbling window that counts the cars by color, flushing state to the 'car-colors' topic.
 
 
-#### Car Makers 
+#### Car Makers
 
 Each car event triggers an `http call-out` to gather additional information about the car maker. Consume from the `makers` topic to see the results:
 
@@ -303,7 +303,7 @@ Consuming records from 'violations'
 
 Hit <Ctrl-C> to exit.
 
-For simplicity, the code assumes that the first car is always the owner, and the 2nd is the violator. 
+For simplicity, the code assumes that the first car is always the owner, and the 2nd is the violator.
 
 Congratulations! You've successfully built and run a dataflow!
 

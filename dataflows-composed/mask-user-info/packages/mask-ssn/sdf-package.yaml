@@ -15,4 +15,4 @@ functions:
       type: string
 
 dev:
-  converter: raw    # options: raw, json      
+  converter: raw # options: raw, json

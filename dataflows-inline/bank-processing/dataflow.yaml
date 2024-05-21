@@ -222,7 +222,7 @@ services:
                 Ok(e)
               }
               _ => Err("Unexpected admin event".to_string())
-            }           
+            }
           }
 
     sinks:
@@ -275,7 +275,7 @@ services:
                 let withdrawal = match ev.operation {
                   DataOperation::CreditAccount(_) => return Ok(None),
                   DataOperation::DebitAccount(debit) => debit,
-                }; 
+                };
 
                 let accounts = account_balance();
                 let Ok(account) = accounts
@@ -283,13 +283,13 @@ services:
                     .lazy()
                     .filter(col("name").eq(lit(ev.name.clone())))
                     .collect() else {
-                  return Ok(None)  
+                  return Ok(None)
                 };
 
                 let account_balance = account.column("balance").map_err(|err | err.to_string())?.f32()
                   .map_err(|err | err.to_string())?.get(0).ok_or("Failed to get balance")?;
                 let new_balance = account_balance - withdrawal.amount;
-                
+
                 if new_balance < 0.0 {
                   Ok(Some(
                     OverdraftEvent {
@@ -342,7 +342,7 @@ services:
                 Ok(e)
               }
               _ => Err("Unexpected credit event".to_string())
-            }           
+            }
           }
 
     sinks:
@@ -397,7 +397,7 @@ services:
                 Ok(vec![debit, credit])
               }
               _ => Err("Unexpected operation".to_string())
-            }           
+            }
           }
 
     sinks:
@@ -414,7 +414,7 @@ services:
                 let withdrawal = match ev.operation {
                   DataOperation::CreditAccount(_) => return Ok(None),
                   DataOperation::DebitAccount(debit) => debit,
-                }; 
+                };
 
                 let accounts = account_balance();
                 let Ok(account) = accounts
@@ -422,13 +422,13 @@ services:
                     .lazy()
                     .filter(col("name").eq(lit(ev.name.clone())))
                     .collect() else {
-                  return Ok(None)  
+                  return Ok(None)
                 };
 
                 let account_balance = account.column("balance").map_err(|err | err.to_string())?.f32()
                   .map_err(|err | err.to_string())?.get(0).ok_or("Failed to get balance")?;
                 let new_balance = account_balance - withdrawal.amount;
-                
+
                 if new_balance < 0.0 {
                   Ok(Some(
                     OverdraftEvent {

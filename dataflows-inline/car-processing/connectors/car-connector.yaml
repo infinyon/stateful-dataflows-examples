@@ -7,7 +7,7 @@ meta:
   topic:
     version: 0.1.0
     meta:
-      name: cars 
+      name: cars
 http:
   endpoint: https://demo-data.infinyon.com/api/stream-car-mismatch-license
   method: GET

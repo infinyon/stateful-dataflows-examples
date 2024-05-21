@@ -1,6 +1,6 @@
 # Overview
 
-Simple example of using the OpenAI API to generate text.  It counds the number of attempts by model. The input is a model followed by sentence. 
+Simple example of using the OpenAI API to generate text.  It counds the number of attempts by model. The input is a model followed by sentence.
 
 For example, the following input:
 

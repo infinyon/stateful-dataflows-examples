@@ -88,8 +88,8 @@ services:
             let words: Vec<String> = input.split_whitespace().map(String::from).collect();
             let model = &words[0];
             // check list of accepted models
-            if model == "gpt-3.5-turbo" || 
-              model == "gpt-3.5-turbo-0125" || 
+            if model == "gpt-3.5-turbo" ||
+              model == "gpt-3.5-turbo-0125" ||
               model == "gpt-3.5-turbo-1106" ||
               model == "gpt-3.5-turbo-1106-0125" ||
               model == "gpt-4-turbo-preview" ||
@@ -106,7 +106,7 @@ services:
                 model: "gpt-3.5-turbo".to_owned()
               })
             }
-            
+
           }
     partition:
       assign-key:
@@ -129,7 +129,7 @@ services:
 
             let auth_key = std::env::var("OPENAI_API_KEY").map_err(|e| e.to_string())?;
             let auth_bearer = format!("Bearer {}", auth_key);
-             
+
             // hack we define types inline here
             #[derive(serde::Serialize)]
             struct OpenAIRequest {
