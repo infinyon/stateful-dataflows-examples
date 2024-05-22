@@ -9,9 +9,9 @@ In addition, the dataflow detects insufficient funds and sends an events to an `
  <img width="700" src="img/bank-processing.jpg">
 </p>
 
-## Pipeline Primitives
+## Dataflow Primitives
 
-The pipeline uses the following primitives:
+The dataflow uses the following primitives:
 
 * _map_
 * _filter_
@@ -29,9 +29,9 @@ It also shows the ability to split traffic, by sending records to different topi
 * Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're doing.
 * Make sure to [Install SDF & Start a Cluster].
 
-### 1. Run the Pipeline
+### 1. Run the Dataflow
 
-Run the pipeline:
+Use `sdf` command line tool to run the dataflow:
 
 ```bash
 sdf run --ui
@@ -42,7 +42,7 @@ Use `--ui` to open the Studio.
 **Note:** The `transfer-service` uses Polars, a library that has not yet been optimized, and will it make take a while the compile. We'll optimize this in a future release.
 
 
-### 2. Test the Pipeline
+### 2. Test the Dataflow
 
 Use `fluvio consume` command to read from multiple streams in parallel:
 

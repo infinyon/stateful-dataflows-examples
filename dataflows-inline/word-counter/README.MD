@@ -6,9 +6,9 @@ Word Count is a dataflow for window processing that analyzes sentences and compu
  <img width="700" src="img/word-counter.jpg">
 </p>
 
-## Pipeline Primitives
+## Dataflow Primitives
 
-The pipeline uses the following primitives:
+The dataflow uses the following primitives:
 * _window_
   * _assign-timestamp_
   * _assign-key_
@@ -25,9 +25,11 @@ Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're
 
 Make sure to [Install SDF and start a Fluvio cluster].
 
-### 1. Run the Pipeline
+### 1. Run the Dataflow
 
-Run the pipeline:
+Use `sdf` command line tool to run the dataflow:
+
+Run the dataflow:
 
 ```bash
 sdf run --ui
@@ -36,7 +38,7 @@ sdf run --ui
 Use `--ui` to open the Studio.
 
 
-### 2. Test the Pipeline
+### 2. Test the Dataflow
 
 #### Produce to Source Topic
 
