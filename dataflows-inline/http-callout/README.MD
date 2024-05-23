@@ -8,9 +8,9 @@ HTTP Callout shows how to call external HTTP servers from inside the operators. 
 
 The `car` events are generated via an [HTTP-Source connector](connectors).
 
-## Pipeline Primitives
+## Dataflow Primitives
 
-The pipeline uses the following primitives:
+The dataflow uses the following primitives:
 * _map_
 * _capabilities_
   * _http_
@@ -22,9 +22,9 @@ The pipeline uses the following primitives:
 
 * Make sure to [Install SDF & Start a Cluster].
 
-### 1. Run the Pipeline
+### 1. Run the Dataflow
 
-Run the pipeline:
+Use `sdf` command line tool to run the dataflow:
 
 ```bash
 sdf run --ui
@@ -32,7 +32,7 @@ sdf run --ui
 
 Use `--ui` to open the Studio.
 
-### 2. Test the Pipeline
+### 2. Test the Dataflow
 
 #### Start the HTTP Sink Connector
 
@@ -61,7 +61,7 @@ Hit <Ctrl-C> to exit.
 
 #### Check Metrics
 
-The SDF engine will automatically collect metrics for the pipeline. In the `sdf` terminal, show the number of records processed by `get-car-maker`:
+The SDF engine will automatically collect metrics for the dataflow. In the `sdf` terminal, show the number of records processed by `get-car-maker`:
 
 ```bash
 show state lookup-car-maker/get-car-maker/metrics --table

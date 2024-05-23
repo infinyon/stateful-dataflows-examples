@@ -34,6 +34,7 @@ DataFlows defined inline:
 * [car-processing](/dataflows-inline/car-processing/)
 * [http-callout](/dataflows-inline/http-callout/)
 * [openai-callout](/dataflows-inline/openai-callout/)
+* [split-sentence](/dataflows-inline/split-sentence/)
 * [word-counter](/dataflows-inline/word-counter/)
 * [word-probe](/dataflows-inline/word-probe/)
 

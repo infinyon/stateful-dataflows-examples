@@ -21,9 +21,9 @@ Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're
 Make sure to [Install SDF & Start a Cluster].
 
 
-### Run the Pipeline
+### Run the Dataflow
 
-Run the pipeline:
+Use `sdf` command line tool to run the dataflow:
 
 ```bash
 sdf run --ui
@@ -32,7 +32,7 @@ sdf run --ui
 Use `--ui` to generate the graphical representation and run the Studio.
 
 
-### Test the Pipeline
+### Test the Dataflow
 
 1. Produce sentences to in `user-info` topic:
 

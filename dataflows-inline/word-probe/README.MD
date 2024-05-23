@@ -7,9 +7,9 @@ Word Probe is a dataflow that shows how to use state across services. This examp
  <img width="700" src="img/word-probe.jpg">
 </p>
 
-## Pipeline Primitives
+## Dataflow Primitives
 
-The pipeline uses the following primitives:
+The dataflow uses the following primitives:
 * _map_
 * _flat-map_
 * _assign-key_
@@ -22,9 +22,9 @@ Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're
 
 Make sure to [Install SDF and start a Fluvio cluster].
 
-### Run the Pipeline
+### Run the Dataflow
 
-Run the pipeline:
+Use `sdf` command line tool to run the dataflow:
 
 ```bash
 sdf run --ui
@@ -35,7 +35,7 @@ Use `--ui` to open the Studio.
 **Note:** The `lookup-word` service uses Polars, a library that has not yet been optimized, and will it make take a while the compile. We'll optimize this in a future release.
 
 
-### Test the Pipeline
+### Test the Dataflow
 
 1. Produce sentences to in `sentences` topic:
 

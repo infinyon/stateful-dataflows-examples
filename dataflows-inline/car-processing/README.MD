@@ -67,9 +67,9 @@ Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're
 
 Make sure to [Install SDF  Start a Cluster].
 
-### 1. Run the Pipeline
+### 1. Run the Dataflow
 
-Run the pipeline:
+Use `sdf` command line tool to run the dataflow:
 
 ```bash
 sdf run --ui
@@ -99,7 +99,7 @@ For additional context, checkout [connectors](./connectors/).
 
 ### 3. Check the results
 
-In the `sdf` terminal, checkout the state maintained by the pipeline:
+In the `sdf` terminal, checkout the state maintained by the dataflow:
 
 ```bash
 show state
@@ -116,7 +116,7 @@ We are intersted in the following:
 
 #### License Plates State
 
-License Plates state stores the license plates read from the `licenses` topic. This is used to check for stolen plates later in the pipeline.
+License Plates state stores the license plates read from the `licenses` topic. This is used to check for stolen plates later in the dataflow.
 
 ```bash
 show state save-license-plates/licence-plates/state --table
@@ -276,7 +276,7 @@ Hit <Ctrl-C> to exit.
 
 #### Detect Annomalies
 
-The pipeline also detects anomalies by check if a license plate is seen in 2 different cars. To demonstrate this functionality, we are ingesting a data set that send an annomaly every 10 records (~5 sec).
+The dataflow also detects anomalies by check if a license plate is seen in 2 different cars. To demonstrate this functionality, we are ingesting a data set that send an annomaly every 10 records (~5 sec).
 
 ```bash
 fluvio consume violations -B -O json

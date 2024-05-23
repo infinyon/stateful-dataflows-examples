@@ -321,14 +321,24 @@ services:
               .collect().map_err(|e| e.to_string())?;
 
             if !plate.is_empty() {
-              let maker = plate
+              let maker_str = plate
                 .column("maker").map_err(|e| e.to_string())?
-                .str().map_err(|e| e.to_string())?
-                .get(0).unwrap_or_default();
-              let model = plate
+                .str().map_err(|e| e.to_string())?;
+
+              let maker = if maker_str.is_empty() {
+                  Default::default()
+                  } else {
+                   maker_str.get(0).unwrap_or_default()
+                  };
+                
+              let model_str = plate
                 .column("model").map_err(|e| e.to_string())?
-                .str().map_err(|e| e.to_string())?
-                .get(0).unwrap_or_default();
+                .str().map_err(|e| e.to_string())?;
+              let model = if model_str.is_empty() {
+                  Default::default()
+              } else {
+                model_str.get(0).unwrap_or_default()
+              };
 
               if (!maker.is_empty() && maker != car.maker.as_str()) ||
                  (!model.is_empty() && model != car.model.as_str()) {
