@@ -27,6 +27,7 @@ jobs:
             "dataflows-inline/car-processing",
             "dataflows-inline/http-callout",
             "dataflows-inline/openai-callout",
+            "dataflows-inline/split-sentence",
             "dataflows-inline/word-counter",
             "dataflows-inline/word-probe",
             "dataflows-composed/mask-user-info",

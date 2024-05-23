@@ -1,0 +1,43 @@
+apiVersion: 0.4.0
+
+meta:
+  name: split-sentence
+  version: 0.1.0
+  namespace: example
+
+config:
+  converter: raw
+
+topics:
+  sentence:
+    schema:
+      value:
+        type: string
+        converter: raw
+  words:
+    schema:
+      value:
+        type: string
+        converter: raw
+
+services:
+  sentence-words:
+    sources:
+      - type: topic
+        id: sentence
+
+    transforms:
+      - operator: flat-map
+        run: |
+          fn sentence_to_words(sentence: String) -> Result<Vec<String>, String> {
+            Ok(sentence.split_whitespace().map(String::from).collect())
+          }      
+      - operator: map
+        run: |
+          pub fn augment_count(word: String) -> Result<String, String> {
+            Ok(format!("{}({})", word, word.chars().count()))
+          }        
+
+    sinks:
+      - type: topic
+        id: words
