@@ -1,4 +1,4 @@
-# Split Example
+# Split (with filter-map operator)
 
 Here's an example of how to split traffic from one to multiple topics.
 

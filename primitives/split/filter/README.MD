@@ -1,4 +1,4 @@
-# Split Example
+# Split (with filter operator)
 
 In this example, we'll read `person` records from a `user` topic split them into `child` and `adult` topics based on age.
 
