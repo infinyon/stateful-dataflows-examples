@@ -1,5 +1,4 @@
 apiVersion: 0.4.0
-
 meta:
   name: split
   version: 0.1.0
@@ -9,46 +8,74 @@ config:
   converter: json
 
 types:
-  person:
+  car:
     type: object
     properties:
-      name:
+      car:
         type: string
-      age: 
-        type: i32
+      category:
+        type: string
+      license:
+        type: string
+  truck:
+    type: object
+    properties:
+      truck:
+        type: string
+      license:
+        type: string
+  sedan:
+    type: object
+    properties:
+      sedan:
+        type: string
+      license:
+        type: string
 
 topics:
-  user:
+  cars:
     schema:
       value:
-        type: person  
-  child:
+        type: car
+  trucks:
     schema:
       value:
-        type: person
-  adult:
+        type: truck
+  sedans:
     schema:
       value:
-        type: person
+        type: sedan
+
 services:
   split-service:
     sources:
       - type: topic
-        id: user
+        id: cars
+
     sinks:
       - type: topic
-        id: child  
+        id: trucks
         transforms:
-          - operator: filter
+          - operator: filter-map
             run: |
-              fn is_child(person: Person) -> Result<bool, String> {
-                  Ok(person.age < 18)
+              fn to_truck(car: Car) -> Result<Option<Truck>, String> {
+                match car.category.as_str() {
+                  "truck" => Ok(Some(
+                      Truck {truck: car.car, license: car.license
+                    })),
+                  _ => Ok(None)
+                }
               }
       - type: topic
-        id: adult
+        id: sedans
         transforms:
-          - operator: filter
+          - operator: filter-map
             run: |
-              fn is_adult(person: Person) -> Result<bool, String> {
-                  Ok(person.age >= 18)
+              fn to_sedan(car: Car) -> Result<Option<Sedan>, String> {
+                match car.category.as_str() {
+                  "sedan" => Ok(Some(
+                      Sedan {sedan: car.car, license: car.license
+                    })),
+                  _ => Ok(None)
+                }
               }
