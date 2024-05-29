@@ -1,6 +1,5 @@
-# Split Examples
+# Split (with filter-map operator)
 
-<<<<<<< HEAD
 Here's an example of how to split traffic from one to multiple topics.
 
 The example splits car events into trucks and sedans based on their category while converting the record format to conform to the schema of the receiving topics.
@@ -77,7 +76,3 @@ fluvio topic delete sedans
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites
-=======
-* [split (filter)](/primitives/split/filter)
-* [split (filter-map)](/primitives/split/filter-map)
->>>>>>> main
