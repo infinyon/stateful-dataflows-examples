@@ -1,4 +1,4 @@
-# FilterMap Operator Example
+# Filter Operator Example
 
 Example of how to use the `filter` operator. In this example, the filter operation allows all sentences that have a question mark (`?`) and drops all others.
 
