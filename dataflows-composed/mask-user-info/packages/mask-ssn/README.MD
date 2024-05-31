@@ -21,13 +21,16 @@ The generator creates all necessary glue logic for a reusable package.
 
 ### Add Custom Code
 
-Let's update the content of `rust/mask-ssn/src/lib.rs` file that has been generated with the following code:
+Let's update the content of `rust/mask-ssn/src/lib.rs` file with following code:
 
 ```rust
+use sdf_macros::sdf;
 use regex::Regex;
 use once_cell::sync::Lazy;
+
 static SSN_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d{3}-\d{2}-\d{4}").unwrap());
 
+#[sdf(map, package = "mask-ssn", namespace = "example")]
 pub(crate) fn mask_ssn(text: String) -> Result<String, String> {
     let output = SSN_RE.replace_all(text.as_str(), "***-**-****").to_string();
     Ok(output)
@@ -50,6 +53,7 @@ Next, add `once_cell` and `regex` to the dependencies in `Cargo.toml`:
 
 ```toml
 [dependencies]
+...
 once_cell = "1"
 regex = "1"
 ```
