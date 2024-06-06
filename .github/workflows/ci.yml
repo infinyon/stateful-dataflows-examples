@@ -14,7 +14,7 @@ jobs:
     checks:
       uses: ./.github/workflows/check.yml
       with:
-        sdf_version: sdf-preview9
+        sdf_version: sdf-preview10
 
     done:
       name: Done
