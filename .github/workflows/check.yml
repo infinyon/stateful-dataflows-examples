@@ -40,7 +40,9 @@ jobs:
           ]
       steps:
         - name: Checkout
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4
+          with:
+            repository: infinyon/stateful-dataflows-examples
 
         - name: Install stable CLI and start Fluvio cluster
           timeout-minutes: 10
