@@ -58,6 +58,7 @@ services:
     sources:
       - type: topic
         id: sentence
+
     states:
       count-per-word:
         type: keyed-state
