@@ -94,14 +94,13 @@ services:
               Ok(word.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect())
             }
 
-        transforms:
+        update-state:
           # Retrieve state by key and increment by 1.
-          - operator: update-state
-            run: |
-              fn increment_word_count(word: String) -> Result<(), String> {
-                count_per_word().increment(1);
-                Ok(())
-                }
+          run: |
+            fn increment_word_count(word: String) -> Result<(), String> {
+              count_per_word().increment(1);
+              Ok(())
+              }
 
       flush:
         # Read the full state and compute the top 3 words sorted by count.

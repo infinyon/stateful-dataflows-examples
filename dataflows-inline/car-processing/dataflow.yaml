@@ -235,13 +235,12 @@ services:
               Ok(cl.color)
             }
 
-        transforms:
-          - operator: update-state
-            run: |
-              fn increment_color_count(cl: CarLocation) -> Result<(), String> {
-                count_by_color().increment(1);
-                Ok(())
-              }
+        update-state:
+          run: |
+            fn increment_color_count(cl: CarLocation) -> Result<(), String> {
+              count_by_color().increment(1);
+              Ok(())
+            }
 
       flush:
         run: |
@@ -293,16 +292,15 @@ services:
             Ok(license.license)
           }
 
-      transforms:
-        - operator: update-state
-          run: |
-            fn add_license_plate(license: License) -> Result<(), String> {
-              let mut lp = licence_plates();
-              lp.maker = license.maker;
-              lp.model = license.model;
-              lp.update();
-              Ok(())
-            }
+      update-state:
+        run: |
+          fn add_license_plate(license: License) -> Result<(), String> {
+            let mut lp = licence_plates();
+            lp.maker = license.maker;
+            lp.model = license.model;
+            lp.update();
+            Ok(())
+          }
 
   # Check license plates
   check-license-plates:
