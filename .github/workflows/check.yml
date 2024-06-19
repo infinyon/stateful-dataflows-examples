@@ -10,6 +10,8 @@ on:
       sdf_version:
         required: true
         type: string
+      branch:
+        type: string
 
 jobs:
     build-and-generate:
@@ -43,7 +45,7 @@ jobs:
           uses: actions/checkout@v4
           with:
             repository: infinyon/stateful-dataflows-examples
-
+            ref: ${{ inputs.branch }}
         - name: Install stable CLI and start Fluvio cluster
           timeout-minutes: 10
           run: |

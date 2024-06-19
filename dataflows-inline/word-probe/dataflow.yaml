@@ -62,15 +62,14 @@ services:
             Ok(word.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect())
           }
 
-      transforms:
-        - operator: update-state
-          run: |
-            fn increment_word_count(_word: String) -> Result<(), String> {
-              let mut state = count_per_word();
-              state.count += 1;
-              state.update();
-              Ok(())
-            }
+      update-state:
+        run: |
+          fn increment_word_count(_word: String) -> Result<(), String> {
+            let mut state = count_per_word();
+            state.count += 1;
+            state.update();
+            Ok(())
+          }
 
   lookup-word:
     sources:
