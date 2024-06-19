@@ -1,12 +1,12 @@
 apiVersion: 0.4.0
 
 meta:
-  name: sentence-pkg
+  name: count-words-pkg
   version: 0.1.0
   namespace: example
 
 functions:
-  sentence-to-words:
+  split-sentence:
     operator: flat-map
     inputs:
       - name: sentence
@@ -14,7 +14,7 @@ functions:
     output:
       type: string
 
-  augment-count:
+  assign-key:
     operator: map
     inputs:
       - name: word

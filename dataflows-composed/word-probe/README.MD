@@ -40,7 +40,7 @@ Use `--ui` to generate the graphical representation and run the Studio.
 1. Produce sentences to in `sentence` topic:
 
 ```bash
-fluvio produce sentence
+fluvio produce sentences
 ```
 
 ```bash
