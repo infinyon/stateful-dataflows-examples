@@ -85,8 +85,9 @@ Congratulations! You've successfully built and run a dataflow!
 Exit `sdf` terminal and remove the topics:
 
 ```bash
-fluvio topic delete sentence
+fluvio topic delete sentences
 fluvio topic delete words
+fluvio topic delete word-counts
 ```
 
 [dataflows-inline/word-probe]: ../../dataflows-inline/word-probe
