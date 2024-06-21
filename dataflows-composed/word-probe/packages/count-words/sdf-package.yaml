@@ -43,7 +43,7 @@ functions:
       - name: word
         type: string
 
-  query_word_count:
+  query-word-count:
     operator: map
     states:
       - name: count-per-word
