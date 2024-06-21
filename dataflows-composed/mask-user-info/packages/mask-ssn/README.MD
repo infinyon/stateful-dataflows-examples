@@ -4,7 +4,7 @@ This is an example of building and testing a package that masks Social Security 
 
 ### Prerequisites
 
-* Checkout the [sdf-package.yaml](./sdf-package.yaml).
+* Checkout the [sdf-package.yaml](./sdf-package.yaml) to see the functions we'll be creating.
 * Make sure to [Install SDF].
 
 

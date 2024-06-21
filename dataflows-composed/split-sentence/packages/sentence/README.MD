@@ -7,7 +7,7 @@ The `sentence` package offers a couple of functions to work with sentences:
 
 ### Prerequisites
 
-* Checkout the [sdf-package.yaml](./sdf-package.yaml).
+* Checkout the [sdf-package.yaml](./sdf-package.yaml) to see the functions we'll be creating.
 * Make sure to [Install SDF].
 
 
