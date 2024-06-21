@@ -1,4 +1,4 @@
-# Word Probe
+# Word Probe (experimental)
 
 This `word probe` example uses composition to demonstrate how to implement states in a package and import them in a dataflow. The word example has two services. The first service reads `sentences`, divides them into words, and stores their count into a state. The second service listens for `words` from the data stream, looks them up in the state, and returns their count.
 
@@ -15,82 +15,4 @@ Checkout [dataflows-inline/word-probe] for the inline variant.
 
 The packages below are imported by the datafow. You must build them first:
   * [count-words]
-
-
-## Step-by-step
-
-Take a look at the [dataflow.yaml](./dataflow.yaml) to get an idea of what we're doing.
-
-Make sure to [Install SDF & Start a Cluster].
-
-
-### Run the Dataflow
-
-Use `sdf` command line tool to run the dataflow:
-
-```bash
-sdf run --ui
-```
-
-Use `--ui` to generate the graphical representation and run the Studio.
-
-
-### Test the Dataflow
-
-1. Produce sentences to in `sentence` topic:
-
-```bash
-fluvio produce sentences
-```
-
-```bash
-Hello world
-Hi there
-```
-
-Consume from `words` to retrieve the result:
-
-```bash
-fluvio consume words -Bd
-```
-
-```bash
-Hello(5)
-world(5)
-Hi(2)
-there(5)
-```
-
-## Show State
-
-Check the counters `sdf` terminal:
-
-```bash
->> show state sentence-words/sentence-to-words/metrics --table
- Key    Window  succeeded  failed
- stats  *       2          0
-```
-
-```bash
->> show state sentence-words/augment-count/metrics --table
- Key    Window  succeeded  failed
- stats  *       4          0
-```
-
-Congratulations! You've successfully built and run a dataflow!
-
-
-## Clean-up
-
-Exit `sdf` terminal and remove the topics:
-
-```bash
-fluvio topic delete sentences
-fluvio topic delete words
-fluvio topic delete word-counts
-```
-
-[dataflows-inline/word-probe]: ../../dataflows-inline/word-probe
-[Install SDF & Start a Cluster]: /README.MD#prerequisites
-[sentence]: ./packages/sentence
 
