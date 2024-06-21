@@ -14,7 +14,7 @@ jobs:
     checks:
       uses: ./.github/workflows/check.yml
       with:
-        sdf_version: sdf-preview10
+        sdf_version: sdf-preview11
         branch: ${{ github.ref }}
 
     done:

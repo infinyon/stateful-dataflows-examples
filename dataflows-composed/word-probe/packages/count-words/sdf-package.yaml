@@ -5,22 +5,53 @@ meta:
   version: 0.1.0
   namespace: example
 
-functions:
-  split-sentence:
-    operator: flat-map
-    inputs:
-      - name: sentence
+types:
+  word-count:
+    type: object
+    properties:
+      word:
         type: string
-    output:
-      type: string
+      count:
+        type: i32
 
-  assign-key:
-    operator: map
+states:
+  count-per-word:
+    type: keyed-state
+    properties:
+      key:
+        type: string
+      value:
+        type: arrow-row
+        properties:
+          count:
+            type: i32
+
+functions:
+  format-word:
+    operator: assign-key
     inputs:
       - name: word
         type: string
     output:
       type: string
 
+  increment-word-count:
+    operator: update-state
+    states:
+      - name: count-per-word
+    inputs:
+      - name: word
+        type: string
+
+  query_word_count:
+    operator: map
+    states:
+      - name: count-per-word
+    inputs:
+      - name: word
+        type: string
+    output:
+      type: word-count
+
 dev:
-  converter: raw # options: raw, json
+  converter: raw 
