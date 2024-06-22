@@ -473,26 +473,25 @@ services:
             Ok(event.iban)
           }
 
-      transforms:
-        - operator: update-state
-          run: |
-            fn update_account_balance(event: DataEvent) -> Result<(), String> {
-              match event.operation {
-                DataOperation::CreditAccount(ac) => {
-                  let mut account_balance = account_balance();
-                  account_balance.name = event.name;
-                  account_balance.balance += ac.amount;
-                  account_balance.update();
-                }
-                DataOperation::DebitAccount(ac) => {
-                  let mut account_balance = account_balance();
-                  account_balance.balance -=  ac.amount;
-                  account_balance.update();
-                }
-                _ => ()
+      update-state:
+        run: |
+          fn update_account_balance(event: DataEvent) -> Result<(), String> {
+            match event.operation {
+              DataOperation::CreditAccount(ac) => {
+                let mut account_balance = account_balance();
+                account_balance.name = event.name;
+                account_balance.balance += ac.amount;
+                account_balance.update();
               }
-              Ok(())
+              DataOperation::DebitAccount(ac) => {
+                let mut account_balance = account_balance();
+                account_balance.balance -=  ac.amount;
+                account_balance.update();
+              }
+              _ => ()
             }
+            Ok(())
+          }
 
   # Copy Debit events to debit-events topic
   get-debit-events:

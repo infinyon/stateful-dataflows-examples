@@ -1,6 +1,6 @@
-# Sentence Package
+# CountWords Package
 
-The `sentence` package offers a couple of functions to work with sentences:
+The `count-words` package offers a couple of functions to work with sentences:
 
 * sentence-to-workds - splits a sentence into individual words.
 * augment-count - augments the sentence with the number of charaters.

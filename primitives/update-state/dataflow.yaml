@@ -50,15 +50,14 @@ services:
             Ok(event.id)
           }
 
-      transforms:
-        - operator: update-state
-          run: |
-            fn update_temperature(event: Temp) -> Result<(), String> {
-              let mut temp = temperature();
+      update-state:
+        run: |
+          fn update_temperature(event: Temp) -> Result<(), String> {
+            let mut temp = temperature();
 
-              temp.sensor = event.sensor;
-              temp.temperature = event.temperature;
-              temp.update();
+            temp.sensor = event.sensor;
+            temp.temperature = event.temperature;
+            temp.update();
 
-              Ok(())
-            }
+            Ok(())
+          }

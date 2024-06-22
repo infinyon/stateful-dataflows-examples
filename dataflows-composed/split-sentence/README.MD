@@ -9,6 +9,8 @@ The following diagram is a visual representation of these operations generated b
  <img width="650" src="img/split-sentence.jpg">
 </p>
 
+Checkout [dataflows-inline/split-sentence] for the inline variant.
+
 ## Prequisites
 
 The packages below are imported by the datafow. You must build them first:
@@ -87,5 +89,6 @@ fluvio topic delete sentence
 fluvio topic delete words
 ```
 
+[dataflows-inline/split-sentence]: ../../dataflows-inline/split-sentence
 [Install SDF & Start a Cluster]: /README.MD#prerequisites
 [sentence]: ./packages/sentence
