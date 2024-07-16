@@ -1,0 +1,15 @@
+# car-connector.yaml
+apiVersion: 0.2.0
+meta:
+  version: 0.3.6
+  name: car-connector
+  type: http-source
+  topic:
+    version: 0.1.0
+    meta:
+      name: cars
+http:
+  endpoint: https://demo-data.infinyon.com/api/stream-car-mismatch-license
+  method: GET
+  stream: true
+  delimiter: "\n\n"

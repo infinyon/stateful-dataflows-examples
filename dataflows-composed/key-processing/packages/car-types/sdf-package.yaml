@@ -1,0 +1,25 @@
+apiVersion: 0.4.0
+
+meta:
+  name: car-types-pkg
+  version: 0.1.0
+  namespace: example
+
+types:
+  car:
+    type: object
+    properties:
+      maker:
+        type: string
+      model:
+        type: string
+      color:
+        type: string
+      license:
+        type: string
+      location:
+        type: string
+      mph:
+        type: u32
+      timestamp:
+        type: string

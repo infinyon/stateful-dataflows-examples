@@ -1,0 +1,14 @@
+package sdf:df;
+
+interface df {
+
+  use sdf:arrow/wasm-io.{ data-frame };
+
+  resource table-value {
+      get-data-frame: func() -> data-frame;
+  }
+}
+
+world arrow-world {
+  import df;
+}

@@ -1,0 +1,53 @@
+apiVersion: 0.4.0
+
+meta:
+  name: make-key
+  version: 0.1.0
+  namespace: example
+
+imports:
+  - pkg: example/car-proc-pkg@0.1.0
+    path: ./packages/car-processing
+    types:
+      - name: car
+      - name: car-prop
+    functions:
+      - name: make-license-key
+
+config:
+  converter: json
+  default_starting_offset:
+    value: 0
+    position: Beginning
+
+topics:
+  cars:
+    schema:
+      value:
+        type: car
+  licensed-car:
+    schema:
+      key: 
+        type: string
+      value:
+        type: car-prop
+
+services:
+  license-key-service:
+    sources:
+      - type: topic
+        id: cars
+
+    transforms:
+      - operator: map
+        uses: make-license-key
+
+    sinks:
+      - type: topic
+        id: licensed-car
+
+# Development only, it does not get published to hub
+dev:
+  imports:
+  - pkg: example/car-proc-pkg@0.1.0
+    path: ./packages/car-processing
