@@ -17,11 +17,7 @@ sdf run
 
 ### Test DataFlow
 
-Produce to `cars`:
-
-```bash
-fluvio produce cars
-```
+The sample data file has the following records:
 
 ```bash
 {"car":"Honda Accord","category":"sedan","license":"4GCF223"}
@@ -30,27 +26,39 @@ fluvio produce cars
 {"car":"Dodge RAM","category":"truck","license":"6DUA684"}
 ```
 
-Consume from `trucks` to see trucks:
+Produce the data to the `cars` topic:
+
+```bash
+fluvio produce cars -f ./sample-data/data.txt
+```
+
+Checkout the data in `cars` topic:
+
+```bash
+fluvio consume cars -Bd
+```
+
+Consume from `trucks` and `sedans` to see the result:
 
 ```bash
 fluvio consume trucks -Bd
-```
-
-```bash
-{"license":"6FAF434","truck":"Ford f-150"}
-{"license":"6DUA684","truck":"Dodge RAM"}
-```
-
-Consume from `sedans` to see sedans:
-
-```bash
 fluvio consume sedans -Bd
 ```
 
 ```bash
+# trucks
+{"license":"6FAF434","truck":"Ford f-150"}
+{"license":"6DUA684","truck":"Dodge RAM"}
+
+# sedans
 {"license":"4GCF223","sedan":"Honda Accord"}
 {"license":"5JAC844","sedan":"BMW 330"}
 ```
+
+**Note:** the split operator divided the `cars` into `trucks` and `sedans`.
+
+
+### Run SDF commands
 
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
@@ -65,14 +73,13 @@ stats  *       4          0
 
 Feel free to checkout the other metrics.
 
+
 ### Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete cars
-fluvio topic delete trucks
-fluvio topic delete sedans
+sdf clean --force
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

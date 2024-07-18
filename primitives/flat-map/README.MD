@@ -15,14 +15,22 @@ sdf run
 
 ### Test DataFlow
 
-Produce sentences:
-
-```bash
-fluvio produce sentences
-```
+The sample data file has the following records:
 
 ```bash
 This is a test
+```
+
+Produce the data to the `sentences` topic:
+
+```bash
+fluvio produce sentences -f ./sample-data/data.txt
+```
+
+Checkout the data in `sentences` topic:
+
+```bash
+fluvio consume sentences -Bd
 ```
 
 Consume from `words` to see them transformed:
@@ -38,6 +46,11 @@ a
 test
 ```
 
+**Note:** the sentence has been divided into a stream of words.
+
+
+### Run SDF commands
+
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
@@ -51,11 +64,10 @@ stats  *       1          0
 
 ### Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete sentences
-fluvio topic delete words
+sdf clean --force
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

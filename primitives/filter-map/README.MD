@@ -15,15 +15,23 @@ sdf run
 
 ### Test DataFlow
 
-Produce to short and long sentences:
-
-```bash
-fluvio produce sentences
-```
+The sample data file has the following records:
 
 ```bash
 say hello
 say hello world
+```
+
+Produce the data to the `sentences` topic:
+
+```bash
+fluvio produce sentences -f ./sample-data/data.txt
+```
+
+Checkout the data in `sentences` topic:
+
+```bash
+fluvio consume sentences -Bd
 ```
 
 Consume from `capitalized` to retrieve the result:
@@ -35,6 +43,11 @@ fluvio consume capitalized -Bd
 ```bash
 SAY HELLO WORLD
 ```
+
+**Note:** long sentences are `capitalized`, the other is filtered out.
+
+
+### Run SDF commands
 
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
@@ -49,11 +62,10 @@ stats  *       2          0
 
 ### Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete sentences
-fluvio topic delete capitalized
+sdf clean --force
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

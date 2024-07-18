@@ -15,15 +15,23 @@ sdf run
 
 ### Test DataFlow
 
-Produce to `users`:
-
-```bash
-fluvio produce users
-```
+The sample data file has the following records:
 
 ```bash
 {"name": "Alice", "ssn": "222-333-5555"}
 {"name": "Bob", "ssn": "444-666-7777"}
+```
+
+Produce the data to the `users` topic:
+
+```bash
+fluvio produce users -f ./sample-data/data.txt
+```
+
+Checkout the data in `users` topic:
+
+```bash
+fluvio consume users -Bd
 ```
 
 Consume from `users-public` to see them transformed:
@@ -36,6 +44,11 @@ fluvio consume users-public -Bd
 {"name":"Alice","ssn":"***-***-****"}
 {"name":"Bob","ssn":"***-***-****"}
 ```
+
+**Note:** the `ssn` values are masked by the regex command.
+
+
+### Run SDF commands
 
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
@@ -50,11 +63,10 @@ stats  *       2          0
 
 ### Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete users
-fluvio topic delete users-public
+sdf clean --force
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

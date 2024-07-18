@@ -1,0 +1,4 @@
+{"name": "John", "born": 1996}
+{"name": "Alice", "born": 1998}
+{"name": "Bob", "born": 2011}
+{"name": "Michael", "born": 2018}

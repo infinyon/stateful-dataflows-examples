@@ -1,0 +1,4 @@
+{"car":"Honda Accord","category":"sedan","license":"4GCF223"}
+{"car":"Ford f-150","category":"truck","license":"6FAF434"}
+{"car":"BMW 330","category":"sedan","license":"5JAC844"}
+{"car":"Dodge RAM","category":"truck","license":"6DUA684"}
