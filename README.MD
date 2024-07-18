@@ -47,7 +47,7 @@ DataFlows defined via composable packages:
 
 ## Primitives
 
-Simple examples centered around primitives.
+Simple examples centered around primitive concepts and operations.
 
 * [map](/primitives/map/)
 * [filter](/primitives/filter/)
