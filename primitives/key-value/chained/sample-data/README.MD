@@ -1,6 +1,15 @@
-# Output Key/Value Example
+# Chained Key/Value Example
 
-This is an example of producing records with a `key` and a `value` for a fluvial topic. We've defined a function that reads records from a topic, divides them into a key and a value, and sends the result to a new topic.
+This example demonstrates the engine behavior for passing keys between while chaining operators. 
+
+For a source topic with a key, the engine has the following behavior:
+
+* A function may read or ignore the incoming key.
+* If the function returns a new key, the following function receives the new key.
+* If any function in the middle of the chain returns a value (without a key), the chain is not broken; the following function reading the key will receive the last updated key.
+
+
+In this example, we've defined a couple of functions. The first function `update_location` takes the key and uses the first digit to identify the region and populate the value. Note that the first function does not pass down the key, but the second function still has access. The second function `add_new_key` reads the key, adds to the value, and returns a new key with the person's label.
 
 * See the [dataflow.yaml](./dataflow.yaml) to see how we've configured the dataflow.
 * Make sure to [Install SDF and start a Fluvio cluster].
@@ -22,52 +31,48 @@ cat ./sample-data/users.txt
 ```
 
 ```bash
-{"age":23,"id":"0001","name":"Alice"}
-{"age":21,"id":"0002","name":"Bob"}
-{"age":34,"id":"0003","name":"Charlie"}
+1001>{"name":"Alice", "age":10}
+1002>{"name":"Bob", "age":17}
+2003>{"name":"Charlie", "age":24}    
 ```
 
 Produce the data to the `user` topic:
 
 ```bash
-fluvio produce user -f ./sample-data/users.txt
+fluvio produce user-input --key-separator ">" -f ./sample-data/users.txt
 ```
 
 Checkout the data in `user` topic:
 
 ```bash
-fluvio consume user -Bd -k
+fluvio consume user-input -Bd -k
 ```
 
 ```bash
-[null] {"age":23,"id":"0001","name":"Alice"}
-[null] {"age":21,"id":"0002","name":"Bob"}
-[null] {"age":34,"id":"0003","name":"Charlie"}
+[1001] {"name":"Alice", "age":10}
+[1002] {"name":"Bob", "age":17}
+[2003] {"name":"Charlie", "age":24}
 ```
 
-Consume from `users` to retrieve the result:
+Consume from `user-output` to retrieve the result:
 
 ```bash
-fluvio consume user-kv -Bd -k
+fluvio consume user-output -Bd -k
 ```
 
 ```bash
-[0001] {"age":23,"name":"Alice"}
-[0002] {"age":21,"name":"Bob"}
-[0003] {"age":34,"name":"Charlie"}
+[child] {"age":10,"id":"1001","location":"New York","name":"Alice"}
+[child] {"age":17,"id":"1002","location":"New York","name":"Bob"}
+[adult] {"age":24,"id":"2003","location":"California","name":"Charlie"}
 ```
 
-Note that the `id` field was moved from the `value` into the `key`.
+The existing `key` was into the `value` and a new `key` was assigned.
 
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state user-to-kv/make-kv-user/metrics --table
-```
-
-```bash
-Key    Window  succeeded  failed 
-stats  *       3          0      
+show state kv-to-user/update-location/metrics --table
+show state kv-to-user/add-new-key/metrics --table
 ```
 
 ### Clean-up

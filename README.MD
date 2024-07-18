@@ -60,7 +60,7 @@ Simple examples centered around primitives.
 * [update-state](/primitives/update-state/)
 * [key-value (input)](/primitives/key-value/input)
 * [key-value (output)](/primitives/key-value/output)
-
+* [key-value (chained)](/primitives/key-value/chained)
 
 ## References
 * [connectors](connectors.md)

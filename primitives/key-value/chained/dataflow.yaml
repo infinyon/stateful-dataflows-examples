@@ -1,7 +1,7 @@
 apiVersion: 0.4.0
 
 meta:
-  name: input-key
+  name: chained-key
   version: 0.1.0
   namespace: example
 
@@ -13,14 +13,14 @@ config:
       position: End
 
 types:
-  user-value:
+  user-in:
     type: object
     properties:
       name:
         type: string
       age:
         type: u32
-  user:
+  user-out:
     type: object
     properties:
       location:
@@ -34,27 +34,29 @@ types:
         optional: true
   
 topics:
-  user-kv:
+  user-input:
     schema:
       key: 
         type: string
       value:
-        type: user-value
-  user:
+        type: user-in
+  user-output:
     schema:
+      key: 
+        type: string    
       value:
-        type: user
+        type: user-out
 
 services:
   kv-to-user:
     sources:
       - type: topic
-        id: user-kv
+        id: user-input
 
     transforms:
       - operator: map
         run: |
-          fn update_location(user_key: Option<String>, user_value: UserValue) -> Result<User, String> {
+          fn update_location(user_key: Option<String>, user: UserIn) -> Result<UserOut, String> {
             let location = if let Some(key) = user_key {
               let digit = key.chars().nth(0).unwrap();
               match digit {
@@ -66,32 +68,31 @@ services:
               "".to_string()
             };
 
-            let user = User {
+            let new_user = UserOut {
               location: location,
-              name: user_value.name,
-              age: user_value.age,
+              name: user.name,
+              age: user.age,
               id: None,
             };
 
-            Ok(user)
+            Ok(new_user)
           }
 
       - operator: map
         run: |
-          fn add_label_key(user_key: Option<String>, user: User) -> Result<(Option<String>, User), String> {
-            let mut cloned_user = user.clone();
-            cloned_user.id = user_key;
+          fn add_new_key(user_key: Option<String>, user: UserOut) -> Result<(Option<String>, UserOut), String> {
+            let mut new_user = user.clone();
+            new_user.id = user_key;
 
-            let label_key = if cloned_user.age < 18 {
+            let new_key = if new_user.age < 18 {
               "child".to_string()
             } else {
               "adult".to_string()
             };
 
-            println!("label_key: {}", label_key);
-
-            Ok((Some(label_key), cloned_user))
+            Ok((Some(new_key), new_user))
           }
+          
     sinks:
       - type: topic
-        id: user
+        id: user-output
