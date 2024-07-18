@@ -96,7 +96,6 @@ Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 sdf clean --force
 ```
 
-
 [dataflows-inline/split-sentence]: ../../dataflows-inline/split-sentence
 [Install SDF & Start a Cluster]: /README.MD#prerequisites
 [sentence]: ./packages/sentence
