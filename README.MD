@@ -17,7 +17,7 @@ SDF is the abreviation for Stateful Dataflows.
 
 ```bash
 curl -fsS https://hub.infinyon.cloud/install/install.sh | bash
-fvm install sdf-preview11
+fvm install sdf-preview13
 ```
 
 #### Start a cluster
@@ -58,6 +58,8 @@ Simple examples centered around primitives.
 * [merge](/primitives/merge/)
 * [regex](/primitives/regex/)
 * [update-state](/primitives/update-state/)
+* [key-value (input)](/primitives/key-value/input)
+* [key-value (output)](/primitives/key-value/output)
 
 
 ## References
