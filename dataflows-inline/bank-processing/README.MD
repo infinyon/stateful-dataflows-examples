@@ -56,17 +56,12 @@ Use `fluvio consume` command to read from multiple streams in parallel:
 
 #### 2.1 Add Account
 
-Use fluvio produce to publish `add-account` events to the `admin-events` topic :
+Use fluvio produce to publish `add-account` events for `duncan` and `lucy` to the `admin-events` topic :
 
 Add `duncan`:
 
 ```bash
 fluvio produce admin-events --raw --file ./sample-data/add-account-duncan.json
-```
-
-Add `lucy`:
-
-```bash
 fluvio produce admin-events --raw --file ./sample-data/add-account-lucy.json
 ```
 
@@ -93,17 +88,10 @@ fluvio consume credit-events -Bd -O json
 
 #### 2.2 Deposit
 
-Use fluvio produce to publish `deposit` events to the `business-events` topic :
-
-Deposit `duncan`:
+Use fluvio produce to publish `deposit` events for `duncan` and `lucy` to the `business-events` topic :
 
 ```bash
 fluvio produce business-events --raw --file ./sample-data/deposit-duncan.json
-```
-
-Deposit `lucy`:
-
-```bash
 fluvio produce business-events --raw --file ./sample-data/deposit-lucy.json
 ```
 
@@ -122,17 +110,10 @@ show state balance-manager/account-balance/state --table
 
 #### 2.3 Withdrawal
 
-Use fluvio produce to publish `withdrawal` events to the `business-events` topic :
-
-Withdrawal `duncan`:
+Use fluvio produce to publish `withdrawal` events for `duncan` and `lucy` to the `business-events` topic :
 
 ```bash
 fluvio produce business-events --raw --file ./sample-data/withdrawal-duncan.json
-```
-
-Withdrawal `lucy`:
-
-```bash
 fluvio produce business-events --raw --file ./sample-data/withdrawal-lucy.json
 ```
 
@@ -151,7 +132,7 @@ show state balance-manager/account-balance/state --table
 
 #### 2.4 Transfer
 
-Use fluvio produce to publish `tranfer` events to the `business-events` topic :
+Use fluvio produce to publish `tranfer` events for `duncan` to `lucy` to the `business-events` topic :
 
 Transfer from `duncan` to `lucy`:
 
@@ -209,7 +190,7 @@ fluvio produce business-events --raw --file ./sample-data/withdrawal-duncan.json
 Check the state in `sdf` terminal:
 
 ```bash
->> show state balance-manager/account-balance/state --table
+show state balance-manager/account-balance/state --table
 ```
 
 ```bash
@@ -226,17 +207,13 @@ fluvio consume overdraft-events -Bd -O json
 
 Congratulations! You've successfully built and run a dataflow!
 
-## Clean-up
 
-Exit `sdf` terminal and remove the topics:
+### Clean-up
+
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete admin-events
-fluvio topic delete business-events
-fluvio topic delete data-events
-fluvio topic delete debit-events
-fluvio topic delete credit-events
-fluvio topic delete overdraft-events
+sdf clean --force
 ```
 
 [Install SDF & Start a Cluster]: /README.MD#prerequisites

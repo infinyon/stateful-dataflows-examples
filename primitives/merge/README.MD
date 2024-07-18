@@ -29,7 +29,7 @@ For this example, we've created two data files: `trucks` and `sedans`.
 {"sedan":"BMW 330","license":"5JAC844"}
 ```
 
-Produce the data to the `trucks` topic & `sedans` topics:
+Produce the data to the `trucks` and `sedans` topics:
 
 ```bash
 fluvio produce trucks -f ./sample-data/trucks.txt

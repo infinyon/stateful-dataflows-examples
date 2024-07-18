@@ -111,13 +111,13 @@ show state word-processing-window/count-per-word/state
 
 Congratulations! You've successfully built and run a dataflow!
 
-## Clean-up
 
-Exit `sdf` terminal and remove the topics:
+### Clean-up
+
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete sentence
-fluvio topic delete most-used-words
+sdf clean --force
 ```
 
 

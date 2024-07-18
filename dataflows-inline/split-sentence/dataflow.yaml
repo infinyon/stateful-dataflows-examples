@@ -9,7 +9,7 @@ config:
   converter: raw
 
 topics:
-  sentence:
+  sentences:
     schema:
       value:
         type: string
@@ -24,7 +24,7 @@ services:
   sentence-words:
     sources:
       - type: topic
-        id: sentence
+        id: sentences
 
     transforms:
       - operator: flat-map
