@@ -63,15 +63,11 @@ there(5)
 Check the counters `sdf` terminal:
 
 ```bash
->> show state sentence-words/sentence-to-words/metrics --table
- Key    Window  succeeded  failed
- stats  *       2          0
+show state sentence-words/sentence-to-words/metrics --table
 ```
 
 ```bash
->> show state sentence-words/augment-count/metrics --table
- Key    Window  succeeded  failed
- stats  *       4          0
+show state sentence-words/augment-count/metrics --table
 ```
 
 Congratulations! You've successfully built and run a dataflow!
