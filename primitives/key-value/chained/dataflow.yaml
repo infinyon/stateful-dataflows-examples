@@ -1,0 +1,97 @@
+apiVersion: 0.4.0
+
+meta:
+  name: input-key
+  version: 0.1.0
+  namespace: example
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  user-value:
+    type: object
+    properties:
+      name:
+        type: string
+      age:
+        type: u32
+  user:
+    type: object
+    properties:
+      location:
+        type: string
+      name:
+        type: string
+      age:
+        type: u32
+      id:
+        type: string
+        optional: true
+  
+topics:
+  user-kv:
+    schema:
+      key: 
+        type: string
+      value:
+        type: user-value
+  user:
+    schema:
+      value:
+        type: user
+
+services:
+  kv-to-user:
+    sources:
+      - type: topic
+        id: user-kv
+
+    transforms:
+      - operator: map
+        run: |
+          fn update_location(user_key: Option<String>, user_value: UserValue) -> Result<User, String> {
+            let location = if let Some(key) = user_key {
+              let digit = key.chars().nth(0).unwrap();
+              match digit {
+                '1' => "New York".to_string(),
+                '2' => "California".to_string(),
+                _ => "USA".to_string()
+              }
+            } else {
+              "".to_string()
+            };
+
+            let user = User {
+              location: location,
+              name: user_value.name,
+              age: user_value.age,
+              id: None,
+            };
+
+            Ok(user)
+          }
+
+      - operator: map
+        run: |
+          fn add_label_key(user_key: Option<String>, user: User) -> Result<(Option<String>, User), String> {
+            let mut cloned_user = user.clone();
+            cloned_user.id = user_key;
+
+            let label_key = if cloned_user.age < 18 {
+              "child".to_string()
+            } else {
+              "adult".to_string()
+            };
+
+            println!("label_key: {}", label_key);
+
+            Ok((Some(label_key), cloned_user))
+          }
+    sinks:
+      - type: topic
+        id: user

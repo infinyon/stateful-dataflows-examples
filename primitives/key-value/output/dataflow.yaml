@@ -22,8 +22,7 @@ types:
         type: string
       age:
         type: u32
-  user-key:
-    type: string
+
   user-value:
     type: object
     properties:
