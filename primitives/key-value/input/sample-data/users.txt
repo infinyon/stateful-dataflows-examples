@@ -1,0 +1,3 @@
+0001>{"name":"Alice", "age":23}
+0002>{"name":"Bob", "age":21}
+0003>{"name":"Charlie", "age":34}

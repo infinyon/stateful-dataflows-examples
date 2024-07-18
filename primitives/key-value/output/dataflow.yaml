@@ -1,0 +1,67 @@
+apiVersion: 0.4.0
+
+meta:
+  name: output-key
+  version: 0.1.0
+  namespace: example
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  user:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      age:
+        type: u32
+  user-key:
+    type: string
+  user-value:
+    type: object
+    properties:
+      name:
+        type: string
+      age:
+        type: u32
+  
+topics:
+  user:
+    schema:
+      value:
+        type: user
+  user-kv:
+    schema:
+      key: 
+        type: string
+      value:
+        type: user-value
+
+services:
+  user-to-kv:
+    sources:
+      - type: topic
+        id: user
+
+    transforms:
+      - operator: map
+        run: |
+          fn make_kv_user(user: User) -> Result<(Option<String>, UserValue), String> {
+            let user_key = user.id.clone();
+            let user_value = UserValue {
+              name: user.name,
+              age: user.age,
+            };
+            Ok((Some(user_key), user_value))
+          }
+
+    sinks:
+      - type: topic
+        id: user-kv

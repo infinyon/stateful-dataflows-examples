@@ -1,0 +1,3 @@
+{"age":23,"id":"0001","name":"Alice"}
+{"age":21,"id":"0002","name":"Bob"}
+{"age":34,"id":"0003","name":"Charlie"}
