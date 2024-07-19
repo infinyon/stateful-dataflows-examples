@@ -1,6 +1,6 @@
 # Input Key/Value Example
 
-This is an example of consuming records with `key` and `value` from a fluvial topic. We've defined a function that reads key-value records from a topic, collapses them into a single value, and sends the result to a new topic.
+This is an example of sourcing records with `key` and `value` from a fluvio topic. We've defined a function that reads key-value records from a topic, collapses them into a single value, and sends the result to a new topic.
 
 * See the [dataflow.yaml](./dataflow.yaml) to see how we've configured the dataflow.
 * Make sure to [Install SDF and start a Fluvio cluster].

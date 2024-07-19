@@ -47,7 +47,7 @@ fluvio consume gen-z -Bd
 {"name": "Bob", "born": 2011}
 ```
 
-**Note:** the regex filter removes people born outside of `gen-z ` age group.
+**Note:** the regex filter removes people born outside of `gen-z` age group.
 
 
 ### Clean-up

@@ -1,6 +1,6 @@
 # Output Key/Value Example
 
-This is an example of producing records with a `key` and a `value` for a fluvial topic. We've defined a function that reads records from a topic, divides them into a key and a value, and sends the result to a new topic.
+This is an example of sending records with a `key` and a `value` for a fluvio topic. We've defined a function that reads records from a topic, divides them into a key and a value, and sends the result to a new topic.
 
 * See the [dataflow.yaml](./dataflow.yaml) to see how we've configured the dataflow.
 * Make sure to [Install SDF and start a Fluvio cluster].

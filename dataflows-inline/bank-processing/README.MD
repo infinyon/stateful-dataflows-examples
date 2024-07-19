@@ -58,8 +58,6 @@ Use `fluvio consume` command to read from multiple streams in parallel:
 
 Use fluvio produce to publish `add-account` events for `duncan` and `lucy` to the `admin-events` topic :
 
-Add `duncan`:
-
 ```bash
 fluvio produce admin-events --raw --file ./sample-data/add-account-duncan.json
 fluvio produce admin-events --raw --file ./sample-data/add-account-lucy.json

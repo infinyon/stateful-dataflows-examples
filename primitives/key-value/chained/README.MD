@@ -1,6 +1,6 @@
 # Chained Key/Value Example
 
-This example demonstrates the engine behavior for passing keys between while chaining operators. 
+This example demonstrates the engine behavior for passing keys between chained operators. 
 
 For a source topic with a key, the engine has the following behavior:
 
@@ -66,7 +66,7 @@ fluvio consume user-output -Bd -k
 [adult] {"age":24,"id":"2003","location":"California","name":"Charlie"}
 ```
 
-The existing `key` was into the `value` and a new `key` was assigned.
+The existing `key` was merged into the `value` and a new `key` was assigned.
 
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
