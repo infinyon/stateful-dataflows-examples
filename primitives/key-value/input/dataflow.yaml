@@ -1,0 +1,67 @@
+apiVersion: 0.4.0
+
+meta:
+  name: input-key
+  version: 0.1.0
+  namespace: example
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  user-key:
+    type: string
+  user-value:
+    type: object
+    properties:
+      name:
+        type: string
+      age:
+        type: u32
+  user:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      age:
+        type: u32
+  
+topics:
+  user-kv:
+    schema:
+      key: 
+        type: string
+      value:
+        type: user-value
+  user:
+    schema:
+      value:
+        type: user
+
+services:
+  kv-to-user:
+    sources:
+      - type: topic
+        id: user-kv
+
+    transforms:
+      - operator: map
+        run: |
+          fn make_user(user_key: Option<String>, user_value: UserValue) -> Result<User, String> {
+            let user = User {
+              id: user_key.unwrap_or("".to_string()),
+              name: user_value.name,
+              age: user_value.age,
+            };
+            Ok(user)
+          }
+
+    sinks:
+      - type: topic
+        id: user

@@ -15,11 +15,7 @@ sdf run
 
 ### Test DataFlow
 
-Produce to `user`:
-
-```bash
-fluvio produce user
-```
+The sample data file has the following records:
 
 ```bash
 {"name":"Andrew","age":16}
@@ -29,37 +25,45 @@ fluvio produce user
 {"name":"Linda","age":15}
 ```
 
-Consume from `child`:
+Produce the data to the `user` topic:
+
+```bash
+fluvio produce user -f ./sample-data/data.txt
+```
+
+Checkout the data in `user` topic:
+
+```bash
+fluvio consume user -Bd
+```
+
+Consume from `child` and `adult` to see the result:
 
 ```bash
 fluvio consume child -Bd
-```
-
-```bash
-{"age":16,"name":"Andrew"}
-{"age":17,"name":"Jackson"}
-{"age":15,"name":"Linda"}
-```
-
-Consume from `adult`:
-
-```bash
 fluvio consume adult -Bd
 ```
 
 ```bash
+# child
+{"age":16,"name":"Andrew"}
+{"age":17,"name":"Jackson"}
+{"age":15,"name":"Linda"}
+
+# adult
 {"age":32,"name":"Randy"}
 {"age":28,"name":"Alice"}
 ```
 
+**Note:** the data from `user` topic is split into `child` and `adult` topics based on age.
+
+
 ### Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete user
-fluvio topic delete child
-fluvio topic delete adult
+sdf clean --force
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

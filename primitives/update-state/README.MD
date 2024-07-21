@@ -15,11 +15,7 @@ sdf run
 
 ### Test DataFlow
 
-Produce temperature data from sensors at different locations:
-
-```bash
-fluvio produce temp-sensor
-```
+The sample data file has the following records:
 
 ```json
 {"id": 0, "sensor": "SF", "temperature": 54}
@@ -28,7 +24,21 @@ fluvio produce temp-sensor
 {"id": 0, "sensor": "SF", "temperature": 47}
 ```
 
-Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
+Produce the data to the `temp-sensor` topic:
+
+```bash
+fluvio produce temp-sensor -f ./sample-data/data.txt
+```
+
+Checkout the data in `temp-sensor` topic:
+
+```bash
+fluvio consume temp-sensor -Bd
+```
+
+### Run SDF commands
+
+Use the `sdf` runtime `>>` terminal to display the state variable:
 
 ```bash
 show state save-temperature/temperature/state --table
@@ -43,10 +53,10 @@ show state save-temperature/temperature/state --table
 
 ### Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete temp-sensor
+sdf clean --force
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

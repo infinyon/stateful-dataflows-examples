@@ -34,15 +34,23 @@ Use `--ui` to generate the graphical representation and run the Studio.
 
 ### Test the Dataflow
 
-1. Produce sentences to in `user-info` topic:
-
-```bash
-fluvio produce user-info
-```
+The sample data file has the following records:
 
 ```json
 {"name": "Alice", "ssn": "555-12-1212"}
 {"name": "Bob", "ssn": "123-45-6789"}
+```
+
+Produce the data to in `user-info` topic:
+
+```bash
+fluvio produce user-info -f ./sample-data/data.txt
+```
+
+Checkout the data in `user-info` topic:
+
+```bash
+fluvio consume user-info -Bd
 ```
 
 Consume from `masked` to retrieve the result:
@@ -60,11 +68,10 @@ Congratulations! You've successfully built and run a dataflow!
 
 ## Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete user-info
-fluvio topic delete masked
+sdf clean --force
 ```
 
 

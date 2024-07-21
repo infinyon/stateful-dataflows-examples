@@ -61,13 +61,13 @@ fluvio consume output -B
 
 Congratulations! You've successfully built and run a dataflow!
 
+
 ## Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete sentence
-fluvio topic delete output
+sdf clean --force
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

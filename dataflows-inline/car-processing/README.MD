@@ -162,7 +162,10 @@ The window is flushed to the `car-colors` topic every 30 seconds.
 Watermark tracks the cutoff timestamp for tumbling windows.
 
 ```bash
->> show state count-by-color/count-by-color/watermark
+show state count-by-color/count-by-color/watermark
+```
+
+```bash
  Key      Value                     Window
  default  2024-03-15T13:44:30.043Z  *
 ```
@@ -316,18 +319,10 @@ cdk deploy shutdown --name car-connector
 cdk deploy shutdown --name license-connector
 ```
 
-Type `exit` in the sdf terminal to close the process and delete the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete cars
-fluvio topic delete makers
-fluvio topic delete speeding
-fluvio topic delete saratoga
-fluvio topic delete sunnyvale
-fluvio topic delete car-colors
-fluvio topic delete licenses
-fluvio topic delete violations
+sdf clean --force
 ```
-
 
 [Install SDF & Start a Cluster]: /README.MD#prerequisites

@@ -19,14 +19,18 @@ jobs:
       strategy:
         matrix:
           example_path: [
+            "primitives/map",
             "primitives/filter",
             "primitives/filter-map",
             "primitives/flat-map",
-            "primitives/map",
             "primitives/merge",
+            "primitives/regex",
+            "primitives/update-state",
             "primitives/split/filter",
             "primitives/split/filter-map",
-            "primitives/update-state",
+            "primitives/key-value/input",
+            "primitives/key-value/output",
+            "primitives/key-value/chained",
             "dataflows-inline/bank-processing",
             "dataflows-inline/car-processing",
             "dataflows-inline/http-callout",

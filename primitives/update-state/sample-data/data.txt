@@ -1,0 +1,4 @@
+{"id": 0, "sensor": "SF", "temperature": 54}
+{"id": 1, "sensor": "LA", "temperature": 38}
+{"id": 2, "sensor": "MO", "temperature": 65}
+{"id": 0, "sensor": "SF", "temperature": 47}

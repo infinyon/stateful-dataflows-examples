@@ -37,23 +37,35 @@ Use `--ui` to open the Studio.
 
 ### Test the Dataflow
 
-1. Produce sentences to in `sentences` topic:
+For this example, we've created two data files: `sentences` and `words`.
 
 ```bash
-echo "behind every great man is a woman rolling her eyes" | fluvio produce sentences
-echo "the eyes reflect what is in the heart and soul" | fluvio produce sentences
-echo "keep your eyes on the stars and your feet on the ground" | fluvio produce sentences
+# sentences.txt
+behind every great man is a woman rolling her eyes
+the eyes reflect what is in the heart and soul
+keep your eyes on the stars and your feet on the ground
+
+# words.txt
+eyes
+stars
+the
 ```
 
-2. Produce words in `words` topic:
+Produce the data to the `sentences` and `words` topics:
 
 ```bash
-echo "eyes" | fluvio produce words
-echo "stars" | fluvio produce words
-echo "the" | fluvio produce words
+fluvio produce sentences -f ./sample-data/sentences.txt
+fluvio produce words -f ./sample-data/words.txt
 ```
 
-3. Consume from `word-count` to check the result:
+Observe the data produced in both topics:
+
+```bash
+fluvio consume sentences -Bd
+fluvio consume words -Bd
+```
+
+Consume from `word-counts` topic to check the result:
 
 ```bash
 fluvio consume word-counts -Bd -O json
@@ -102,15 +114,13 @@ You should see something like this:
 
 Congratulations! You've successfully built and run a dataflow!
 
-## Clean-up
 
-Exit `sdf` terminal and remove the topics:
+### Clean-up
+
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete sentences
-fluvio topic delete words
-fluvio topic delete word-counts
+sdf clean --force
 ```
-
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

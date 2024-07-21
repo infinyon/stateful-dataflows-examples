@@ -86,7 +86,7 @@ augment-count
 Test `sentence-to-words` function:
 
 ```bash
->> test function sentence-to-words --input "Hello World"
+>> test function sentence-to-words --value "Hello World"
 Hello
 World
 ```
@@ -94,7 +94,7 @@ World
 Test `augment-count` function:
 
 ```bash
->> test function augment-count --input "Hello"
+>> test function augment-count --value "Hello"
 Hello(5)
 ```
 

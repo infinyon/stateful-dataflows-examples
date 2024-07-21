@@ -84,11 +84,10 @@ Note that your connector will continue to run in the background until you shut t
 cdk deploy shutdown --name car-callout
 ```
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete cars
-fluvio topic delete makers
+sdf clean --force
 ```
 
 [Install SDF & Start a Cluster]: /README.MD#prerequisites

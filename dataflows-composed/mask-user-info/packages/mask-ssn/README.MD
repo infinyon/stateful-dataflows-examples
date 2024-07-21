@@ -76,12 +76,11 @@ sdf test
 ```
 
 ```bash
->> test function mask-ssn --input "My SSN is 534-34-3443."
+>> test function mask-ssn --value "My SSN is 534-34-3443."
 My SSN is ***-**-****.
 ```
 
 The package is ready to use in the [dataflow](../../).
-
 
 
 [Install SDF]: /README.MD#prerequisites

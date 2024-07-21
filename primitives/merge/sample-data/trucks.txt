@@ -1,0 +1,2 @@
+{"truck":"Ford f-150","license":"6FAF434"}
+{"truck":"Dodge RAM","license":"6DUA684"}

@@ -17,26 +17,30 @@ sdf run
 
 ### Test DataFlow
 
-Produce to `trucks`:
+For this example, we've created two data files: `trucks` and `sedans`.
 
 ```bash
-fluvio produce trucks
-```
-
-```bash
+# trucks.txt
 {"truck":"Ford f-150","license":"6FAF434"}
 {"truck":"Dodge RAM","license":"6DUA684"}
-```
 
-Produce to `sedans`:
-
-```bash
-fluvio produce sedans
-```
-
-```bash
+# sedans.txt
 {"sedan":"Honda Accord","license":"4GCF223"}
 {"sedan":"BMW 330","license":"5JAC844"}
+```
+
+Produce the data to the `trucks` and `sedans` topics:
+
+```bash
+fluvio produce trucks -f ./sample-data/trucks.txt
+fluvio produce sedans -f ./sample-data/sedans.txt
+```
+
+Checkout the data in both topics:
+
+```bash
+fluvio consume trucks -Bd
+fluvio consume sedans -Bd
 ```
 
 Consume from `licenses` to see their license plates:
@@ -51,6 +55,11 @@ fluvio consume licenses -Bd
 "4GCF223"
 "5JAC844"
 ```
+
+**Note:** the two topics are merged and the resulting values are normalized to the target topic schema.
+
+
+### Run SDF commands
 
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
@@ -77,12 +86,10 @@ Feel free to checkout the other metrics.
 
 ### Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete trucks
-fluvio topic delete sedans
-fluvio topic delete licenses
+sdf clean --force
 ```
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

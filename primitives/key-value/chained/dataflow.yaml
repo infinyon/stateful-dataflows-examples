@@ -1,0 +1,98 @@
+apiVersion: 0.4.0
+
+meta:
+  name: chained-key
+  version: 0.1.0
+  namespace: example
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  user-in:
+    type: object
+    properties:
+      name:
+        type: string
+      age:
+        type: u32
+  user-out:
+    type: object
+    properties:
+      location:
+        type: string
+      name:
+        type: string
+      age:
+        type: u32
+      id:
+        type: string
+        optional: true
+  
+topics:
+  user-input:
+    schema:
+      key: 
+        type: string
+      value:
+        type: user-in
+  user-output:
+    schema:
+      key: 
+        type: string    
+      value:
+        type: user-out
+
+services:
+  kv-to-user:
+    sources:
+      - type: topic
+        id: user-input
+
+    transforms:
+      - operator: map
+        run: |
+          fn update_location(user_key: Option<String>, user: UserIn) -> Result<UserOut, String> {
+            let location = if let Some(key) = user_key {
+              let digit = key.chars().nth(0).unwrap();
+              match digit {
+                '1' => "New York".to_string(),
+                '2' => "California".to_string(),
+                _ => "USA".to_string()
+              }
+            } else {
+              "".to_string()
+            };
+
+            let new_user = UserOut {
+              location: location,
+              name: user.name,
+              age: user.age,
+              id: None,
+            };
+
+            Ok(new_user)
+          }
+
+      - operator: map
+        run: |
+          fn add_new_key(user_key: Option<String>, user: UserOut) -> Result<(Option<String>, UserOut), String> {
+            let mut new_user = user.clone();
+            new_user.id = user_key;
+
+            let new_key = if new_user.age < 18 {
+              "child".to_string()
+            } else {
+              "adult".to_string()
+            };
+
+            Ok((Some(new_key), new_user))
+          }
+          
+    sinks:
+      - type: topic
+        id: user-output

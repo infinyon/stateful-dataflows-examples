@@ -37,15 +37,23 @@ Use `--ui` to generate the graphical representation and run the Studio.
 
 ### Test the Dataflow
 
-1. Produce sentences to in `sentence` topic:
-
-```bash
-fluvio produce sentence
-```
+The sample data file has the following records:
 
 ```bash
 Hello world
 Hi there
+```
+
+Produce the data to the `sentences` topic:
+
+```bash
+fluvio produce sentences -f ./sample-data/data.txt
+```
+
+Checkout the data in `sentences` topic:
+
+```bash
+fluvio consume sentences -Bd
 ```
 
 Consume from `words` to retrieve the result:
@@ -61,7 +69,7 @@ Hi(2)
 there(5)
 ```
 
-## Show State
+### Show State
 
 Check the counters `sdf` terminal:
 
@@ -82,11 +90,10 @@ Congratulations! You've successfully built and run a dataflow!
 
 ## Clean-up
 
-Exit `sdf` terminal and remove the topics:
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 
 ```bash
-fluvio topic delete sentence
-fluvio topic delete words
+sdf clean --force
 ```
 
 [dataflows-inline/split-sentence]: ../../dataflows-inline/split-sentence
