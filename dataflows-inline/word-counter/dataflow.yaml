@@ -122,7 +122,7 @@ services:
               [key,value] => {
                   while rows.next() {
                     let word = rows.str(&key)?;
-                    let count = rows.i32(&value)? as u32;
+                    let count = rows.u32(&value)?;
                     let word_count = WordCount { word, count };
                     top_words.push(word_count);
                   }
