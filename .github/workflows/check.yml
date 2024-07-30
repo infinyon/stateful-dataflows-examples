@@ -51,6 +51,8 @@ jobs:
             repository: infinyon/stateful-dataflows-examples
             ref: ${{ inputs.branch}}
 
+        - uses: dtolnay/rust-toolchain@stable
+
         - name: Install stable CLI and start Fluvio cluster
           timeout-minutes: 10
           run: |
