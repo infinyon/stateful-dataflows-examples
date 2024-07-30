@@ -75,7 +75,7 @@ services:
       # Split the sentence into words
       - operator: flat-map
         run: |
-          fn split_sequence(sentence: String) -> Result<Vec<String>, String> {
+          fn split_sequence(sentence: String) -> Result<Vec<String>> {
             Ok(sentence.split_whitespace().map(|word| word.chars().filter(|c| c.is_alphanumeric()).collect::<String>()).filter(|word| !word.is_empty()).collect())
           }
     window:
@@ -85,7 +85,7 @@ services:
       assign-timestamp:
         # Instruct the engine to apply the timestamp from the event metadata for the watermark operator
         run: |
-          fn assign_event_timestamp(value: String, event_time: i64) -> Result<i64, String> {
+          fn assign_event_timestamp(_value: String, event_time: i64) -> Result<i64> {
             Ok(event_time)
           }
 
@@ -93,22 +93,24 @@ services:
         # Assign a partition key to divide the data set for the update operation
         assign-key:
           run: |
-            fn assign_word_key(word: String) -> Result<String, String> {
+            fn assign_word_key(word: String) -> Result<String> {
               Ok(word.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect())
             }
 
         update-state:
           # Retrieve state by key and increment by 1.
           run: |
-            fn increment_word_count(word: String) -> Result<(), String> {
-              count_per_word().increment(1);
+            fn increment_word_count(_word: String) -> Result<()> {
+              let mut state = count_per_word();
+              state.count += 1;
+              state.update();
               Ok(())
             }
 
       flush:
         # Read the full state and compute the top 3 words sorted by count.
         run: |
-          fn compute_most_used_words() -> Result<TopWords, String> {
+          fn compute_most_used_words() -> Result<TopWords> {
             let word_counts = count_per_word();
 
             let top3 = word_counts.sql("select * from count_per_word order by count desc limit 3")?;
@@ -126,7 +128,7 @@ services:
                   }
                   
               },
-                _ => return Error(anyhow::anyhow!("unexpected schema")),
+                _ => return Err(anyhow::anyhow!("unexpected schema")),
             }
               
             Ok(top_words)          
