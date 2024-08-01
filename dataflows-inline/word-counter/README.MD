@@ -14,7 +14,6 @@ The dataflow uses the following primitives:
   * _assign-key_
   * _update-state_
   * _flush_
-    * _aggregate_
 * _flat-map_
 * _states_
 
