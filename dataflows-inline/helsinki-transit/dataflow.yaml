@@ -52,7 +52,6 @@ types:
     items:
       type: vp-stat
 
-
 topics:
   events:
     name: helsinki
@@ -73,7 +72,7 @@ services:
       - type: topic
         id: events
     states:
-      - name: vehicle-stat
+      vehicle-stat:
         type: keyed-state
         properties:
           key:
@@ -112,12 +111,12 @@ services:
 
       assign-timestamp:
         dependencies:
-            - name: chrono
-              version: "0.4.23"
-            - name: anyhow
-              version: "1.0.38"
+          - name: chrono
+            version: "0.4.23"
+          - name: anyhow
+            version: "1.0.38"
         run: |
-          fn assign_timestamp(event: Vp,event_time: i64) -> Result<i64, String> {
+          fn assign_timestamp(event: Vp, _event_time: i64) -> Result<i64, String> {
 
               use chrono::{DateTime, FixedOffset};
 
@@ -126,10 +125,9 @@ services:
                       .map_err(|err| anyhow::anyhow!("time parse error: {}", err))?;
                   Ok(time.timestamp_millis())
               }
-          
+
             parse_utc(&event.tst).map_err(|e| e.to_string())
           }
-
 
       partition:
         assign-key:
@@ -138,27 +136,25 @@ services:
               Ok(event.vehicle.to_string())
             }
 
-        transforms:
-          - operator: update-state
-            run: |
-              fn update_speed(event: Vp) -> Result<(), String> {
-                let mut veh = vehicle_stat();
-                veh.events += 1;
-                veh.route = event.route.clone();
-                veh.speed = (veh.speed + event.speed) / 2.0f64;
-                veh.update();
-                Ok(())
-              }
-
+        update-state:
+          run: |
+            fn update_speed(event: Vp) -> Result<(), String> {
+              let mut veh = vehicle_stat();
+              veh.events += 1;
+              veh.route = event.route.clone();
+              veh.speed = (veh.speed + event.speed) / 2.0f64;
+              veh.update()?;
+              Ok(())
+            }
 
       flush:
-        operator: aggregate
         run: |
           fn compute_top_vehicle() -> Result<TopVehicle, String> {
+            use polars::chunked_array::ops::SortMultipleOptions;
             let mut stat = vehicle_stat();
 
             let head = stat
-              .sort(["speed"], true, false)
+              .sort(["speed"], SortMultipleOptions::default().with_order_descendings([true,false]))
               .map_err(|e| e.to_string())?
               .head(Some(5));
             let shape = head.shape();
@@ -185,7 +181,7 @@ services:
             }
             
             Ok(top_vehicles)
-          
+
           }
     sinks:
       - type: topic
