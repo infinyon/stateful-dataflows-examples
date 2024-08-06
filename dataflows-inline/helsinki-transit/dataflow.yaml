@@ -153,7 +153,7 @@ services:
             let speed_value = top5.col("speed")?;
             while rows.next() {
               let vehicle = rows.str(&key)?;
-              let speed = rows.u32(&speed_value)?;
+              let speed = rows.f64(&speed_value)?;
               top_vehicles.push(VpStat {vehicle, speed});
             }            
             Ok(top_vehicles)

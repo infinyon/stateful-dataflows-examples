@@ -221,7 +221,6 @@ services:
                 };
                 Ok(e)
               }
-              _ => Err(anyhow::anyhow!("Unexpected admin event"))
             }
           }
 
@@ -270,7 +269,6 @@ services:
           - operator: filter-map
             run: |
               fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>> {
-                use polars::prelude::{col,lit,IntoLazy};
 
                 let withdrawal = match ev.operation {
                   DataOperation::CreditAccount(_) => return Ok(None),
@@ -278,15 +276,16 @@ services:
                 };
 
                 let accounts = account_balance();
-                let Ok(account) = accounts
-                    .clone()
-                    .lazy()
-                    .filter(col("name").eq(lit(ev.name.clone())))
-                    .collect() else {
-                  return Ok(None)
-                };
 
-                let account_balance = account.column("balance")?.f32()?.get(0).ok_or("Failed to get balance")?;
+                let account = accounts.sql(&format!("select * from `account-balance` where name = '{}'", ev.name))?;
+
+                let rows = accounts.rows()?;
+
+                if !rows.next() {
+                  return Ok(None)
+                }
+                let balance_col = account.col("balance")?;
+                let account_balance = rows.f32(&balance_col)?;
                 let new_balance = account_balance - withdrawal.amount;
 
                 if new_balance < 0.0 {
@@ -408,7 +407,6 @@ services:
           - operator: filter-map
             run: |
               fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>> {
-                use polars::prelude::{col,lit,IntoLazy};
 
                 let withdrawal = match ev.operation {
                   DataOperation::CreditAccount(_) => return Ok(None),
@@ -416,16 +414,16 @@ services:
                 };
 
                 let accounts = account_balance();
-                let Ok(account) = accounts
-                    .clone()
-                    .lazy()
-                    .filter(col("name").eq(lit(ev.name.clone())))
-                    .collect() else {
-                  return Ok(None)
-                };
 
-                let account_balance = account.column("balance").map_err(|err | err.to_string())?.f32()
-                  .map_err(|err | err.to_string())?.get(0).ok_or("Failed to get balance")?;
+                let account = accounts.sql(&format!("select * from `account-balance` where name = '{}'", ev.name))?;
+
+                let rows = account.rows()?;
+
+                if !rows.next() {
+                  return Ok(None)
+                }
+                let balance_col = account.col("balance")?;
+                let account_balance = rows.f32(&balance_col)?;
                 let new_balance = account_balance - withdrawal.amount;
 
                 if new_balance < 0.0 {
@@ -487,7 +485,6 @@ services:
                 account_balance.balance -=  ac.amount;
                 account_balance.update()?;
               }
-              _ => ()
             }
             Ok(())
           }
