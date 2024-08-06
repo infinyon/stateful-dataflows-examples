@@ -1,6 +1,6 @@
 # Perform word count on sentences in non windowed transformation
 
-apiVersion: 0.4.0
+apiVersion: 0.5.0
 meta:
   name: helsinki-stat
   version: 0.1.0
@@ -113,8 +113,6 @@ services:
         dependencies:
           - name: chrono
             version: "0.4.23"
-          - name: anyhow
-            version: "1.0.38"
         run: |
           fn assign_timestamp(event: Vp, _event_time: i64) -> Result<i64, String> {
 
