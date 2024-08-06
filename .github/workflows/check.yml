@@ -33,6 +33,7 @@ jobs:
             "primitives/key-value/chained",
             "dataflows-inline/bank-processing",
             "dataflows-inline/car-processing",
+            "dataflows-inline/helsinki-transit",
             "dataflows-inline/http-callout",
             "dataflows-inline/openai-callout",
             "dataflows-inline/split-sentence",
