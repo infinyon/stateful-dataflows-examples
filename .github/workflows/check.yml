@@ -33,6 +33,7 @@ jobs:
             "primitives/key-value/chained",
             "dataflows-inline/bank-processing",
             "dataflows-inline/car-processing",
+            "dataflows-inline/helsinki-transit",
             "dataflows-inline/http-callout",
             "dataflows-inline/openai-callout",
             "dataflows-inline/split-sentence",
@@ -51,6 +52,8 @@ jobs:
             repository: infinyon/stateful-dataflows-examples
             ref: ${{ inputs.branch}}
 
+        - uses: dtolnay/rust-toolchain@stable
+
         - name: Install stable CLI and start Fluvio cluster
           timeout-minutes: 10
           run: |
@@ -64,6 +67,7 @@ jobs:
 
         - name: install wasm wasi target
           run: |
+            rustup target add wasm32-wasip1
             rustup target add wasm32-wasi
 
         - name: Install SDF version
