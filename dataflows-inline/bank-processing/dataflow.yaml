@@ -206,7 +206,7 @@ services:
     transforms:
       - operator: map
         run: |
-          fn admin_create_credit_events(event: AdminEvent) -> Result<DataEvent, String> {
+          fn admin_create_credit_events(event: AdminEvent) -> Result<DataEvent> {
             match event.operation {
               AdminOperation::AddAccount(ev) => {
                 let e = DataEvent {
@@ -242,7 +242,7 @@ services:
     transforms:
       - operator: filter-map
         run: |
-          fn create_debit_events(event: BusinessEvent) -> Result<Option<DataEvent>, String> {
+          fn create_debit_events(event: BusinessEvent) -> Result<Option<DataEvent>> {
             match event.operation {
               BusinessOperation::Withdrawal(ev) => {
                 let e = DataEvent {
@@ -269,7 +269,7 @@ services:
         transforms:
           - operator: filter-map
             run: |
-              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
+              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>> {
                 use polars::prelude::{col,lit,IntoLazy};
 
                 let withdrawal = match ev.operation {
@@ -317,7 +317,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn filter_credit_events(event: BusinessEvent) -> Result<bool, String> {
+          fn filter_credit_events(event: BusinessEvent) -> Result<bool> {
             match event.operation {
               BusinessOperation::Deposit(_) => Ok(true),
               _ => Ok(false)
@@ -326,7 +326,7 @@ services:
 
       - operator: map
         run: |
-          fn create_credit_events(event: BusinessEvent) -> Result<DataEvent, String> {
+          fn create_credit_events(event: BusinessEvent) -> Result<DataEvent> {
             match event.operation {
               BusinessOperation::Deposit(ev) => {
                 let e = DataEvent {
@@ -362,7 +362,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn filter_transfer_events(event: BusinessEvent) -> Result<bool, String> {
+          fn filter_transfer_events(event: BusinessEvent) -> Result<bool> {
             match event.operation {
               BusinessOperation::Transfer(_) => Ok(true),
               _ => Ok(false)
@@ -371,7 +371,7 @@ services:
 
       - operator: flat-map
         run: |
-          fn create_credit_debit_events(event: BusinessEvent) -> Result<Vec<DataEvent>, String> {
+          fn create_credit_debit_events(event: BusinessEvent) -> Result<Vec<DataEvent>> {
             match event.operation {
               BusinessOperation::Transfer(ev) => {
                 let debit = DataEvent {
@@ -408,7 +408,7 @@ services:
         transforms:
           - operator: filter-map
             run: |
-              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
+              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>> {
                 use polars::prelude::{col,lit,IntoLazy};
 
                 let withdrawal = match ev.operation {
@@ -469,24 +469,24 @@ services:
     partition:
       assign-key:
         run: |
-          fn key_by_iban(event: DataEvent) -> Result<String, String> {
+          fn key_by_iban(event: DataEvent) -> Result<String> {
             Ok(event.iban)
           }
 
       update-state:
         run: |
-          fn update_account_balance(event: DataEvent) -> Result<(), String> {
+          fn update_account_balance(event: DataEvent) -> Result<()> {
             match event.operation {
               DataOperation::CreditAccount(ac) => {
                 let mut account_balance = account_balance();
                 account_balance.name = event.name;
                 account_balance.balance += ac.amount;
-                account_balance.update();
+                account_balance.update()?;
               }
               DataOperation::DebitAccount(ac) => {
                 let mut account_balance = account_balance();
                 account_balance.balance -=  ac.amount;
-                account_balance.update();
+                account_balance.update()?;
               }
               _ => ()
             }
@@ -502,7 +502,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn get_debit_events(event: DataEvent) -> Result<bool, String> {
+          fn get_debit_events(event: DataEvent) -> Result<bool> {
             match event.operation {
               DataOperation::DebitAccount(_) => Ok(true),
               _ => Ok(false)
