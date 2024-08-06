@@ -1,0 +1,26 @@
+apiVersion: 0.1.0
+meta:
+  version: 0.2.6
+  name: helsinki-mqtt
+  type: mqtt-source
+  topic: helsinki
+mqtt:
+  url: "mqtt://mqtt.hsl.fi"
+  topic: "/hfp/v2/journey/ongoing/vp/bus/#"
+  payload_output_type: json
+
+  
+transforms:
+  - uses: infinyon/jolt@0.4.1
+    with:
+      spec:
+        - operation: shift
+          spec:
+            payload:
+              VP:
+                lat: "lat"
+                long: "long"
+                veh: "vehicle"
+                route: "route"
+                spd: "speed"
+                tst: "tst"
