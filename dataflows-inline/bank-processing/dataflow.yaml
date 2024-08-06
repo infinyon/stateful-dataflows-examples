@@ -221,7 +221,7 @@ services:
                 };
                 Ok(e)
               }
-              _ => Err("Unexpected admin event".to_string())
+              _ => Err(anyhow::anyhow!("Unexpected admin event"))
             }
           }
 
@@ -286,8 +286,7 @@ services:
                   return Ok(None)
                 };
 
-                let account_balance = account.column("balance").map_err(|err | err.to_string())?.f32()
-                  .map_err(|err | err.to_string())?.get(0).ok_or("Failed to get balance")?;
+                let account_balance = account.column("balance")?.f32()?.get(0).ok_or("Failed to get balance")?;
                 let new_balance = account_balance - withdrawal.amount;
 
                 if new_balance < 0.0 {
@@ -341,7 +340,7 @@ services:
                 };
                 Ok(e)
               }
-              _ => Err("Unexpected credit event".to_string())
+              _ => Err(anyhow::anyhow!("Unexpected credit event"))
             }
           }
 
@@ -396,7 +395,7 @@ services:
                 };
                 Ok(vec![debit, credit])
               }
-              _ => Err("Unexpected operation".to_string())
+              _ => Err(anyhow::anyhow!("Unexpected operation"))
             }
           }
 
@@ -522,7 +521,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn get_credit_events(event: DataEvent) -> Result<bool, String> {
+          fn get_credit_events(event: DataEvent) -> Result<bool> {
             match event.operation {
               DataOperation::CreditAccount(_) => Ok(true),
               _ => Ok(false)
