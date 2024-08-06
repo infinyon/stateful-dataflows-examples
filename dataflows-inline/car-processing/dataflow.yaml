@@ -315,44 +315,26 @@ services:
       - operator: filter-map
         run: |
           fn check_license_plate(car: Car) -> Result<Option<StolenPlate>> {
-            use polars::prelude::*;
+                let plates = licence_plates();
+                let count = plates.sql(&format!("select * from `licence_plates` where _key = '{}'", car.license))?;
+                let rows = count.rows()?;
+                let columns = count.schema(["_key","maker", "model"])?;
+                match &columns[..] {
+                  [k,maker,model] => {
+                    if rows.next() {
+                      let mkr = rows.str(&maker)?;
+                      let mdl = rows.str(&model)?;
 
-            let plates = licence_plates();
-            let plate = plates
-              .clone().lazy().filter(col("_key").eq(lit(car.license.clone())))
-              .collect().map_err(|e| e.to_string())?;
-
-            if !plate.is_empty() {
-              let maker_str = plate
-                .column("maker").map_err(|e| e.to_string())?
-                .str().map_err(|e| e.to_string())?;
-
-              let maker = if maker_str.is_empty() {
-                  Default::default()
-                  } else {
-                   maker_str.get(0).unwrap_or_default()
-                  };
-                
-              let model_str = plate
-                .column("model").map_err(|e| e.to_string())?
-                .str().map_err(|e| e.to_string())?;
-              let model = if model_str.is_empty() {
-                  Default::default()
-              } else {
-                model_str.get(0).unwrap_or_default()
-              };
-
-              if (!maker.is_empty() && maker != car.maker.as_str()) ||
-                 (!model.is_empty() && model != car.model.as_str()) {
-                return Ok(Some(StolenPlate {
-                  license: car.license.clone(),
-                  owner: format!("{} {}", &car.maker, &car.model),
-                  violator: format!("{} {}", maker, model)
-                }));
+                  return Ok(Some(StolenPlate {
+                    license: car.license.clone(),
+                    owner: format!("{} {}", &car.maker, &car.model),
+                    violator: format!("{} {}", mkr, mdl)
+                  }));} else {
+                      return Ok(None);
+                    }
+                },
+                  _ => panic!("unexpected schema"),
               }
-            }
-
-            Ok(None)
           }
 
     sinks:
