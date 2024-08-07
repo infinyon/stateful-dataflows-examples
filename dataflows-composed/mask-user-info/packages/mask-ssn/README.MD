@@ -24,14 +24,16 @@ The generator creates all necessary glue logic for a reusable package.
 Let's update the content of `rust/mask-ssn/src/lib.rs` file with following code:
 
 ```rust
-use sdf_macros::sdf;
-use regex::Regex;
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
-static SSN_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d{3}-\d{2}-\d{4}").unwrap());
+use anyhow::Result;
+use regex::Regex;
+use sdf_macros::sdf;
+
+static SSN_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\d{3}-\d{2}-\d{4}").unwrap());
 
 #[sdf(map, package = "mask-ssn", namespace = "example")]
-pub(crate) fn mask_ssn(text: String) -> Result<String, String> {
+pub(crate) fn mask_ssn(text: String) -> Result<String> {
     let output = SSN_RE.replace_all(text.as_str(), "***-**-****").to_string();
     Ok(output)
 }
@@ -47,14 +49,12 @@ mod test {
         assert_eq!(output.unwrap(), "***-**-****");
     }
 }
-```
 
-Next, add `once_cell` and `regex` to the dependencies in `Cargo.toml`:
+Next, add `regex` to the dependencies in `Cargo.toml`:
 
 ```toml
 [dependencies]
 ...
-once_cell = "1"
 regex = "1"
 ```
 
