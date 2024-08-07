@@ -14,14 +14,14 @@ types:
     properties:
       name:
         type: string
-      age: 
+      age:
         type: i32
 
 topics:
   user:
     schema:
       value:
-        type: person  
+        type: person
   child:
     schema:
       value:
@@ -37,11 +37,11 @@ services:
         id: user
     sinks:
       - type: topic
-        id: child  
+        id: child
         transforms:
           - operator: filter
             run: |
-              fn is_child(person: Person) -> Result<bool, String> {
+              fn is_child(person: Person) -> Result<bool> {
                   Ok(person.age < 18)
               }
       - type: topic
@@ -49,6 +49,6 @@ services:
         transforms:
           - operator: filter
             run: |
-              fn is_adult(person: Person) -> Result<bool, String> {
+              fn is_adult(person: Person) -> Result<bool> {
                   Ok(person.age >= 18)
               }

@@ -10,7 +10,7 @@ This is an example of sending records with a `key` and a `value` for a fluvio to
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
@@ -18,7 +18,7 @@ sdf run
 We've created a sample data file to load records into a fluvio topic. Let's view the file:
 
 ```bash
-cat ./sample-data/users.txt 
+cat ./sample-data/users.txt
 ```
 
 ```bash
@@ -66,8 +66,8 @@ show state user-to-kv/make-kv-user/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       3          0      
+Key    Window  succeeded  failed
+stats  *       3          0
 ```
 
 ### Clean-up

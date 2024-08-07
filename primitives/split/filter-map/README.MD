@@ -12,7 +12,7 @@ The example splits car events into trucks and sedans based on their category whi
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow

@@ -1,6 +1,6 @@
 # Chained Key/Value Example
 
-This example demonstrates the engine behavior for passing keys between chained operators. 
+This example demonstrates the engine behavior for passing keys between chained operators.
 
 For a source topic with a key, the engine has the following behavior:
 
@@ -19,7 +19,7 @@ In this example, we've defined a couple of functions. The first function `update
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
@@ -27,13 +27,13 @@ sdf run
 We've created a sample data file to load records into a fluvio topic. Let's view the file:
 
 ```bash
-cat ./sample-data/users.txt 
+cat ./sample-data/users.txt
 ```
 
 ```bash
 1001>{"name":"Alice", "age":10}
 1002>{"name":"Bob", "age":17}
-2003>{"name":"Charlie", "age":24}    
+2003>{"name":"Charlie", "age":24}
 ```
 
 Produce the data to the `user` topic:

@@ -32,18 +32,18 @@ types:
       id:
         type: string
         optional: true
-  
+
 topics:
   user-input:
     schema:
-      key: 
+      key:
         type: string
       value:
         type: user-in
   user-output:
     schema:
-      key: 
-        type: string    
+      key:
+        type: string
       value:
         type: user-out
 
@@ -56,7 +56,7 @@ services:
     transforms:
       - operator: map
         run: |
-          fn update_location(user_key: Option<String>, user: UserIn) -> Result<UserOut, String> {
+          fn update_location(user_key: Option<String>, user: UserIn) -> Result<UserOut> {
             let location = if let Some(key) = user_key {
               let digit = key.chars().nth(0).unwrap();
               match digit {
@@ -80,7 +80,7 @@ services:
 
       - operator: map
         run: |
-          fn add_new_key(user_key: Option<String>, user: UserOut) -> Result<(Option<String>, UserOut), String> {
+          fn add_new_key(user_key: Option<String>, user: UserOut) -> Result<(Option<String>, UserOut)> {
             let mut new_user = user.clone();
             new_user.id = user_key;
 
@@ -92,7 +92,7 @@ services:
 
             Ok((Some(new_key), new_user))
           }
-          
+
     sinks:
       - type: topic
         id: user-output

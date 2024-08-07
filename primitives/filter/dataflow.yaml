@@ -27,7 +27,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn filter_questions(input: String) -> Result<bool, String> {
+          fn filter_questions(input: String) -> Result<bool> {
             Ok(input.contains("?"))
           }
 

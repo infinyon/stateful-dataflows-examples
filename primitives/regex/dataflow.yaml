@@ -17,7 +17,6 @@ topics:
       value:
         type: string
 
-
 services:
   regex:
     sources:
@@ -31,7 +30,7 @@ services:
             version: "1.10.0"
 
         run: |
-          fn filter_ssn(input: String) -> Result<bool, String> {
+          fn filter_ssn(input: String) -> Result<bool> {
             use std::sync::OnceLock;
             use regex::Regex;
 

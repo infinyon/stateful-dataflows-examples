@@ -27,7 +27,7 @@ services:
     transforms:
       - operator: filter-map
         run: |
-          fn long_sentence_to_uppercase(input: String) -> Result<Option<String>, String> {
+          fn long_sentence_to_uppercase(input: String) -> Result<Option<String>> {
             if input.len() > 10 {
               Ok(Some(input.to_uppercase()))
             } else {

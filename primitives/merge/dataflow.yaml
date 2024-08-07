@@ -46,7 +46,7 @@ services:
         transforms:
           - operator: map
             run: |
-              fn truck_license(truck: Truck) -> Result<String, String> {
+              fn truck_license(truck: Truck) -> Result<String> {
                 Ok(truck.license)
               }
       - type: topic
@@ -54,7 +54,7 @@ services:
         transforms:
           - operator: map
             run: |
-              fn sedan_license(sedan: Sedan) -> Result<String, String> {
+              fn sedan_license(sedan: Sedan) -> Result<String> {
                 Ok(sedan.license)
               }
 

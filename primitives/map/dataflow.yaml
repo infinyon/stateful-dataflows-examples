@@ -36,7 +36,7 @@ services:
     transforms:
       - operator: map
         run: |
-          fn mask_ssn(user: User) -> Result<User, String> {
+          fn mask_ssn(user: User) -> Result<User> {
             let mut u = user.clone();
             u.ssn = u.ssn.replace(|c: char| c.is_digit(10), "*");
             Ok(u)
