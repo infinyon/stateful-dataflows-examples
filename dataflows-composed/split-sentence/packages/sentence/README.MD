@@ -29,7 +29,7 @@ Update the code for the APIs defined.
 Replace the `sentence_to_words` function body in the `rust/sentence-to-words/src/lib.rs` with the following code:
 
 ```rust
-pub(crate) fn sentence_to_words(sentence: String) -> Result<Vec<String>, String> {
+pub(crate) fn sentence_to_words(sentence: String) -> Result<Vec<String>> {
     Ok(sentence.split_whitespace().map(String::from).collect())
 }
 
@@ -38,7 +38,7 @@ pub(crate) fn sentence_to_words(sentence: String) -> Result<Vec<String>, String>
 In `rust/augment-count/src/lib.rs` replace the function body:
 
 ```rust
-pub(crate) fn augment_count(word: String) -> Result<String, String> {
+pub(crate) fn augment_count(word: String) -> Result<String> {
     Ok(format!("{}({})", word, word.chars().count()))
 }
 ```
