@@ -10,7 +10,7 @@ Example of how to use the `filter` operator. In this example, the filter operati
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow

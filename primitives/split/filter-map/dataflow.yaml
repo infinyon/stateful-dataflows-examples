@@ -58,7 +58,7 @@ services:
         transforms:
           - operator: filter-map
             run: |
-              fn to_truck(car: Car) -> Result<Option<Truck>, String> {
+              fn to_truck(car: Car) -> Result<Option<Truck>> {
                 match car.category.as_str() {
                   "truck" => Ok(Some(
                       Truck {truck: car.car, license: car.license
@@ -71,7 +71,7 @@ services:
         transforms:
           - operator: filter-map
             run: |
-              fn to_sedan(car: Car) -> Result<Option<Sedan>, String> {
+              fn to_sedan(car: Car) -> Result<Option<Sedan>> {
                 match car.category.as_str() {
                   "sedan" => Ok(Some(
                       Sedan {sedan: car.car, license: car.license

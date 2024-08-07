@@ -30,7 +30,7 @@ types:
         type: string
       age:
         type: u32
-  
+
 topics:
   user:
     schema:
@@ -38,7 +38,7 @@ topics:
         type: user
   user-kv:
     schema:
-      key: 
+      key:
         type: string
       value:
         type: user-value
@@ -52,7 +52,7 @@ services:
     transforms:
       - operator: map
         run: |
-          fn make_kv_user(user: User) -> Result<(Option<String>, UserValue), String> {
+          fn make_kv_user(user: User) -> Result<(Option<String>, UserValue)> {
             let user_key = user.id.clone();
             let user_value = UserValue {
               name: user.name,

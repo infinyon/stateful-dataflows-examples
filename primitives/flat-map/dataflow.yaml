@@ -27,7 +27,7 @@ services:
     transforms:
       - operator: flat-map
         run: |
-          fn split_sentence(sentence: String) -> Result<Vec<String>, String> {
+          fn split_sentence(sentence: String) -> Result<Vec<String>> {
             Ok(sentence.split_whitespace().map(String::from).collect())
           }
 

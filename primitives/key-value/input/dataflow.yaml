@@ -31,11 +31,11 @@ types:
         type: string
       age:
         type: u32
-  
+
 topics:
   user-kv:
     schema:
-      key: 
+      key:
         type: string
       value:
         type: user-value
@@ -53,7 +53,7 @@ services:
     transforms:
       - operator: map
         run: |
-          fn make_user(user_key: Option<String>, user_value: UserValue) -> Result<User, String> {
+          fn make_user(user_key: Option<String>, user_value: UserValue) -> Result<User> {
             let user = User {
               id: user_key.unwrap_or("".to_string()),
               name: user_value.name,

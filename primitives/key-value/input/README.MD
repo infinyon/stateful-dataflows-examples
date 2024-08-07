@@ -10,7 +10,7 @@ This is an example of sourcing records with `key` and `value` from a fluvio topi
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
@@ -18,7 +18,7 @@ sdf run
 We've created a sample data file to load key-value records into a fluvio topic. Let's view the file:
 
 ```bash
-cat ./sample-data/users.txt 
+cat ./sample-data/users.txt
 ```
 
 ```bash
@@ -67,8 +67,8 @@ show state kv-to-user/user-kv/metrics --table
 ```
 
 ```bash
-Key    Window  succeeded  failed 
-stats  *       3          0      
+Key    Window  succeeded  failed
+stats  *       3          0
 ```
 
 ### Clean-up

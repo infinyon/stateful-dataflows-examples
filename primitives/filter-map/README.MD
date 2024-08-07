@@ -10,7 +10,7 @@ Example of how to use the `filter-map` operator. In this example, the filter-map
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
