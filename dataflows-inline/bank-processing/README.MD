@@ -34,7 +34,7 @@ It also shows the ability to split traffic, by sending records to different topi
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --ui --ephemeral
 ```
 
 Use `--ui` to open the Studio.
