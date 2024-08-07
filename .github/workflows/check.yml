@@ -40,7 +40,7 @@ jobs:
             "dataflows-inline/word-counter",
             "dataflows-inline/word-probe",
             "dataflows-composed/mask-user-info",
-            "dataflows-composed/split-sentence"
+            "dataflows-composed/split-sentence",
           ]
           sdf-version: [
             "${{ inputs.sdf_version }}"
