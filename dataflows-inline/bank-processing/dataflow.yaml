@@ -1,4 +1,4 @@
-apiVersion: 0.4.0
+apiVersion: 0.5.0
 meta:
   name: banking-app
   version: 0.1.0
@@ -206,7 +206,7 @@ services:
     transforms:
       - operator: map
         run: |
-          fn admin_create_credit_events(event: AdminEvent) -> Result<DataEvent, String> {
+          fn admin_create_credit_events(event: AdminEvent) -> Result<DataEvent> {
             match event.operation {
               AdminOperation::AddAccount(ev) => {
                 let e = DataEvent {
@@ -221,7 +221,6 @@ services:
                 };
                 Ok(e)
               }
-              _ => Err("Unexpected admin event".to_string())
             }
           }
 
@@ -242,7 +241,7 @@ services:
     transforms:
       - operator: filter-map
         run: |
-          fn create_debit_events(event: BusinessEvent) -> Result<Option<DataEvent>, String> {
+          fn create_debit_events(event: BusinessEvent) -> Result<Option<DataEvent>> {
             match event.operation {
               BusinessOperation::Withdrawal(ev) => {
                 let e = DataEvent {
@@ -269,8 +268,7 @@ services:
         transforms:
           - operator: filter-map
             run: |
-              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
-                use polars::prelude::{col,lit,IntoLazy};
+              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>> {
 
                 let withdrawal = match ev.operation {
                   DataOperation::CreditAccount(_) => return Ok(None),
@@ -278,16 +276,16 @@ services:
                 };
 
                 let accounts = account_balance();
-                let Ok(account) = accounts
-                    .clone()
-                    .lazy()
-                    .filter(col("name").eq(lit(ev.name.clone())))
-                    .collect() else {
-                  return Ok(None)
-                };
 
-                let account_balance = account.column("balance").map_err(|err | err.to_string())?.f32()
-                  .map_err(|err | err.to_string())?.get(0).ok_or("Failed to get balance")?;
+                let account = accounts.sql(&format!("select * from `account-balance` where name = '{}'", ev.name))?;
+
+                let rows = accounts.rows()?;
+
+                if !rows.next() {
+                  return Ok(None)
+                }
+                let balance_col = account.col("balance")?;
+                let account_balance = rows.f32(&balance_col)?;
                 let new_balance = account_balance - withdrawal.amount;
 
                 if new_balance < 0.0 {
@@ -317,7 +315,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn filter_credit_events(event: BusinessEvent) -> Result<bool, String> {
+          fn filter_credit_events(event: BusinessEvent) -> Result<bool> {
             match event.operation {
               BusinessOperation::Deposit(_) => Ok(true),
               _ => Ok(false)
@@ -326,7 +324,7 @@ services:
 
       - operator: map
         run: |
-          fn create_credit_events(event: BusinessEvent) -> Result<DataEvent, String> {
+          fn create_credit_events(event: BusinessEvent) -> Result<DataEvent> {
             match event.operation {
               BusinessOperation::Deposit(ev) => {
                 let e = DataEvent {
@@ -341,7 +339,7 @@ services:
                 };
                 Ok(e)
               }
-              _ => Err("Unexpected credit event".to_string())
+              _ => Err(anyhow::anyhow!("Unexpected credit event"))
             }
           }
 
@@ -362,7 +360,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn filter_transfer_events(event: BusinessEvent) -> Result<bool, String> {
+          fn filter_transfer_events(event: BusinessEvent) -> Result<bool> {
             match event.operation {
               BusinessOperation::Transfer(_) => Ok(true),
               _ => Ok(false)
@@ -371,7 +369,7 @@ services:
 
       - operator: flat-map
         run: |
-          fn create_credit_debit_events(event: BusinessEvent) -> Result<Vec<DataEvent>, String> {
+          fn create_credit_debit_events(event: BusinessEvent) -> Result<Vec<DataEvent>> {
             match event.operation {
               BusinessOperation::Transfer(ev) => {
                 let debit = DataEvent {
@@ -396,7 +394,7 @@ services:
                 };
                 Ok(vec![debit, credit])
               }
-              _ => Err("Unexpected operation".to_string())
+              _ => Err(anyhow::anyhow!("Unexpected operation"))
             }
           }
 
@@ -408,8 +406,7 @@ services:
         transforms:
           - operator: filter-map
             run: |
-              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>, String> {
-                use polars::prelude::{col,lit,IntoLazy};
+              fn generate_overdraft_event(ev: DataEvent) -> Result<Option<OverdraftEvent>> {
 
                 let withdrawal = match ev.operation {
                   DataOperation::CreditAccount(_) => return Ok(None),
@@ -417,16 +414,16 @@ services:
                 };
 
                 let accounts = account_balance();
-                let Ok(account) = accounts
-                    .clone()
-                    .lazy()
-                    .filter(col("name").eq(lit(ev.name.clone())))
-                    .collect() else {
-                  return Ok(None)
-                };
 
-                let account_balance = account.column("balance").map_err(|err | err.to_string())?.f32()
-                  .map_err(|err | err.to_string())?.get(0).ok_or("Failed to get balance")?;
+                let account = accounts.sql(&format!("select * from `account-balance` where name = '{}'", ev.name))?;
+
+                let rows = account.rows()?;
+
+                if !rows.next() {
+                  return Ok(None)
+                }
+                let balance_col = account.col("balance")?;
+                let account_balance = rows.f32(&balance_col)?;
                 let new_balance = account_balance - withdrawal.amount;
 
                 if new_balance < 0.0 {
@@ -469,26 +466,25 @@ services:
     partition:
       assign-key:
         run: |
-          fn key_by_iban(event: DataEvent) -> Result<String, String> {
+          fn key_by_iban(event: DataEvent) -> Result<String> {
             Ok(event.iban)
           }
 
       update-state:
         run: |
-          fn update_account_balance(event: DataEvent) -> Result<(), String> {
+          fn update_account_balance(event: DataEvent) -> Result<()> {
             match event.operation {
               DataOperation::CreditAccount(ac) => {
                 let mut account_balance = account_balance();
                 account_balance.name = event.name;
                 account_balance.balance += ac.amount;
-                account_balance.update();
+                account_balance.update()?;
               }
               DataOperation::DebitAccount(ac) => {
                 let mut account_balance = account_balance();
                 account_balance.balance -=  ac.amount;
-                account_balance.update();
+                account_balance.update()?;
               }
-              _ => ()
             }
             Ok(())
           }
@@ -502,7 +498,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn get_debit_events(event: DataEvent) -> Result<bool, String> {
+          fn get_debit_events(event: DataEvent) -> Result<bool> {
             match event.operation {
               DataOperation::DebitAccount(_) => Ok(true),
               _ => Ok(false)
@@ -522,7 +518,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn get_credit_events(event: DataEvent) -> Result<bool, String> {
+          fn get_credit_events(event: DataEvent) -> Result<bool> {
             match event.operation {
               DataOperation::CreditAccount(_) => Ok(true),
               _ => Ok(false)

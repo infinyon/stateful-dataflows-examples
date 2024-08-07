@@ -1,6 +1,6 @@
 # Perform word count on sentences in non windowed transformation
 
-apiVersion: 0.4.0
+apiVersion: 0.5.0
 meta:
   name: helsinki-stat
   version: 0.1.0
@@ -93,7 +93,7 @@ services:
           - name: serde_json
             version: "1.0.60"
         run: |
-          fn parse_event(event: String) -> Result<Option<Vp>, String> {
+          fn parse_event(event: String) -> Result<Option<Vp>> {
 
               match serde_json::from_str(&event) {
                 Ok(vp) => Ok(Some(vp)),
@@ -113,32 +113,27 @@ services:
         dependencies:
           - name: chrono
             version: "0.4.23"
-          - name: anyhow
-            version: "1.0.38"
         run: |
-          fn assign_timestamp(event: Vp, _event_time: i64) -> Result<i64, String> {
-
-              use chrono::{DateTime, FixedOffset};
-
-              fn parse_utc(timestamp: &str) -> anyhow::Result<i64> {
-                  let time = DateTime::<FixedOffset>::parse_from_str(timestamp, "%+")
-                      .map_err(|err| anyhow::anyhow!("time parse error: {}", err))?;
-                  Ok(time.timestamp_millis())
-              }
-
-            parse_utc(&event.tst).map_err(|e| e.to_string())
+          fn assign_timestamp(event: Vp, _event_time: i64) -> Result<i64> {
+            use chrono::{DateTime, FixedOffset};
+            fn parse_utc(timestamp: &str) -> anyhow::Result<i64> {
+              let time = DateTime::<FixedOffset>::parse_from_str(timestamp, "%+")
+                .map_err(|err| anyhow::anyhow!("time parse error: {}", err))?;
+              Ok(time.timestamp_millis())
+            }
+            parse_utc(&event.tst)
           }
 
       partition:
         assign-key:
           run: |
-            fn assign_key(event: Vp) -> Result<String, String> {
+            fn assign_key(event: Vp) -> Result<String> {
               Ok(event.vehicle.to_string())
             }
 
         update-state:
           run: |
-            fn update_speed(event: Vp) -> Result<(), String> {
+            fn update_speed(event: Vp) -> Result<()> {
               let mut veh = vehicle_stat();
               veh.events += 1;
               veh.route = event.route.clone();
@@ -149,39 +144,19 @@ services:
 
       flush:
         run: |
-          fn compute_top_vehicle() -> Result<TopVehicle, String> {
-            use polars::chunked_array::ops::SortMultipleOptions;
+          fn compute_top_vehicle() -> Result<TopVehicle> {
             let mut stat = vehicle_stat();
-
-            let head = stat
-              .sort(["speed"], SortMultipleOptions::default().with_order_descendings([true,false]))
-              .map_err(|e| e.to_string())?
-              .head(Some(5));
-            let shape = head.shape();
-
-            
+            let top5 = stat.sql("select * from vehicle_stat order by speed desc limit 5")?;
+            let rows = top5.rows()?;
             let mut top_vehicles = vec![];
-            for i in 0..shape.0 {
-              let vehicle = head
-                .column("id").map_err(|e| e.to_string())?
-                .str().map_err(|e| e.to_string())?
-                .get(i).ok_or("failed to get id")?
-                .to_string();
-
-              let speed = head
-                .column("speed").map_err(|e| e.to_string())?
-                .f64().map_err(|e| e.to_string())?
-                .get(i).ok_or("failed to get speed")?;
-
-            
-              top_vehicles.push(VpStat {
-                vehicle,
-                speed
-              });
-            }
-            
+            let key = top5.key()?;
+            let speed_value = top5.col("speed")?;
+            while rows.next() {
+              let vehicle = rows.str(&key)?;
+              let speed = rows.f64(&speed_value)?;
+              top_vehicles.push(VpStat {vehicle, speed});
+            }            
             Ok(top_vehicles)
-
           }
     sinks:
       - type: topic

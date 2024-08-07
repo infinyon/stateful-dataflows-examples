@@ -1,4 +1,4 @@
-apiVersion: 0.4.0
+apiVersion: 0.5.0
 meta:
   name: car-processing
   version: 0.1.0
@@ -135,16 +135,15 @@ services:
           - name: serde_json
             version: "1"
         run: |
-          fn get_car_maker(car: Car) -> Result<Maker, String> {
+          fn get_car_maker(car: Car) -> Result<Maker> {
             let maker = car.maker.replace(" ", "%20");
             let url = format!("https://demo-data.infinyon.com/api/maker/{maker}");
-            let request = sdf_http::http::Request::builder().uri(url).body("")
-              .map_err(|e| e.to_string())?;
+            let request = sdf_http::http::Request::builder().uri(url).body("")?;
 
-            let response = sdf_http::blocking::send(request).map_err(|e| e.to_string())?;
+            let response = sdf_http::blocking::send(request)?;
             let body = response.into_body();
 
-            let m: Maker = serde_json::from_slice(&*body).map_err(|err| err.to_string())?;
+            let m: Maker = serde_json::from_slice(&*body)?;
             Ok(m)
           }
 
@@ -161,7 +160,7 @@ services:
     transforms:
       - operator: filter
         run: |
-          fn is_speeding(car: Car) -> Result<bool, String> {
+          fn is_speeding(car: Car) -> Result<bool> {
             Ok(car.mph > 45)
           }
 
@@ -178,7 +177,7 @@ services:
     transforms:
       - operator: map
         run: |
-          fn get_car_location(car: Car) -> Result<CarLocation, String> {
+          fn get_car_location(car: Car) -> Result<CarLocation> {
             Ok(CarLocation {
               car: format!("{} {}", car.maker, car.model),
               color: car.color,
@@ -192,7 +191,7 @@ services:
         transforms:
           - operator: filter
             run: |
-              fn is_saratoga(cl: CarLocation) -> Result<bool, String> {
+              fn is_saratoga(cl: CarLocation) -> Result<bool> {
                 Ok(cl.location == "Saratoga")
               }
       - type: topic
@@ -200,7 +199,7 @@ services:
         transforms:
           - operator: filter
             run: |
-              fn is_sunnyvale(cl: CarLocation) -> Result<bool, String> {
+              fn is_sunnyvale(cl: CarLocation) -> Result<bool> {
                 Ok(cl.location == "Sunnyvale")
               }
 
@@ -225,31 +224,31 @@ services:
 
       assign-timestamp:
         run: |
-          fn assign_event_timestamp(cl: CarLocation, event_time: i64) -> Result<i64, String> {
+          fn assign_event_timestamp(_cl: CarLocation, event_time: i64) -> Result<i64> {
             Ok(event_time)
           }
       partition:
         assign-key:
           run: |
-            fn key_by_color(cl: CarLocation) -> Result<String, String> {
+            fn key_by_color(cl: CarLocation) -> Result<String> {
               Ok(cl.color)
             }
 
         update-state:
           run: |
-            fn increment_color_count(cl: CarLocation) -> Result<(), String> {
+            fn increment_color_count(cl: CarLocation) -> Result<()> {
               count_by_color().increment(1);
               Ok(())
             }
 
       flush:
         run: |
-          fn get_car_color_count() -> Result<CarColors, String> {
-            let mut cc = count_by_color().clone();
-            Ok(cc.iter().map(|entry| 
+          fn get_car_color_count() -> Result<CarColors> {
+            let cc = count_by_color().clone();
+            Ok(cc.into_iter().map(|(color, count)| 
               Color { 
-                color: entry.key.clone(), 
-                count: entry.value 
+                color, 
+                count 
               }
             ).collect())
           }
@@ -281,24 +280,24 @@ services:
     transforms:
       - operator: flat-map
         run: |
-          fn split_licenses(licenses: Licenses) -> Result<Vec<License>, String> {
+          fn split_licenses(licenses: Licenses) -> Result<Vec<License>> {
             Ok(licenses)
           }
 
     partition:
       assign-key:
         run: |
-          fn get_license_plate(license: License) -> Result<String, String> {
+          fn get_license_plate(license: License) -> Result<String> {
             Ok(license.license)
           }
 
       update-state:
         run: |
-          fn add_license_plate(license: License) -> Result<(), String> {
+          fn add_license_plate(license: License) -> Result<()> {
             let mut lp = licence_plates();
             lp.maker = license.maker;
             lp.model = license.model;
-            lp.update();
+            lp.update()?;
             Ok(())
           }
 
@@ -315,45 +314,27 @@ services:
     transforms:
       - operator: filter-map
         run: |
-          fn check_license_plate(car: Car) -> Result<Option<StolenPlate>, String> {
-            use polars::prelude::*;
+          fn check_license_plate(car: Car) -> Result<Option<StolenPlate>> {
+                let plates = licence_plates();
+                let count = plates.sql(&format!("select * from `licence_plates` where _key = '{}'", car.license))?;
+                let rows = count.rows()?;
+                let columns = count.schema(["_key","maker", "model"])?;
+                match &columns[..] {
+                  [k,maker,model] => {
+                    if rows.next() {
+                      let mkr = rows.str(&maker)?;
+                      let mdl = rows.str(&model)?;
 
-            let plates = licence_plates();
-            let plate = plates
-              .clone().lazy().filter(col("_key").eq(lit(car.license.clone())))
-              .collect().map_err(|e| e.to_string())?;
-
-            if !plate.is_empty() {
-              let maker_str = plate
-                .column("maker").map_err(|e| e.to_string())?
-                .str().map_err(|e| e.to_string())?;
-
-              let maker = if maker_str.is_empty() {
-                  Default::default()
-                  } else {
-                   maker_str.get(0).unwrap_or_default()
-                  };
-                
-              let model_str = plate
-                .column("model").map_err(|e| e.to_string())?
-                .str().map_err(|e| e.to_string())?;
-              let model = if model_str.is_empty() {
-                  Default::default()
-              } else {
-                model_str.get(0).unwrap_or_default()
-              };
-
-              if (!maker.is_empty() && maker != car.maker.as_str()) ||
-                 (!model.is_empty() && model != car.model.as_str()) {
-                return Ok(Some(StolenPlate {
-                  license: car.license.clone(),
-                  owner: format!("{} {}", &car.maker, &car.model),
-                  violator: format!("{} {}", maker, model)
-                }));
+                  return Ok(Some(StolenPlate {
+                    license: car.license.clone(),
+                    owner: format!("{} {}", &car.maker, &car.model),
+                    violator: format!("{} {}", mkr, mdl)
+                  }));} else {
+                      return Ok(None);
+                    }
+                },
+                  _ => panic!("unexpected schema"),
               }
-            }
-
-            Ok(None)
           }
 
     sinks:

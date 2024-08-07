@@ -1,4 +1,4 @@
-apiVersion: 0.4.0
+apiVersion: 0.5.0
 meta:
   name: word-counter
   version: 0.1.0
@@ -66,13 +66,16 @@ services:
           key:
             type: string
           value:
-            type: u32
+            type: arrow-row
+            properties:
+              count:
+                type: u32
 
     transforms:
       # Split the sentence into words
       - operator: flat-map
         run: |
-          fn split_sequence(sentence: String) -> Result<Vec<String>, String> {
+          fn split_sequence(sentence: String) -> Result<Vec<String>> {
             Ok(sentence.split_whitespace().map(|word| word.chars().filter(|c| c.is_alphanumeric()).collect::<String>()).filter(|word| !word.is_empty()).collect())
           }
     window:
@@ -82,7 +85,7 @@ services:
       assign-timestamp:
         # Instruct the engine to apply the timestamp from the event metadata for the watermark operator
         run: |
-          fn assign_event_timestamp(value: String, event_time: i64) -> Result<i64, String> {
+          fn assign_event_timestamp(_value: String, event_time: i64) -> Result<i64> {
             Ok(event_time)
           }
 
@@ -90,27 +93,45 @@ services:
         # Assign a partition key to divide the data set for the update operation
         assign-key:
           run: |
-            fn assign_word_key(word: String) -> Result<String, String> {
+            fn assign_word_key(word: String) -> Result<String> {
               Ok(word.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect())
             }
 
         update-state:
           # Retrieve state by key and increment by 1.
           run: |
-            fn increment_word_count(word: String) -> Result<(), String> {
-              count_per_word().increment(1);
+            fn increment_word_count(_word: String) -> Result<()> {
+              let mut state = count_per_word();
+              state.count += 1;
+              state.update();
               Ok(())
-              }
+            }
 
       flush:
         # Read the full state and compute the top 3 words sorted by count.
         run: |
-          fn compute_most_used_words() -> Result<TopWords, String> {
-            let mut top3 = count_per_word().clone();
-            top3.sort_by(|a, b| a.value.cmp(&b.value));
-            top3.reverse();
-            top3.truncate(3);
-            Ok(top3.iter().map( | entry | WordCount { word: entry.key.clone(), count: entry.value }).collect())
+          fn compute_most_used_words() -> Result<TopWords> {
+            let word_counts = count_per_word();
+
+            let top3 = word_counts.sql("select * from count_per_word order by count desc limit 3")?;
+            let rows = top3.rows()?;
+            let columns = top3.schema(["_key","count"])?;
+
+            let mut top_words = vec![];
+            match &columns[..] {
+              [key,value] => {
+                  while rows.next() {
+                    let word = rows.str(&key)?;
+                    let count = rows.u32(&value)?;
+                    let word_count = WordCount { word, count };
+                    top_words.push(word_count);
+                  }
+                  
+              },
+                _ => return Err(anyhow::anyhow!("unexpected schema")),
+            }
+              
+            Ok(top_words)          
           }
 
     sinks:

@@ -1,4 +1,4 @@
-apiVersion: 0.4.0
+apiVersion: 0.5.0
 meta:
   name: word-probe
   version: 0.1.0
@@ -52,22 +52,22 @@ services:
     transforms:
       - operator: flat-map
         run: |
-          fn split_sequence(sentence: String) -> Result<Vec<String>, String> {
+          fn split_sequence(sentence: String) -> Result<Vec<String>> {
             Ok(sentence.split_whitespace().map(String::from).collect())
           }
     partition:
       assign-key:
         run: |
-          fn key_by_word(word: String) -> Result<String, String> {
+          fn key_by_word(word: String) -> Result<String> {
             Ok(word.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect())
           }
 
       update-state:
         run: |
-          fn increment_word_count(_word: String) -> Result<(), String> {
+          fn increment_word_count(_word: String) -> Result<()> {
             let mut state = count_per_word();
             state.count += 1;
-            state.update();
+            state.update()?;
             Ok(())
           }
 
@@ -83,19 +83,22 @@ services:
     transforms:
       - operator: map
         run: |
-          fn query_word_count(word: String) -> Result<WordCount, String> {
-            use polars::prelude::{col,lit,IntoLazy};
-
+          fn query_word_count(word: String) -> Result<WordCount> {
             let df = count_per_word();
-            let val = df.clone().lazy()
-                .filter(col("_key").eq(lit(word.clone())))
-                .collect().expect("parse");
-
-            if let Some(count) = val.column("count").unwrap().i32().unwrap().get(0) {
-              Ok(WordCount{word, count})
-            } else {
-              Ok(WordCount{word, count: 0})
-            }
+            let count = df.sql(&format!("select * from `count-per-word` where _key = '{}'", word))?;
+            let rows = count.rows()?;
+            let columns = count.schema(["_key","count"])?;
+            match &columns[..] {
+              [k,v] => {
+                    if rows.next() {
+                      let c = rows.i32(&v)?;
+                      return Ok(WordCount{word, count: c})
+                    } else {
+                      return Ok(WordCount{word, count: 0})
+                    }      
+                },
+                  _ => panic!("unexpected schema"),
+              }
           }
 
     sinks:

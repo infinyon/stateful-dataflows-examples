@@ -1,4 +1,4 @@
-apiVersion: 0.4.0
+apiVersion: 0.5.0
 
 meta:
   name: input-key
