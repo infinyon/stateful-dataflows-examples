@@ -53,7 +53,7 @@ $ fluvio consume helsinki | jq
 # Start Dataflow with SDF
 
 ```
-sdf run --ephemeral
+sdf run
 ```
 
 Read top 5 bus speed:
