@@ -95,7 +95,7 @@ services:
                       return Ok(WordCount{word, count: c})
                     } else {
                       return Ok(WordCount{word, count: 0})
-                    }      
+                    }
                 },
                   _ => panic!("unexpected schema"),
               }
