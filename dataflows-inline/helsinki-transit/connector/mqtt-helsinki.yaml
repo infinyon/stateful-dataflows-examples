@@ -1,6 +1,6 @@
 apiVersion: 0.1.0
 meta:
-  version: 0.2.6
+  version: 0.2.8
   name: helsinki-mqtt
   type: mqtt-source
   topic: helsinki
@@ -9,7 +9,7 @@ mqtt:
   topic: "/hfp/v2/journey/ongoing/vp/bus/#"
   payload_output_type: json
 
-  
+
 transforms:
   - uses: infinyon/jolt@0.4.1
     with:
