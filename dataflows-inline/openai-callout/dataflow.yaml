@@ -190,7 +190,7 @@ services:
             let response = sdf_http::blocking::send(request)?;
             let body: Vec<u8> = response.into_body();
 
-            let ai_response: OpenAIResponse = serde_json::from_slice(&body).map_err(|e| e.to_string())?;
+            let ai_response: OpenAIResponse = serde_json::from_slice(&body)?;
             println!("output: {}", String::from_utf8(body)?);
 
             let counter = count_per_model();
