@@ -316,27 +316,26 @@ services:
         run: |
           fn check_license_plate(car: Car) -> Result<Option<StolenPlate>> {
                 let plates = licence_plates();
-                let count = plates.sql(&format!("select * from `licence_plates` where _key = '{}'", car.license))?;
-                let rows = count.rows()?;
-                let columns = count.schema(["_key","maker", "model"])?;
-                match &columns[..] {
-                  [k,maker,model] => {
-                    if rows.next() {
-                      let mkr = rows.str(&maker)?;
-                      let mdl = rows.str(&model)?;
+                let lp = plates.sql(&format!("select * from `licence-plates` where _key = '{}'", car.license))?;
+                let rows = lp.rows()?;
 
-                  return Ok(Some(StolenPlate {
-                    license: car.license.clone(),
-                    owner: format!("{} {}", &car.maker, &car.model),
-                    violator: format!("{} {}", mkr, mdl)
-                  }));} else {
-                      return Ok(None);
+                let maker_col = lp.col("maker")?;
+                let model_col = lp.col("model")?;
+
+                if !rows.next() {
+                  return Ok(None)
+                }
+                let maker = rows.str(&maker_col)?;
+                let model = rows.str(&model_col)?;
+
+                Ok(Some(
+                    StolenPlate {
+                      license: car.license.clone(),
+                      owner: format!("{} {}", &car.maker, &car.model),
+                      violator: format!("{} {}", maker, model)
                     }
-                },
-                  _ => panic!("unexpected schema"),
-              }
+                ))
           }
-
     sinks:
       - type: topic
         id: violations
