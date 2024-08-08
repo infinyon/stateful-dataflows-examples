@@ -245,10 +245,10 @@ services:
         run: |
           fn get_car_color_count() -> Result<CarColors> {
             let cc = count_by_color().clone();
-            Ok(cc.into_iter().map(|(color, count)| 
-              Color { 
-                color, 
-                count 
+            Ok(cc.into_iter().map(|(color, count)|
+              Color {
+                color,
+                count
               }
             ).collect())
           }
