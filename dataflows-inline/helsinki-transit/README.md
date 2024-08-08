@@ -7,7 +7,7 @@ Demo of SSDK with helsinki metro MQTT
 ## Download Jolt SmartModule
 
 ```
-$ fluvio hub smartmodule download infinyon/jolt@0.3.0
+$ fluvio hub smartmodule download infinyon/jolt@0.4.1
 ```
 
 ## Start MQTT connector
@@ -50,7 +50,13 @@ $ fluvio consume helsinki | jq
 
 ```
 
-Read top 5 bus speed: 
+# Start Dataflow with SDF
+
+```
+sdf run --ephemeral
+```
+
+Read top 5 bus speed:
 ```
 $ fluvio consume top-vehicle | jq
 ```

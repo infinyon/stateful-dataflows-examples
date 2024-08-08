@@ -155,7 +155,7 @@ services:
               let vehicle = rows.str(&key)?;
               let speed = rows.f64(&speed_value)?;
               top_vehicles.push(VpStat {vehicle, speed});
-            }            
+            }
             Ok(top_vehicles)
           }
     sinks:
