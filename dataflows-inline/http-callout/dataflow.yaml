@@ -56,17 +56,16 @@ services:
           - name: serde_json
             version: "1"
         run: |
-          fn get_car_maker(car: Car) -> Result<Maker, String> {
+          fn get_car_maker(car: Car) -> Result<Maker> {
             // Build Request
             let maker = car.maker.replace(" ", "%20");
             let url = format!("https://demo-data.infinyon.com/api/maker/{maker}");
-            let request = sdf_http::http::Request::builder().uri(url).body("")
-              .map_err(|e| e.to_string())?;
+            let request = sdf_http::http::Request::builder().uri(url).body("")?;
 
             // Handle Reponse
-            let response = sdf_http::blocking::send(request).map_err(|e| e.to_string())?;
+            let response = sdf_http::blocking::send(request)?;
             let body = response.into_body();
-            let m: Maker = serde_json::from_slice(&*body).map_err(|err| err.to_string())?;
+            let m: Maker = serde_json::from_slice(&*body)?;
 
             Ok(m)
           }
