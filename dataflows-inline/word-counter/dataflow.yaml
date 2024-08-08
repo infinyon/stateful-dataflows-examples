@@ -126,12 +126,12 @@ services:
                     let word_count = WordCount { word, count };
                     top_words.push(word_count);
                   }
-                  
+
               },
                 _ => return Err(anyhow::anyhow!("unexpected schema")),
             }
-              
-            Ok(top_words)          
+
+            Ok(top_words)
           }
 
     sinks:
