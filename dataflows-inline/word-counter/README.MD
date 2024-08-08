@@ -124,6 +124,4 @@ sdf clean --force
 
 You may also start an http-source connector that continuously feed data to the `sentence` topic. For instructions, checkout [connectors](./connectors/).
 
-
-
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

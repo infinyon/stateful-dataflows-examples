@@ -1,7 +1,7 @@
 # sentence-connector.yaml
 apiVersion: 0.2.0
 meta:
-  version: 0.3.6
+  version: 0.3.8
   name: sentence-connector
   type: http-source
   topic:
