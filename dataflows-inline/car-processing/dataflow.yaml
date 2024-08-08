@@ -316,11 +316,11 @@ services:
         run: |
           fn check_license_plate(car: Car) -> Result<Option<StolenPlate>> {
                 let plates = licence_plates();
-                let count = plates.sql(&format!("select * from `licence_plates` where _key = '{}'", car.license))?;
+                let count = plates.sql(&format!("select * from `licence-plates` where _key = '{}'", car.license))?;
                 let rows = count.rows()?;
-                let columns = count.schema(["_key","maker", "model"])?;
+                let columns = count.schema(["maker", "model"])?;
                 match &columns[..] {
-                  [k,maker,model] => {
+                  [maker,model] => {
                     if rows.next() {
                       let mkr = rows.str(&maker)?;
                       let mdl = rows.str(&model)?;
