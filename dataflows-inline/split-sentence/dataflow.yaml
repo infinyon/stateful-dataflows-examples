@@ -29,14 +29,14 @@ services:
     transforms:
       - operator: flat-map
         run: |
-          fn sentence_to_words(sentence: String) -> Result<Vec<String>, String> {
+          fn sentence_to_words(sentence: String) -> Result<Vec<String>> {
             Ok(sentence.split_whitespace().map(String::from).collect())
-          }      
+          }
       - operator: map
         run: |
-          pub fn augment_count(word: String) -> Result<String, String> {
+          pub fn augment_count(word: String) -> Result<String> {
             Ok(format!("{}({})", word, word.chars().count()))
-          }        
+          }
 
     sinks:
       - type: topic
