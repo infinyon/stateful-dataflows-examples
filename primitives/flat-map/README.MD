@@ -10,7 +10,7 @@ Example of how to use the `flat-map` operator. In this example, the flat-map ope
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run --ephemeral
+sdf run
 ```
 
 ### Test DataFlow

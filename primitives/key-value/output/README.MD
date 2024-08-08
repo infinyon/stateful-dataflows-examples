@@ -10,7 +10,7 @@ This is an example of sending records with a `key` and a `value` for a fluvio to
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run --ephemeral
+sdf run
 ```
 
 ### Test DataFlow

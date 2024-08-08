@@ -10,7 +10,7 @@ This is an example of sourcing records with `key` and `value` from a fluvio topi
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run --ephemeral
+sdf run
 ```
 
 ### Test DataFlow

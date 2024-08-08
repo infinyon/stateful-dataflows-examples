@@ -72,7 +72,7 @@ Make sure to [Install SDF  Start a Cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui --ephemeral
+sdf run --ui
 ```
 
 Use `--ui` to generate the graphical representation and run the Studio.
