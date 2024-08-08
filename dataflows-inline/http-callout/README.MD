@@ -40,8 +40,8 @@ In a new terminal change direcotry to `./connectors`, download the connector bin
 
 ```bash
 cd ./connectors
-cdk hub download infinyon/http-source@0.3.6
-cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-callout-connector.yaml
+cdk hub download infinyon/http-source@0.3.8
+cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c car-callout-connector.yaml
 ```
 
 To see the events, run `fluvio consume cars`.
