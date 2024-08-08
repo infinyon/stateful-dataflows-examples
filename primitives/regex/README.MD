@@ -10,7 +10,7 @@ In this example, we'll import the `regex` crate to demonstrate adding external `
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run --ephemeral
+sdf run
 ```
 
 ### Test DataFlow

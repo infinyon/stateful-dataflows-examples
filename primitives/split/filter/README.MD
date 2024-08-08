@@ -10,7 +10,7 @@ In this example, we'll read `person` records from a `user` topic split them into
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run --ephemeral
+sdf run
 ```
 
 ### Test DataFlow
