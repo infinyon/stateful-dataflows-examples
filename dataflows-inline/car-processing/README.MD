@@ -72,7 +72,7 @@ Make sure to [Install SDF  Start a Cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --ui --ephemeral
 ```
 
 Use `--ui` to generate the graphical representation and run the Studio.
@@ -87,9 +87,9 @@ In a new terminal change direcotry to `./connectors`, download the connector bin
 
 ```bash
 cd ./connectors
-cdk hub download infinyon/http-source@0.3.6
-cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c license-connector.yaml
-cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-connector.yaml
+cdk hub download infinyon/http-source@0.3.8
+cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c license-connector.yaml
+cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c car-connector.yaml
 ```
 
 To see the events, run `fluvio consume cars`.
