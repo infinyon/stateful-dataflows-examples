@@ -12,12 +12,12 @@ The example reads events from the truck and sedan topics, converts them to a str
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
 
-For this example, we've created two data files: `trucks` and `sedans`.
+For this example, we've created two data files: `./sample-data/trucks.txt` and `./sample-data/sedans.txt`.
 
 ```bash
 # trucks.txt
@@ -64,7 +64,7 @@ fluvio consume licenses -Bd
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state sedans/sedan-license/metrics --table
+show state sedans/sedan-license/metrics
 ```
 
 ```bash
@@ -73,7 +73,7 @@ stats  *       2          0
 ```
 
 ```bash
-show state trucks/truck-license/metrics --table
+show state trucks/truck-license/metrics
 ```
 
 ```bash

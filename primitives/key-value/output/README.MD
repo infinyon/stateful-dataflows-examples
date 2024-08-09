@@ -10,7 +10,7 @@ This is an example of sending records with a `key` and a `value` for a fluvio to
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
@@ -62,7 +62,7 @@ Note that the `id` field was moved from the `value` into the `key`.
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state user-to-kv/make-kv-user/metrics --table
+show state user-to-kv/make-kv-user/metrics
 ```
 
 ```bash

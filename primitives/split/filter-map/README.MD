@@ -12,12 +12,12 @@ The example splits car events into trucks and sedans based on their category whi
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```bash
 {"car":"Honda Accord","category":"sedan","license":"4GCF223"}
@@ -63,7 +63,7 @@ fluvio consume sedans -Bd
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state trucks/to-truck/metrics --table
+show state trucks/to-truck/metrics
 ```
 
 ```bash

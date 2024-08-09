@@ -19,7 +19,7 @@ In this example, we've defined a couple of functions. The first function `update
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
@@ -71,8 +71,11 @@ The existing `key` was merged into the `value` and a new `key` was assigned.
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state kv-to-user/update-location/metrics --table
-show state kv-to-user/add-new-key/metrics --table
+show state kv-to-user/update-location/metrics
+```
+
+```bash
+show state kv-to-user/add-new-key/metrics
 ```
 
 ### Clean-up

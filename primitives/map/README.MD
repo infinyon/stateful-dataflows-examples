@@ -10,12 +10,12 @@ Example of how to use the `map` operator. In this example, the map operator tran
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```bash
 {"name": "Alice", "ssn": "222-333-5555"}
@@ -53,7 +53,7 @@ fluvio consume users-public -Bd
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state map-service/mask-ssn/metrics --table
+show state map-service/mask-ssn/metrics
 ```
 
 ```bash

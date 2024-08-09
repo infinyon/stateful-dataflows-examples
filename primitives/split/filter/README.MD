@@ -10,12 +10,12 @@ In this example, we'll read `person` records from a `user` topic split them into
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```bash
 {"name":"Andrew","age":16}
@@ -57,6 +57,18 @@ fluvio consume adult -Bd
 
 **Note:** the data from `user` topic is split into `child` and `adult` topics based on age.
 
+### Run SDF commands
+
+Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
+
+```bash
+show split-service/user/metrics
+```
+
+```bash
+ Key    Window  succeeded  failed 
+ stats  *       5          0   
+```
 
 ### Clean-up
 

@@ -10,12 +10,12 @@ In this example, we'll import the `regex` crate to demonstrate adding external `
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```json
 {"name": "John", "born": 1996}
