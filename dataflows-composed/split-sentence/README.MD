@@ -29,7 +29,7 @@ Make sure to [Install SDF & Start a Cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui --ephemeral
+sdf run --ephemeral --ui 
 ```
 
 Use `--ui` to generate the graphical representation and run the Studio.
@@ -37,7 +37,7 @@ Use `--ui` to generate the graphical representation and run the Studio.
 
 ### Test the Dataflow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```bash
 Hello world
@@ -74,13 +74,13 @@ there(5)
 Check the counters `sdf` terminal:
 
 ```bash
->> show state sentence-words/sentence-to-words/metrics --table
+>> show state sentence-words/sentence-to-words/metrics
  Key    Window  succeeded  failed
  stats  *       2          0
 ```
 
 ```bash
->> show state sentence-words/augment-count/metrics --table
+>> show state sentence-words/augment-count/metrics
  Key    Window  succeeded  failed
  stats  *       4          0
 ```

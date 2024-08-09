@@ -26,7 +26,7 @@ Make sure to [Install SDF & Start a Cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui --ephemeral
+sdf run --ephemeral --ui
 ```
 
 Use `--ui` to generate the graphical representation and run the Studio.
@@ -34,7 +34,7 @@ Use `--ui` to generate the graphical representation and run the Studio.
 
 ### Test the Dataflow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```json
 {"name": "Alice", "ssn": "555-12-1212"}

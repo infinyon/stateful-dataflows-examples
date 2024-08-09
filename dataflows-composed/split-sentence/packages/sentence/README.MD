@@ -32,7 +32,6 @@ Replace the `sentence_to_words` function body in the `rust/sentence-to-words/src
 pub(crate) fn sentence_to_words(sentence: String) -> Result<Vec<String>> {
     Ok(sentence.split_whitespace().map(String::from).collect())
 }
-
 ```
 
 In `rust/augment-count/src/lib.rs` replace the function body:
