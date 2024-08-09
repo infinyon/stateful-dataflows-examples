@@ -31,7 +31,7 @@ Use `sdf` command line tool to run the dataflow:
 Run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --ephemeral --ui
 ```
 
 Use `--ui` to open the Studio.
