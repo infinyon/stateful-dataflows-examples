@@ -34,7 +34,7 @@ It also shows the ability to split traffic, by sending records to different topi
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --ephemeral --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -66,7 +66,7 @@ fluvio produce admin-events --raw --file ./sample-data/add-account-lucy.json
 Check the state in the `sdf` terminal:
 
 ```bash
-show state balance-manager/account-balance/state --table
+show state balance-manager/account-balance/state
 ```
 
 ```bash
@@ -96,7 +96,7 @@ fluvio produce business-events --raw --file ./sample-data/deposit-lucy.json
 Check the state in `sdf` terminal:
 
 ```bash
-show state balance-manager/account-balance/state --table
+show state balance-manager/account-balance/state
 ```
 
 ```bash
@@ -118,7 +118,7 @@ fluvio produce business-events --raw --file ./sample-data/withdrawal-lucy.json
 Check the state in `sdf` terminal:
 
 ```bash
-show state balance-manager/account-balance/state --table
+show state balance-manager/account-balance/state
 ```
 
 ```bash
@@ -141,7 +141,7 @@ fluvio produce business-events --raw --file ./sample-data/transfer-duncan-to-luc
 Check the state in `sdf` terminal:
 
 ```bash
-show state balance-manager/account-balance/state --table
+show state balance-manager/account-balance/state
 ```
 
 ```bash
@@ -159,7 +159,7 @@ fluvio produce business-events --raw --file ./sample-data/transfer-lucy-to-dunca
 Check the state in `sdf` terminal:
 
 ```bash
-show state balance-manager/account-balance/state --table
+show state balance-manager/account-balance/state
 ```
 
 ```bash
@@ -188,7 +188,7 @@ fluvio produce business-events --raw --file ./sample-data/withdrawal-duncan.json
 Check the state in `sdf` terminal:
 
 ```bash
-show state balance-manager/account-balance/state --table
+show state balance-manager/account-balance/state
 ```
 
 ```bash

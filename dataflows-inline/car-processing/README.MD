@@ -72,7 +72,7 @@ Make sure to [Install SDF  Start a Cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --ephemeral --ui
 ```
 
 Use `--ui` to generate the graphical representation and run the Studio.
@@ -119,7 +119,7 @@ We are intersted in the following:
 License Plates state stores the license plates read from the `licenses` topic. This is used to check for stolen plates later in the dataflow.
 
 ```bash
-show state save-license-plates/licence-plates/state --table
+show state save-license-plates/licence-plates/state
 ```
 
 ```
