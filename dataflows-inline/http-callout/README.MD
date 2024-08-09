@@ -27,7 +27,7 @@ The dataflow uses the following primitives:
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --ephemeral --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -64,7 +64,7 @@ Hit <Ctrl-C> to exit.
 The SDF engine will automatically collect metrics for the dataflow. In the `sdf` terminal, show the number of records processed by `get-car-maker`:
 
 ```bash
-show state lookup-car-maker/get-car-maker/metrics --table
+show state lookup-car-maker/get-car-maker/metrics
 ```
 
 ```bash
