@@ -10,12 +10,12 @@ In this example, we use the `update-state` operator to collect the `temperature`
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```json
 {"id": 0, "sensor": "SF", "temperature": 54}
@@ -41,7 +41,7 @@ fluvio consume temp-sensor -Bd
 Use the `sdf` runtime `>>` terminal to display the state variable:
 
 ```bash
-show state save-temperature/temperature/state --table
+show state save-temperature/temperature/state
 ```
 
 ```bash

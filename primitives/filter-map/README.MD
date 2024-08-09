@@ -10,12 +10,12 @@ Example of how to use the `filter-map` operator. In this example, the filter-map
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```bash
 say hello
@@ -52,7 +52,7 @@ SAY HELLO WORLD
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state filter-map-service/long-sentence-to-uppercase/metrics --table
+show state filter-map-service/long-sentence-to-uppercase/metrics
 ```
 
 ```bash

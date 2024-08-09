@@ -10,12 +10,12 @@ Example of how to use the `flat-map` operator. In this example, the flat-map ope
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
 
-The sample data file has the following records:
+The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```bash
 This is a test
@@ -54,7 +54,7 @@ test
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state flat-map-service/split-sentence/metrics --table
+show state flat-map-service/split-sentence/metrics
 ```
 
 ```bash

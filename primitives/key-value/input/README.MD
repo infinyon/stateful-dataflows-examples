@@ -10,7 +10,7 @@ This is an example of sourcing records with `key` and `value` from a fluvio topi
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run
+sdf run --ephemeral
 ```
 
 ### Test DataFlow
@@ -63,7 +63,7 @@ Note that the `id` field was moved from the `key` into the `value`.
 Display the stateful dataflow stats in the `sdf` runtime `>>` terminal:
 
 ```bash
-show state kv-to-user/user-kv/metrics --table
+show state kv-to-user/user-kv/metrics
 ```
 
 ```bash
