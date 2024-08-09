@@ -327,7 +327,7 @@ services:
                 }
                 let maker = rows.str(&maker_col)?;
                 let model = rows.str(&model_col)?;
-
+              if maker != car.maker.as_str() || model != car.model.as_str() {
                 Ok(Some(
                     StolenPlate {
                       license: car.license.clone(),
@@ -335,6 +335,9 @@ services:
                       violator: format!("{} {}", maker, model)
                     }
                 ))
+              } else {
+                Ok(None)
+              }
           }
     sinks:
       - type: topic
