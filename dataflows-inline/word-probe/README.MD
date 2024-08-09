@@ -27,7 +27,7 @@ Make sure to [Install SDF and start a Fluvio cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --ephemeral --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -37,7 +37,7 @@ Use `--ui` to open the Studio.
 
 ### Test the Dataflow
 
-For this example, we've created two data files: `sentences` and `words`.
+For this example, we'll use the following data files: `./sample-data/sentences.txt` and `./sample-data/words.txt`.
 
 ```bash
 # sentences.txt
@@ -93,7 +93,7 @@ You should see something like this:
 Use the `show state` in `sdf` terminal to watch the internal state of the windows:
 
 ```bash
-show state count-words/count-per-word/state --table
+show state count-words/count-per-word/state
 ```
 
 You should see something like this:
