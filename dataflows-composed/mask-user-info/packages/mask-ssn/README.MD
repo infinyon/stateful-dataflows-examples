@@ -49,6 +49,7 @@ mod test {
         assert_eq!(output.unwrap(), "***-**-****");
     }
 }
+```
 
 Next, add `regex` to the dependencies in `Cargo.toml`:
 
@@ -67,7 +68,7 @@ sdf build
 ```
 
 
-### Test the Code
+### Test the Code with SDF
 
 Test the code with:
 
@@ -79,6 +80,18 @@ sdf test
 >> test function mask-ssn --value "My SSN is 534-34-3443."
 My SSN is ***-**-****.
 ```
+
+
+### Test the code with `Cargo`
+
+Navigate to the `rust` and run the tests using Rust:
+
+```bash
+cd rust
+cargo test
+```
+
+### Package Ready for use
 
 The package is ready to use in the [dataflow](../../).
 

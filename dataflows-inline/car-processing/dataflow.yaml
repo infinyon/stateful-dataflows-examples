@@ -315,29 +315,30 @@ services:
       - operator: filter-map
         run: |
           fn check_license_plate(car: Car) -> Result<Option<StolenPlate>> {
-                let plates = licence_plates();
-                let lp = plates.sql(&format!("select * from `licence-plates` where _key = '{}'", car.license))?;
-                let rows = lp.rows()?;
+            let plates = licence_plates();
+            let lp = plates.sql(&format!("select * from `licence-plates` where _key = '{}'", car.license))?;
+            let rows = lp.rows()?;
 
-                let maker_col = lp.col("maker")?;
-                let model_col = lp.col("model")?;
+            let maker_col = lp.col("maker")?;
+            let model_col = lp.col("model")?;
 
-                if !rows.next() {
-                  return Ok(None)
+            if !rows.next() {
+              return Ok(None)
+            }
+            let maker = rows.str(&maker_col)?;
+            let model = rows.str(&model_col)?;
+
+            if maker != car.maker.as_str() || model != car.model.as_str() {
+              Ok(Some(
+                StolenPlate {
+                  license: car.license.clone(),
+                  owner: format!("{} {}", &car.maker, &car.model),
+                  violator: format!("{} {}", maker, model)
                 }
-                let maker = rows.str(&maker_col)?;
-                let model = rows.str(&model_col)?;
-              if maker != car.maker.as_str() || model != car.model.as_str() {
-                Ok(Some(
-                    StolenPlate {
-                      license: car.license.clone(),
-                      owner: format!("{} {}", &car.maker, &car.model),
-                      violator: format!("{} {}", maker, model)
-                    }
-                ))
-              } else {
-                Ok(None)
-              }
+              ))
+            } else {
+              Ok(None)
+            }
           }
     sinks:
       - type: topic
