@@ -72,7 +72,7 @@ Make sure to [Install SDF  Start a Cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ephemeral --ui
+sdf run --ui
 ```
 
 Use `--ui` to generate the graphical representation and run the Studio.
@@ -87,9 +87,9 @@ In a new terminal change direcotry to `./connectors`, download the connector bin
 
 ```bash
 cd ./connectors
-cdk hub download infinyon/http-source@0.3.8
-cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c license-connector.yaml
-cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c car-connector.yaml
+cdk hub download infinyon/http-source@0.3.6
+cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c license-connector.yaml
+cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-connector.yaml
 ```
 
 To see the events, run `fluvio consume cars`.
@@ -119,7 +119,7 @@ We are intersted in the following:
 License Plates state stores the license plates read from the `licenses` topic. This is used to check for stolen plates later in the dataflow.
 
 ```bash
-show state save-license-plates/licence-plates/state
+show state save-license-plates/licence-plates/state --table
 ```
 
 ```
@@ -324,5 +324,63 @@ Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
 ```bash
 sdf clean --force
 ```
+
+## Dockerfile
+To run the above with a container, a Dockerfile is included. The docker container will install all the required files and packages. The included shell script starts a fluvio cluster as well as the connectors required for the car dataflow to work. You can alter the consume command in the [run.sh](run.sh) to view different topics. The dataflow does take a long time to run.
+```
+docker build -t carproc .
+docker run carproc
+```
+### Expected Output
+```
+📝 Running pre-flight checks
+🎉 All checks passed!
+🎯 Successfully installed Local Fluvio cluster
+📝 Running cluster status checks with profile local
+... checking package
+Log file: /workspace/connectors/license-connector.log
+Connector runs with process id: 54
+Started connector `license-connector`
+... checking package
+Log file: /workspace/connectors/car-connector.log
+Connector runs with process id: 68
+Started connector `car-connector`
+Waiting for SDF to Start...
+Welcome to SDF
+Running SDF
+{"color":"orange","license":"6WLM817","location":"Saratoga","maker":"Mercedes-Benz","model":"GT AMG","mph":63,"timestamp":"2024-08-14T19:22:49.722Z"}
+{"color":"beige","license":"6FKL683","location":"Sunnyvale","maker":"Mini","model":"Cooper","mph":52,"timestamp":"2024-08-14T19:22:51.222Z"}
+{"color":"perl","license":"1KFR357","location":"Saratoga","maker":"Chevrolet","model":"Equinox","mph":50,"timestamp":"2024-08-14T19:22:52.222Z"}
+(...)
+```
+
+*Note: docker has a tendency to use a lot of space for volumes. If you ever end up using a lot of disk space, run the following command to clean out past containers*
+
+```
+docker system prune -a --volumes -f
+```
+
+## Visualizer
+Packed in the repo is a demo in TS with express + fluvio's npm package. The demo dumps all the topics associated with the dataflow. As topics get populated, the express server updates the demo.
+<p align="center">
+ <img src="img/visualizer.gif">
+</p>
+
+### To Run
+*To run the demo, the connectors and dataflow must be running.*
+1. Navigate to the visualizer after starting the required clusters and dataflow.
+  ```
+  cd visualizer
+  ```
+2. Install all the packageds.
+  ```
+npm install
+  ```
+3. Start the express server with node
+  ```
+  node app.js
+  ```
+4. Open the web application via a browser. Should be localhost:3000
+
 
 [Install SDF & Start a Cluster]: /README.MD#prerequisites
