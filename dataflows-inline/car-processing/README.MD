@@ -72,10 +72,11 @@ Make sure to [Install SDF  Start a Cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --ephemeral --ui
 ```
 
-Use `--ui` to generate the graphical representation and run the Studio.
+* Use `--ui` to generate the graphical representation and run the Studio.
+* Use `--ephemeral` to run without workers
 
 **Note:** The `check-license-plates` service uses Polars, a library that has not yet been optimized, and will it make take a while the compile. We'll optimize this in a future release.
 
@@ -87,9 +88,9 @@ In a new terminal change direcotry to `./connectors`, download the connector bin
 
 ```bash
 cd ./connectors
-cdk hub download infinyon/http-source@0.3.6
-cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c license-connector.yaml
-cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-connector.yaml
+cdk hub download infinyon/http-source@0.3.8
+cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c license-connector.yaml
+cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c car-connector.yaml
 ```
 
 To see the events, run `fluvio consume cars`.
@@ -119,7 +120,7 @@ We are intersted in the following:
 License Plates state stores the license plates read from the `licenses` topic. This is used to check for stolen plates later in the dataflow.
 
 ```bash
-show state save-license-plates/licence-plates/state --table
+show state save-license-plates/licence-plates/state
 ```
 
 ```
