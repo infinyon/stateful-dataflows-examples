@@ -32,6 +32,7 @@ DataFlows defined inline:
 
 * [bank-processing](/dataflows-inline/bank-processing/)
 * [car-processing](/dataflows-inline/car-processing/)
+* [hackernews-notify](/dataflows-inline/hackernews-notify/)
 * [http-callout](/dataflows-inline/http-callout/)
 * [openai-callout](/dataflows-inline/openai-callout/)
 * [split-sentence](/dataflows-inline/split-sentence/)

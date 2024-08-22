@@ -1,0 +1,187 @@
+apiVersion: 0.5.0
+meta:
+  name: hackernews-notify
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  article:
+    type: object
+    properties:
+      comments:
+        type: string
+      description:
+        type: string
+      link:
+        type: string
+      pub-date:
+        type: string
+      title:
+        type: string
+  article-data:
+    type: object
+    properties:
+      word:
+        type: string
+      link:
+        type: string
+      title:
+        type: string
+  notify-event:
+    type: object
+    properties:
+      email:
+        type: string
+      word:
+        type: string
+      link:
+        type: string
+      title:
+        type: string
+  user:
+    type: object
+    properties:
+      word:
+        type: string
+      email:
+        type: string
+
+topics:
+  hackernews:
+    schema:
+      value:
+        type: article
+  user-request:
+    schema:
+      value:
+        type: user
+  notify-event:
+    schema:
+      value:
+        type: notify-event
+  words:
+    schema:
+      value:
+        type: string
+
+services:
+  process-user-request:
+    sources:
+      - type: topic
+        id: user-request
+
+    states:
+      notify-table:
+        type: keyed-state
+        properties:
+          key:
+            type: string # word
+          value:
+            type: arrow-row
+            properties:
+              email-list:
+                type: string
+
+    partition:
+      assign-key:
+        run: |
+          fn key_by_keyword(user: User) -> Result<String> {
+            Ok(user.word.to_lowercase())
+          }
+
+      update-state:
+        run: |
+          fn update_notify_table(user: User) -> Result<()> {
+            let mut notify_state = notify_table();
+            if notify_state.email_list.contains(&user.email) {
+               return Ok(());
+            }
+            if !notify_state.email_list.is_empty() {
+              notify_state.email_list.push(',');
+            }
+            notify_state.email_list.push_str(&user.email);
+            notify_state.update()?;
+            Ok(())
+          }
+
+  process-articles:
+    sources:
+      - type: topic
+        id: hackernews
+
+    states:
+      notify-table:
+        from: process-user-request.notify-table
+
+    transforms:
+      - operator: flat-map
+        run: |
+          fn split_article(article: Article) -> Result<Vec<ArticleData>> {
+            Ok(article.title.clone().split_whitespace().map(
+              |word| 
+                ArticleData {
+                  word: String::from(word),
+                  link: article.link.clone(),
+                  title: article.title.clone()
+                }
+            ).collect())
+          }
+
+      - operator: filter-map
+        dependencies:
+          - name: format-sql-query
+            version: 0.4.0
+        run: |
+          fn match_words(article_data: ArticleData) -> Result<Option<(Option<String>, ArticleData)>> {
+            use format_sql_query::{Table, Column, QuotedData};
+            let table = notify_table();
+            let query = format!("SELECT * FROM `{}` WHERE {} = {}", 
+                  Table("notify-table".into()), 
+                  Column("_key".into()), QuotedData(&article_data.word.to_lowercase())
+            );
+            let emails = match table.sql(&query) {
+              Ok(emails) => emails,
+              Err(e) => {
+                println!("Error: {}", e);
+                return Err(e)
+              }
+            };
+            let rows = emails.rows()?;
+
+            if !rows.next() {
+              return Ok(None)
+            }
+
+            let email_list_col = emails.col("email-list")?;
+            let email_list = rows.str(&email_list_col)?;
+            Ok(Some((Some(email_list), article_data)))
+          }
+
+      - operator: flat-map
+        run: |
+          fn build_notifiations(email_list: Option<String>, article_data: ArticleData) -> Result<Vec<NotifyEvent>> {
+            let Some(email_list) = email_list else {
+              return Ok(vec!());
+            };
+
+            let emails = email_list.split(',').map(|email| 
+              NotifyEvent {
+               email: String::from(email), 
+               word: article_data.word.clone(), 
+               link: article_data.link.clone(), 
+               title: article_data.title.clone() 
+            }).collect();
+
+            Ok(emails)
+          }
+
+    sinks:
+      - type: topic
+        id: notify-event

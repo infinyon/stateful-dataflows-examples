@@ -1,0 +1,19 @@
+apiVersion: 0.1.0
+meta:
+  version: 0.3.8
+  name: hackernews 
+  type: http-source
+  topic: hackernews
+http:
+  method: GET
+  endpoint: 'https://hnrss.org/newest'
+  interval: 60s
+transforms:
+  - uses: infinyon-labs/rss-json@0.1.1
+  - uses: infinyon/jolt@0.4.1
+    with:
+      spec:
+      - operation: shift
+        spec:
+          items: ""
+  - uses: infinyon-labs/array-map-json@0.1.1
