@@ -1,0 +1,41 @@
+name: Nightly check
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   
+
+jobs:
+    checks:
+      uses: ./.github/workflows/check.yml
+      with:
+        sdf_version: sdf-beta2-dev
+        branch: ${{ github.ref }}
+    done:
+      name: Done
+      needs:
+        - checks
+      runs-on: ubuntu-latest
+      if: always()
+      steps:
+      - name: Dump needs context
+        env:
+          CONTEXT: ${{ toJson(needs) }}
+        run: |
+          echo -e "\033[33;1;4mDump context\033[0m"
+          echo -e "$CONTEXT\n"
+      - name: Report failure on cancellation
+        if: ${{ contains(needs.*.result, 'cancelled') || cancelled() }}
+        run: exit 1
+      - name: Failing test and build
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+      - name: Don't allow skipped
+        if: ${{ contains(needs.*.result, 'skipped') }}
+        run: exit 1
+      - name: Successful test and build
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
