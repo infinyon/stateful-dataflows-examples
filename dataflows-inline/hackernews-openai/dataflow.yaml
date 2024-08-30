@@ -51,7 +51,8 @@ types:
     properties:
       hackernews:
         type: notify-event
-        summary: string 
+      summary: 
+        type: string 
 
   user:
     type: object
@@ -217,86 +218,85 @@ services:
         run: |
           fn invoke_openai(source: NotifyEvent) -> Result<SmartEvent> {
 
-          use serde::Serialize;
+            use serde::Serialize;
 
-          let auth_key = std::env::var("OPENAI_API_KEY")?;
-          let auth_bearer = format!("Bearer {}", auth_key);
+            let auth_key = std::env::var("OPENAI_API_KEY")?;
+            let auth_bearer = format!("Bearer {}", auth_key);
 
-          let model = "gpt-4o";
-          let content = format!("summary link: {}",source.link);
+            let model = "gpt-4o".to_string();
+            let content = format!("summary link: {}",source.link);
 
-          // hack we define types inline here
-          #[derive(serde::Serialize)]
-          struct OpenAIRequest {
-            model: String,
-            messages: Vec<Message>
+            // hack we define types inline here
+            #[derive(serde::Serialize)]
+            struct OpenAIRequest {
+              model: String,
+              messages: Vec<Message>
+            }
+
+            #[derive(serde::Serialize, serde::Deserialize)]
+            struct Message {
+              role: String,
+              content: String
+            }
+
+            #[derive(serde::Deserialize)]
+            struct OpenAIResponse {
+              id: String,
+              object: String,
+              created: u64,
+              model: String,
+              choices: Vec<Choice>,
+              usage: Usage
+            }
+
+
+            #[derive(serde::Deserialize)]
+            struct Choice {
+              index: u64,
+              message: Message,
+              finish_reason: String
+            }
+
+            #[derive(serde::Deserialize)]
+            struct Usage {
+              prompt_tokens: u64,
+              completion_tokens: u64,
+              total_tokens: u64
+            }
+
+            let req = OpenAIRequest {
+              model,
+              messages: vec![
+                Message {
+                  role: "user".to_string(),
+                  content
+                }
+              ]
+            };
+
+            let body = serde_json::to_string(&req)?;
+            println!("request body: {}", body);
+
+            let request = sdf_http::http::Request::builder()
+              .uri("https://api.openai.com/v1/chat/completions")
+              .method("POST")
+              .header("Content-Type", "application/json")
+              .header("Authorization", auth_bearer)
+              .body(body)?;
+
+            let response = sdf_http::blocking::send(request)?;
+            let body: Vec<u8> = response.into_body();
+
+            let ai_response: OpenAIResponse = serde_json::from_slice(&body)?;
+            println!("output: {}", String::from_utf8(body)?);
+
+            let chat_output = ai_response.choices[0].message.content.to_owned();
+
+            Ok(SmartEvent {
+              hackernews: source,
+              summary: chat_output
+            })
           }
-
-          #[derive(serde::Serialize, serde::Deserialize)]
-          struct Message {
-            role: String,
-            content: String
-          }
-
-          #[derive(serde::Deserialize)]
-          struct OpenAIResponse {
-            id: String,
-            object: String,
-            created: u64,
-            model: String,
-            choices: Vec<Choice>,
-            usage: Usage
-          }
-
-
-          #[derive(serde::Deserialize)]
-          struct Choice {
-            index: u64,
-            message: Message,
-            finish_reason: String
-          }
-
-          #[derive(serde::Deserialize)]
-          struct Usage {
-            prompt_tokens: u64,
-            completion_tokens: u64,
-            total_tokens: u64
-          }
-
-          let req = OpenAIRequest {
-            model: req.model.to_owned(),
-            messages: vec![
-              Message {
-                role: "user".to_string(),
-                content: req.input
-              }
-            ]
-          };
-
-          let body = serde_json::to_string(&req)?;
-          println!("request body: {}", body);
-
-          let request = sdf_http::http::Request::builder()
-            .uri("https://api.openai.com/v1/chat/completions")
-            .method("POST")
-            .header("Content-Type", "application/json")
-            .header("Authorization", auth_bearer)
-            .body(body)?;
-
-          let response = sdf_http::blocking::send(request)?;
-          let body: Vec<u8> = response.into_body();
-
-          let ai_response: OpenAIResponse = serde_json::from_slice(&body)?;
-          println!("output: {}", String::from_utf8(body)?);
-
-          let counter = count_per_model();
-          let total_attempts = counter.increment(1);
-          let chat_output = ai_response.choices[0].message.content.to_owned();
-
-          Ok(SmartEvent {
-            hackernews: source,
-            summary: chat_output
-          })
     sinks:
       - type: topic
         id: smart-event

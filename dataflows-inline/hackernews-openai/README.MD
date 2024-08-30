@@ -57,7 +57,7 @@ echo '{"word": "the", "email":"bob@test.com"}' | fluvio produce user-request
 echo '{"word": "AI", "email":"bob@test.com"}' | fluvio produce user-request
 ```
 
-#### Consume from Sink Topic
+#### Consume from Hacker new events
 
 If any of the words match, you should see records in the `notify-event` topic:
 
@@ -80,6 +80,12 @@ In this example `from` matched:
   "title": "From pixels to planning: scale-free active inference",
   "word": "from"
 }
+```
+
+### Consuming from Smart Events
+
+```
+fluvio consume smart-event -O json
 ```
 
 #### Check the state
