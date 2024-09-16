@@ -19,6 +19,11 @@ sdf run --ephemeral --ui
 ```
 The sink topic is `reddit-nodup`.
 
+![Stateful](img/reddit.png)
+
+## Example Output
+![Output](img/reddit_posts.png)
+
 ## Clean up
 The connectors can add up and get pretty annoying. A clean script `cleanconn` is included to remove all running and stopped connectors. **It removes all connectors!**
 
