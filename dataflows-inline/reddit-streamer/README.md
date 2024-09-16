@@ -1,4 +1,36 @@
-e reddit object will return the following, please edit the yaml if you find any of the information useful or necessary.
+# Reddit Subreddit Streamer
+This example with stream new posts from different subreddits using the endpoint **https://www.reddit.com/r/.../new.json**
+
+## Starting the connectors
+By running the generator.sh script we are able to start a connector any subreddit.
+```
+./generator Honda
+./generator Toyota
+./generator Mazda
+```
+The script will generate a connector file. It will also automatically install all the packages necessary. The connector extracts the newest post via the jolt. Other params are available and the `generator` script can be edit to include them. The full list is in the bottom of the README. 
+
+The connector will produce for only the `reddit-sub-posts` topic. It has no deduplication.
+
+## Stateful for deduplication
+A stateful dataflow is also included in the repo for deduplication. To run it:
+```
+sdf run --ephemeral --ui
+```
+The sink topic is `reddit-nodup`.
+
+## Clean up
+The connectors can add up and get pretty annoying. A clean script `cleanconn` is included to remove all running and stopped connectors. **It removes all connectors!**
+
+## Problems
+The endpoint actually is a dump of x amount of new posts for a subreddit and can get really big. Sometimes things don't work out or lag a lot. I may be good to edit the interval that the connector polls the subreddit. 
+
+The connector is not suitable for reading subreddits that are very active and get more than one posts per five seconds. You can edit the interval it polls at. It can only read the new post.
+
+The connector will read old posts if the new post is removed. So it may reread a post twice. It is not true deduplication(but close enough?).
+
+## Full body of request
+The reddit object will return the following, please edit the generator if you find any of the information useful or necessary.
 ```
 "approved_at_utc": null,
 "subreddit": "test",
@@ -107,3 +139,4 @@ e reddit object will return the following, please edit the yaml if you find any 
 "media": null,
 "is_video": false
 ```
+
