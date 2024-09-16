@@ -1,0 +1,101 @@
+apiVersion: 0.5.0
+meta:
+  name: reddit-reader
+  version: 0.1.0
+  namespace: reddit
+
+config:
+  converter: json
+
+types:
+  reddit-obj:
+    type: object
+    properties:
+      subreddit: 
+        type: string
+      title: 
+        type: string
+      author: 
+        type: string
+      selftext: 
+        type: string
+      ups:
+        type: u32
+      permalink: 
+        type: string
+      id: 
+        type: string
+
+topics:
+  reddit-sub-posts:
+    schema:
+      value:
+        type: reddit-obj
+  reddit-nodup:
+    schema:
+      value:
+        type: reddit-obj
+services:
+  dedup:
+    sources:
+      - type: topic
+        id: reddit-sub-posts
+    states:
+      tracker:
+        from: dedup-tracker.tracker
+    transforms:
+      - operator: filter
+        run: |
+          fn genfilter(obj: RedditObj) -> Result<bool> {
+            let track = tracker();
+            //let trackrow = track.sql(&format!("select * from `tracker`"))?;
+            let trackrow = track.sql(&format!(
+                "select * from `tracker` where `subreddit` = '{}'", 
+                obj.subreddit
+            ))?;
+            let rows = trackrow.rows()?;
+
+            if !rows.next() {
+                return Ok(true);
+            }
+
+            let id_col = trackrow.col("id")?;
+            let last_id = rows.str(&id_col)?;
+
+            Ok(obj.id != last_id)
+          }
+    sinks:
+      - type: topic
+        id: reddit-nodup
+  dedup-tracker:
+    sources:
+      - type: topic
+        id: reddit-nodup
+    states:
+      tracker: 
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: arrow-row
+            properties:
+              id:
+                type: string
+              subreddit:
+                type: string
+    partition:
+      assign-key:
+        run: |
+          fn map_post(post: RedditObj) -> Result<String> {
+            Ok(post.subreddit)
+          }
+      update-state:
+        run: |
+          fn track_read(post: RedditObj) -> Result<()> {
+            let mut track = tracker();
+            track.id = post.id;
+            track.subreddit = post.subreddit;
+            track.update()?;
+            Ok(())
+          }
