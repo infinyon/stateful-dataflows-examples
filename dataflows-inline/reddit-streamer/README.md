@@ -1,5 +1,5 @@
 # Reddit Subreddit Streamer
-This example with stream new posts from different subreddits using the endpoint **https://www.reddit.com/r/.../new.json**
+This example with stream new posts from different subreddits using the endpoint **https://www.reddit.com/r/.../new.json**. This is influenced by [x-sushant-x's entry in Quira](https://github.com/x-sushant-x/reddit-streamer-fluvio/tree/master). However, everything is containerized with fluvio's technology with connectors and SDF. 
 
 ## Starting the connectors
 By running the generator.sh script we are able to start a connector any subreddit.
