@@ -20,7 +20,7 @@ sdf run --ephemeral --ui
 The sink topic is `reddit-nodup`.
 
 ![Stateful](img/reddit.png)
-
+*There are two services in the dataflow. The connectors send data through the service `dedup` which communicates with a state table that determines whether or not the post's id from a given subreddit has been added in the sink or not. If it has been found in the state table it doesn't do anything. If it has it adds to the sink topic. The sink topic then sends it through the service that updates the state table. Thus, it should ensure that no duplicate records are found. However, this solution is not perfect, see below.*
 ## Example Output
 ![Output](img/reddit_posts.png)
 
