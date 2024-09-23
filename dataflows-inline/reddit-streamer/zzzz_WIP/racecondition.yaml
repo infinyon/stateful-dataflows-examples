@@ -1,0 +1,239 @@
+apiVersion: 0.5.0
+meta:
+  name: reddit-reader
+  version: 0.1.0
+  namespace: reddit
+
+config:
+  converter: json
+
+types:
+  reddit-obj:
+    type: object
+    properties:
+      subreddit: 
+        type: string
+      title: 
+        type: string
+      author: 
+        type: string
+      selftext: 
+        type: string
+      ups:
+        type: u32
+      permalink: 
+        type: string
+      id: 
+        type: string
+
+topics:
+  reddit-sub-posts:
+    schema:
+      value:
+        type: reddit-obj
+  reddit-nodup:
+    schema:
+      value:
+        type: reddit-obj
+  reddit-key:
+    schema:
+      value:
+        type: string
+  watched-post:
+    schema:
+      value:
+        type: reddit-obj
+services:
+  dedup:
+    sources:
+      - type: topic
+        id: reddit-sub-posts
+    states:
+      tracker:
+        from: dedup-tracker.tracker
+    transforms:
+      - operator: filter
+        run: |
+          fn genfilter(obj : RedditObj) -> Result<bool> {
+            let track = tracker();
+            let trackrow = track.sql(&format!(
+                "select * from `tracker` where `id` = '{}'", obj.id
+            ))?;
+            let rows = trackrow.rows()?;
+            Ok(!rows.next())
+          }
+    sinks:
+      - type: topic
+        id: reddit-nodup
+  dedup-tracker:
+    sources:
+      - type: topic
+        id: reddit-nodup
+    states:
+      tracker: 
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: arrow-row
+            properties:
+              id:
+                type: string
+              subreddit:
+                type: string
+              selftext:
+                type: string
+              title:
+                type: string
+              ups:
+                type: u32
+              author:
+                type: string
+              permalink:
+                type: string
+    partition:
+      assign-key:
+        run: |
+          fn map_post(post: RedditObj) -> Result<String> {
+            Ok(post.id)
+          }
+      update-state:
+        run: |
+          fn track_read(post: RedditObj) -> Result<()> {
+            let mut track = tracker();
+            track.id= post.id;
+            track.subreddit= post.subreddit;
+            track.selftext = post.selftext;
+            track.title = post.title;
+            track.ups = post.ups;
+            track.author = post.author;
+            track.permalink = post.permalink;
+            track.update()?;
+            Ok(())
+          }
+  keyword-splitter:
+    sources:
+      - type: topic 
+        id: reddit-nodup
+    states:
+      tracker:
+        from: dedup-tracker.tracker
+    transforms: 
+      - operator: map
+        dependencies:
+          - name: sdf-http
+            git: "https://github.com/infinyon/sdf-http-guest"
+            tag: "v0.4.0"
+          - name: serde_json
+            version: "1.0.60"
+          - name: regex
+            version: "1.10.0"
+        run: |
+          fn extract_keywords(post: RedditObj) -> Result<(Option<String>,String) > {
+            use regex::Regex;
+            let re = Regex::new(r"\s+").unwrap(); 
+            let mut ret = format!("{} {}",post.title,post.selftext);
+            ret = ret.chars()
+                .filter(|c| c.is_alphanumeric() || c.is_whitespace()) 
+                .collect::<String>() 
+                .to_lowercase();
+            Ok((Some(post.id), re.replace_all(&ret, "#").to_string() ))
+          }
+    sinks:
+      - type: topic
+        id: reddit-key
+        transforms:
+          - operator: flat-map
+            run: |
+              fn send_key(_id: Option<String>, keywords: String) -> Result<Vec<String> >{
+                let ret: Vec<String> = keywords.split('#')
+                            .map(|str| str.to_string())
+                            .collect();
+                Ok(ret)
+              }
+      - type: topic
+        id: watched-post
+        transforms:
+          - operator: filter-map
+            run: |
+              fn has_watched(id: Option<String>, keywords: String) -> Result<Option<RedditObj> >{
+                //this service is annoyint to write because i can't get a hold of the original reddit obj so i have to rebuild it
+                let keywordslist: Vec<String> = keywords.split('#')
+                            .map(|str| str.to_string())
+                            .collect();
+                /*
+                let watching_list = std::env::var("watching")?;
+                let watched: Vec<String> = watching_list.split(',')
+                            .map(|str| str.to_string())
+                            .collect();
+                */
+                let watched: Vec<String> = vec![
+                    String::from("rust"),
+                    String::from("fluvio"),
+                    String::from("infinyon"),
+                ];
+                
+                use std::collections::HashSet;
+                let set_key: HashSet<String> = keywordslist.iter().cloned().collect();
+                let set_watched: HashSet<String> = watched.iter().cloned().collect();
+                let inter: HashSet<String> = set_key.intersection(&set_watched).cloned().collect();
+
+                let mut error: String = "ok".to_string();
+                let sql = format!("select * from `tracker` where _key = '{}'", id.clone().unwrap_or("".to_string()));
+
+                if !inter.is_empty() {
+                    // Execute the query to get tracker data
+                    let tmp_tracker = tracker();
+                    let tracker = tmp_tracker.sql(&format!(
+                        "select * from `tracker` where _key = '{}'", id.clone().unwrap_or("".to_string())
+                    ))?;
+                    let rows = tracker.rows()?;
+                    let columns = tracker.schema(["id", "subreddit", "title", "author", "selftext", "ups", "permalink"])?;
+                    match &columns[..] {
+                        [r_id, r_subreddit, r_title, r_author, r_selftext, r_ups, r_permalink] => {
+                            error = "before the if statement ".to_string();
+                            if rows.next() {
+                                error = "insdie setting the obj".to_string();
+                                // Extract fields from the current row
+                                let reddit_obj = RedditObj {
+                                    id: rows.str(&r_id)?,
+                                    subreddit: rows.str(&r_subreddit)?,
+                                    title: rows.str(&r_title)?,
+                                    author: rows.str(&r_author)?,
+                                    selftext: rows.str(&r_selftext)?,
+                                    ups: rows.u32(&r_ups)?,
+                                    permalink: rows.str(&r_permalink)?,
+                                };
+                                return Ok(Some(reddit_obj));
+                            }
+                        },
+                        _ => return Err(anyhow::anyhow!("unexpected schema")),
+                    }
+                }
+                Ok(None)
+              }
+  keyword-counter:
+    sources:
+      - type: topic 
+        id: reddit-key
+    states:
+      tabkeywords:
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: u32
+    partition:
+      assign-key:
+        run: |
+          fn map_keyword(keyword: String) -> Result<String > {
+            Ok(keyword)
+          }
+      update-state:
+        run: |
+          fn update_keyword(keyword: String) -> Result<()> {
+            tabkeywords().increment(1);
+            Ok(())
+          }
