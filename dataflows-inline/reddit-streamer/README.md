@@ -52,7 +52,7 @@ A stateful service is included for deduplication. The way it works is by first c
 The connectors can add up and get pretty annoying. A clean script `cleanconn` is included to remove all running and stopped connectors. **It removes all connectors!**
 
 ## Problems
-The endpoint actually is a dump of x amount of new posts for a subreddit and can get really big. Sometimes things don't work out or lag a lot. I may be good to edit the interval that the connector polls the subreddit. It may also be helpful to run the sdf first and the connector separately. In terminal one,
+1. The endpoint actually is a dump of x amount of new posts for a subreddit and can get really big. Sometimes things don't work out or lag a lot. I may be good to edit the interval that the connector polls the subreddit. It may also be helpful to run the sdf first and the connector separately. In terminal one,
 ```
 make sdf
 ```
@@ -61,9 +61,54 @@ And in terminal two
 make connectors
 ```
 
-The connector is not suitable for reading subreddits that are very active and get more than one posts per five seconds. You can edit the interval it polls at. It can only read the new post.
+2. The connector is not suitable for reading subreddits that are very active and get more than one posts per five seconds. You can edit the interval it polls at. It can only read the new post.
 
-The connector will read old posts if the new post is removed. 
+3. The connector will read old posts if the new post is removed.
+4. In this example, keyword extraction is done by breaking whitespaces and punctuation up. There is an example of better keyword detection via hugging face's classifier. The code can be found here [non-working dataflow](zzzz_WIP/intelligentflow.yaml). It has not been tested, but modifying the function `extract_keywords` in the dataflow could sufficiently allow better keyword detection.
+```
+fn extract_keywords(post: RedditObj) -> Result<(Option<String>,String) > {
+            use sdf_http::http::{Request, header};
+            use serde_json::Value;
+            use regex::Regex;
+
+            let url = "https://api-inference.huggingface.co/models/vblagoje/bert-english-uncased-finetuned-pos";
+            let token = "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";
+            
+            let re = Regex::new(r"[[:punct:]]").unwrap();
+            let post_title = re.replace_all(&post.title, "").to_string();
+            let post_body = re.replace_all(&post.selftext, "").to_string();
+            let body = format!( "{{\"inputs\": \"{}. {}\"}}", post_title,post_body);
+
+            let request = Request::builder()
+                .method("POST")
+                .uri(url)
+                .header(header::CONTENT_TYPE, "application/json")
+                .header(header::AUTHORIZATION, format!("Bearer {}",token)) 
+                .body(body)?;
+            let response = sdf_http::blocking::send(request)?;
+            let mut listObj= String::from_utf8(response.into_body())?;
+            listObj = listObj.replace("#", "");
+            let mut keywords: String = String::new();
+            let entities: Vec<Value>= serde_json::from_str(&listObj)?;  
+            //Ok((Some(post.id),listObj))
+            for entity in entities {
+                if let Some(entity_group) = entity.get("entity_group") {
+                    if let Some(entity_group_str) = entity_group.as_str() {
+                        if entity_group_str == "NOUN" || entity_group_str == "PROPN" {
+                            if let Some(word) = entity.get("word") {
+                                if let Some(word_str) = word.as_str() {
+                                    if !keywords.is_empty()  { keywords.push('#'); }
+                                    keywords.push_str(word_str);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Ok((Some(post.id),keywords))
+          }
+}
+```
 
 ## Full body of request
 The reddit object will return the following, please edit the generator if you find any of the information useful or necessary.
