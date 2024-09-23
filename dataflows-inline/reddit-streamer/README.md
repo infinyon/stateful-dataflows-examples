@@ -72,7 +72,7 @@ fn extract_keywords(post: RedditObj) -> Result<(Option<String>,String) > {
             use regex::Regex;
 
             let url = "https://api-inference.huggingface.co/models/vblagoje/bert-english-uncased-finetuned-pos";
-            let token = "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";
+            let token = "....."; //insert ur token here
             
             let re = Regex::new(r"[[:punct:]]").unwrap();
             let post_title = re.replace_all(&post.title, "").to_string();
