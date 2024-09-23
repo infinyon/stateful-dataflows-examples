@@ -5,7 +5,6 @@
 #spaces may brake not sure 
 WATCHING_VAR ?= rust,fluvio,infinyon
 SUBS ?= rust,test,
-NEW_CONNECTOR ?= 
 
 clean:
 	@echo "Cleaning up..."
