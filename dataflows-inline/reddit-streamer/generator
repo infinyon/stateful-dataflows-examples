@@ -1,14 +1,10 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-  echo "Usage: $0 <subreddit>"
-  exit 1
-fi
+generate_connector() {
+  SUBREDDIT=$1
 
-SUBREDDIT=$1
-
-mkdir -p conn
-cat > conn/reddit-connector-$SUBREDDIT.yaml <<EOL
+  mkdir -p conn
+  cat > conn/reddit-connector-$SUBREDDIT.yaml <<EOL
 apiVersion: 0.1.0
 meta:
   version: 0.3.8
@@ -39,9 +35,22 @@ transforms:
                     permalink: "permalink"
                     id: "id"
 EOL
+  echo "Connector file generated: reddit-connector-$SUBREDDIT.yaml"
+}
 
-echo "Connector file generated: reddit-connector-$SUBREDDIT.yaml"
-echo "++++++++++++++"
+if [ -z "$1" ]; then
+  echo "Usage: $0 <subreddits>"
+  exit 1
+fi
+
+IFS=',' read -r -a SUBREDDITS <<< "$1"
+
+for SUBREDDIT in "${SUBREDDITS[@]}"; do
+  generate_connector "$SUBREDDIT"
+done
+
+
+echo -e "--------------------\n"
 echo "Making sure that http-source is installed"
 if [ -e "infinyon-http-source-0.3.8.ipkg" ]; then
     echo "Package Found."
@@ -49,12 +58,21 @@ else
     echo "Package Not Found. Installing..."
     cdk hub download infinyon/http-source@0.3.8
 fi
-echo "++++++++++++++"
-echo "Downloading jolt"
-fluvio hub sm download infinyon/jolt@0.4.1
-echo "++++++++++++++"
+
+echo -e "--------------------\n"
+echo "Making sure that infinyon/jolt@0.4.1 is installed"
+output=$(fluvio sm list)
+if echo "$output" | grep -q "infinyon/jolt@0.4.1"; then
+  echo "SmartModule infinyon/jolt@0.4.1 is installed."
+else
+  echo "SmartModule infinyon/jolt@0.4.1 is NOT installed."
+  echo "Downloading jolt"
+  fluvio hub sm download infinyon/jolt@0.4.1
+fi
+
+echo -e "--------------------\n"
 echo "Starting connector"
-cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg --config conn/reddit-connector-"$SUBREDDIT".yaml
-
-
+for SUBREDDIT in "${SUBREDDITS[@]}"; do
+  cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg --config conn/reddit-connector-"$SUBREDDIT".yaml
+done
 
