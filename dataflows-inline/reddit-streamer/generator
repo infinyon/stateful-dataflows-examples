@@ -10,7 +10,7 @@ meta:
   version: 0.3.8
   name: reddit-${SUBREDDIT}
   type: http-source
-  topic: reddit-sub-posts
+  topic: reddit-posts
   producer: 
     batch-size: 10000
 http:
@@ -38,6 +38,44 @@ EOL
   echo "Connector file generated: reddit-connector-$SUBREDDIT.yaml"
 }
 
+generate_comment_connector() {
+  SUBREDDIT=$1
+
+  mkdir -p conn
+  cat > conn/reddit-connector-comment-$SUBREDDIT.yaml <<EOL
+apiVersion: 0.1.0
+meta:
+  version: 0.3.8
+  name: reddit-${SUBREDDIT}-comments
+  type: http-source
+  topic: reddit-comments
+  producer: 
+    batch-size: 10000
+http:
+  method: GET
+  endpoint: https://www.reddit.com/r/${SUBREDDIT}/comments.json
+  interval: 5s
+transforms:
+  - uses: infinyon/jolt@0.4.1
+    with:
+      spec:
+        - operation: shift
+          spec:
+            data:
+              children:
+                "0": 
+                  data:
+                    subreddit: "subreddit"
+                    author: "author"
+                    body: "body"
+                    ups: "ups"
+                    permalink: "permalink"
+                    id: "id"
+EOL
+  echo "Connector file generated: reddit-connector-comment-$SUBREDDIT.yaml"
+}
+
+
 if [ -z "$1" ]; then
   echo "Usage: $0 <subreddits>"
   exit 1
@@ -47,6 +85,7 @@ IFS=',' read -r -a SUBREDDITS <<< "$1"
 
 for SUBREDDIT in "${SUBREDDITS[@]}"; do
   generate_connector "$SUBREDDIT"
+  generate_comment_connector "$SUBREDDIT"
 done
 
 
@@ -74,5 +113,6 @@ echo -e "--------------------\n"
 echo "Starting connector"
 for SUBREDDIT in "${SUBREDDITS[@]}"; do
   cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg --config conn/reddit-connector-"$SUBREDDIT".yaml
+  cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg --config conn/reddit-connector-comment-"$SUBREDDIT".yaml
 done
 

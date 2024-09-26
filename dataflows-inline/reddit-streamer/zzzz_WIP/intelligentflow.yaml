@@ -136,7 +136,7 @@ services:
             use regex::Regex;
 
             let url = "https://api-inference.huggingface.co/models/vblagoje/bert-english-uncased-finetuned-pos";
-            let token = "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";
+            let token = "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";
             
             let re = Regex::new(r"[[:punct:]]").unwrap();
             let post_title = re.replace_all(&post.title, "").to_string();

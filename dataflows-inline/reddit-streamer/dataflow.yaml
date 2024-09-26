@@ -8,7 +8,7 @@ config:
   converter: json
 
 types:
-  reddit-obj:
+  reddit-post:
     type: object
     properties:
       subreddit: 
@@ -25,23 +25,44 @@ types:
         type: string
       id: 
         type: string
-  reddit-obj-keyword:
+  reddit-post-keyword:
     type: object
     properties:
       obj: 
-        type: reddit-obj
+        type: reddit-post
       keywords: 
         type: string
-
+  reddit-comment:
+    type: object
+    properties:
+      subreddit: 
+        type: string
+      author: 
+        type: string
+      body: 
+        type: string
+      ups:
+        type: u32
+      permalink: 
+        type: string
+      id: 
+        type: string
+  reddit-comment-keyword:
+    type: object
+    properties:
+      obj: 
+        type: reddit-comment
+      keywords: 
+        type: string
 topics:
-  reddit-sub-posts:
+  reddit-posts:
     schema:
       value:
-        type: reddit-obj
-  reddit-nodup:
+        type: reddit-post
+  reddit-posts-nodup:
     schema:
       value:
-        type: reddit-obj
+        type: reddit-post
   reddit-key:
     schema:
       value:
@@ -49,19 +70,32 @@ topics:
   watched-post:
     schema:
       value:
-        type: reddit-obj
+        type: reddit-post
+  reddit-comments:
+    schema:
+      value:
+        type: reddit-comment
+  reddit-comments-nodup:
+    schema:
+      value:
+        type: reddit-comment
+  watched-comment:
+    schema:
+      value:
+        type: reddit-comment
+
 services:
-  dedup:
+  dedup-post:
     sources:
       - type: topic
-        id: reddit-sub-posts
+        id: reddit-posts
     states:
       tracker:
-        from: dedup-tracker.tracker
+        from: dedup-tracker-post.tracker
     transforms:
       - operator: filter
         run: |
-          fn genfilter(obj : RedditObj) -> Result<bool> {
+          fn genfilter(obj : RedditPost) -> Result<bool> {
             let track = tracker();
             let trackrow = track.sql(&format!(
                 "select * from `tracker` where `id` = '{}'", obj.id
@@ -71,11 +105,11 @@ services:
           }
     sinks:
       - type: topic
-        id: reddit-nodup
-  dedup-tracker:
+        id: reddit-posts-nodup
+  dedup-tracker-post:
     sources:
       - type: topic
-        id: reddit-nodup
+        id: reddit-posts-nodup
     states:
       tracker: 
         type: keyed-state
@@ -102,12 +136,12 @@ services:
     partition:
       assign-key:
         run: |
-          fn map_post(post: RedditObj) -> Result<String> {
+          fn map_post(post: RedditPost) -> Result<String> {
             Ok(post.id)
           }
       update-state:
         run: |
-          fn track_read(post: RedditObj) -> Result<()> {
+          fn track_read(post: RedditPost) -> Result<()> {
             let mut track = tracker();
             track.id= post.id;
             track.subreddit= post.subreddit;
@@ -119,20 +153,19 @@ services:
             track.update()?;
             Ok(())
           }
-  keyword-splitter:
+  keyword-splitter-posts:
     sources:
       - type: topic 
-        id: reddit-nodup
+        id: reddit-posts-nodup
     transforms: 
       - operator: map
         dependencies:
           - name: regex
             version: "1.10.0"
         run: |
-          fn extract_keywords(post: RedditObj) -> Result< RedditObjKeyword > {
+          fn extract_keywords(post: RedditPost) -> Result< RedditPostKeyword > {
             use regex::Regex;
             use std::collections::HashSet;
-
 
             let re = Regex::new(r"\s+").unwrap(); 
             let mut ret = format!("{} {}",post.title,post.selftext);
@@ -144,7 +177,7 @@ services:
                 .map(|s| s.to_string()).collect();
             let keywords = keywords.into_iter().collect::<Vec<_>>().join("#");
 
-            Ok(RedditObjKeyword{
+            Ok(RedditPostKeyword{
                 obj: post,
                 keywords: keywords,
             })
@@ -155,7 +188,7 @@ services:
         transforms:
           - operator: flat-map
             run: |
-              fn send_key(post : RedditObjKeyword) -> Result<Vec<String> >{
+              fn send_key(post : RedditPostKeyword) -> Result<Vec<String> >{
                 let ret: Vec<String> = post.keywords.split('#')
                             .map(|str| str.to_string()).collect();
                 Ok(ret)
@@ -165,7 +198,7 @@ services:
         transforms:
           - operator: filter-map
             run: |
-              fn has_watched(post : RedditObjKeyword) -> Result<Option<RedditObj> >{
+              fn has_watched(post : RedditPostKeyword) -> Result<Option<RedditPost> >{
                 use std::collections::HashSet;
 
                 let keywordslist: Vec<String> = post.keywords.split('#')
@@ -208,3 +241,132 @@ services:
             tabkeywords().increment(1);
             Ok(())
           }
+  dedup-comment:
+    sources:
+      - type: topic
+        id: reddit-comments
+    states:
+      tracker:
+        from: dedup-tracker-comment.commentlist
+    transforms:
+      - operator: filter
+        run: |
+          fn genfilter_comment(obj : RedditComment) -> Result<bool> {
+            let track = commentlist();
+            let trackrow = track.sql(&format!(
+                "select * from `commentlist` where `id` = '{}'", obj.id
+            ))?;
+            let rows = trackrow.rows()?;
+            Ok(!rows.next())
+          }
+    sinks:
+      - type: topic
+        id: reddit-comments-nodup
+  dedup-tracker-comment:
+    sources:
+      - type: topic
+        id: reddit-comments-nodup
+    states:
+      commentlist: 
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: arrow-row
+            properties:
+              id:
+                type: string
+              subreddit:
+                type: string
+              body:
+                type: string
+              ups:
+                type: u32
+              author:
+                type: string
+              permalink:
+                type: string
+    partition:
+      assign-key:
+        run: |
+          fn map_comment(comment: RedditComment) -> Result<String> {
+            Ok(comment.id)
+          }
+      update-state:
+        run: |
+          fn track_subreddit_comment(comment: RedditComment) -> Result<()> {
+            let mut track = commentlist();
+            track.id= comment.id;
+            track.subreddit = comment.subreddit;
+            track.body= comment.body;
+            track.ups = comment.ups;
+            track.author = comment.author;
+            track.permalink = comment.permalink;
+            track.update()?;
+            Ok(())
+          }
+  keyword-splitter-comments:
+    sources:
+      - type: topic 
+        id: reddit-comments-nodup
+    transforms: 
+      - operator: map
+        dependencies:
+          - name: regex
+            version: "1.10.0"
+        run: |
+          fn extract_keywords_comment(comment: RedditComment) -> Result< RedditCommentKeyword > {
+            use regex::Regex;
+            use std::collections::HashSet;
+
+            let re = Regex::new(r"\s+").unwrap(); 
+            let mut ret = format!("{}",comment.body);
+            ret = ret.chars()
+                .filter(|c| c.is_alphanumeric() || c.is_whitespace()) 
+                .collect::<String>().to_lowercase();
+            let keywords: HashSet<String> = ret
+                .split_whitespace()
+                .map(|s| s.to_string()).collect();
+            let keywords = keywords.into_iter().collect::<Vec<_>>().join("#");
+
+            Ok(RedditCommentKeyword{
+                obj: comment,
+                keywords: keywords,
+            })
+          }
+    sinks:
+      - type: topic
+        id: reddit-key
+        transforms:
+          - operator: flat-map
+            run: |
+              fn send_key_comment(comment: RedditCommentKeyword) -> Result<Vec<String> >{
+                let ret: Vec<String> = comment.keywords.split('#')
+                            .map(|str| str.to_string()).collect();
+                Ok(ret)
+              }
+      - type: topic
+        id: watched-comment
+        transforms:
+          - operator: filter-map
+            run: |
+              fn has_watched_comment(comment: RedditCommentKeyword) -> Result<Option<RedditComment> >{
+                use std::collections::HashSet;
+
+                let keywordslist: Vec<String> = comment.keywords.split('#')
+                            .map(|str| str.to_string())
+                            .collect();
+                let watching_list = std::env::var("watching")?;
+                let watched: Vec<String> = watching_list.split(',')
+                            .map(|str| str.to_string()).collect();
+                
+                let set_key: HashSet<String> = keywordslist.iter().cloned().collect();
+                let set_watched: HashSet<String> = watched.iter().cloned().collect();
+                let inter: HashSet<String> = set_key.intersection(&set_watched).cloned().collect();
+
+                if !inter.is_empty() {
+                    return Ok(Some(comment.obj));
+                }
+                Ok(None)
+              }
