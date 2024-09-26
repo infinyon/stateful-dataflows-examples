@@ -1,5 +1,5 @@
 # Reddit Subreddit Streamer
-This example with stream new posts from different subreddits using the endpoint **https://www.reddit.com/r/.../new.json**. This is influenced by [x-sushant-x's entry in Quira](https://github.com/x-sushant-x/reddit-streamer-fluvio/tree/master). However, everything is containerized with fluvio's technology with connectors and SDF. The project consists of a script that generates connectors as well a watcher that allows for you to watch for certain keywords found in reddit posts.
+This example with stream new posts and comments from different subreddits using the endpoint **https://www.reddit.com/r/.../new.json**. This is influenced by [x-sushant-x's entry in Quira](https://github.com/x-sushant-x/reddit-streamer-fluvio/tree/master). However, everything is containerized with fluvio's technology with connectors and SDF. The project consists of a script that generates connectors as well a watcher that allows for you to watch for certain keywords found in reddit posts.
 
 ## Topics
 ![Stateful](img/reddit.png)
@@ -38,7 +38,7 @@ Or to start multipe subreddits use comma-separated
 ```
 The script will generate a connector file. It will also automatically install all the packages necessary. The connector extracts the newest post via the jolt. Other params from the reddit request are available and the `generator` script can be edit to include them. The full list is in the bottom of the README. 
 
-The connector will produce for only the `reddit-sub-posts` topic. It has no deduplication.
+The connector will produce posts for only the `reddit-posts` topic and comments for the `reddit-comments` topic. It has no deduplication.
 
 ## Stateful for deduplication
 A stateful service is included for deduplication. The way it works is by first checking if the state has said entry via the post's id:
@@ -113,8 +113,7 @@ fn extract_keywords(post: RedditObj) -> Result<(Option<String>,String) > {
 ## Full body of request
 The reddit object will return the following, please edit the generator if you find any of the information useful or necessary.
 =======
-e reddit object will return the following, please edit the yaml if you find any of the information useful or necessary.
->>>>>>> Stashed changes
+The reddit object will return the following, please edit the yaml if you find any of the information useful or necessary.
 ```
 "approved_at_utc": null,
 "subreddit": "test",
