@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 # Reddit Subreddit Streamer
 This example with stream new posts from different subreddits using the endpoint **https://www.reddit.com/r/.../new.json**. This is influenced by [x-sushant-x's entry in Quira](https://github.com/x-sushant-x/reddit-streamer-fluvio/tree/master). However, everything is containerized with fluvio's technology with connectors and SDF. The project consists of a script that generates connectors as well a watcher that allows for you to watch for certain keywords found in reddit posts.
 
