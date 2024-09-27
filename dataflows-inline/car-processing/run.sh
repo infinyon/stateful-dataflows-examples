@@ -6,7 +6,7 @@ cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c car-connector.yaml
 cd /workspace
 
 sdf clean
-initial_command="sdf run --ephemeral"
+initial_command="sdf run"
 new_command="fluvio consume speeding"
 
 $initial_command > output.log 2>&1 &
