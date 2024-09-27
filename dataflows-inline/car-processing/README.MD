@@ -373,7 +373,7 @@ Packed in the repo is a demo in TS with express + fluvio's npm package. The demo
   ```
   cd visualizer
   ```
-2. Install all the packageds.
+2. Install all the packages.
   ```
 npm install
   ```

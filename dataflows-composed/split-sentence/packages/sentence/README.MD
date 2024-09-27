@@ -26,7 +26,7 @@ The generator creates all necessary glue logic for a reusable package.
 
 Update the code for the APIs defined.
 
-Replace the `sentence_to_words` function body in the `rust/sentence-to-words/src/lib.rs` with the following code:
+Replace the `sentence_to_words` function body in the `rust/sentence-pkg/src/sentence_to_words.rs` with the following code:
 
 ```rust
 pub(crate) fn sentence_to_words(sentence: String) -> Result<Vec<String>> {
@@ -34,7 +34,7 @@ pub(crate) fn sentence_to_words(sentence: String) -> Result<Vec<String>> {
 }
 ```
 
-In `rust/augment-count/src/lib.rs` replace the function body:
+In `rust/sentence-pkg/src/augment_count.rs` replace the function body:
 
 ```rust
 pub(crate) fn augment_count(word: String) -> Result<String> {
