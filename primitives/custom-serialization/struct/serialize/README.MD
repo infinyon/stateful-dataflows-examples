@@ -1,6 +1,6 @@
 # Map Operator Example
 
-Example of how to rename the fields of source structs during deserialization. In this example, the `fullName` field on `citizen` is renamed to `full_name`.
+Example of how to rename the fields of sink structs during serialization. In this example, the `full_name` field on `citizen` is renamed to `fullName`.
 
 * Checkout the [dataflow.yaml](./dataflow.yaml).
 * Make sure to [Install SDF and start a Fluvio cluster].
@@ -18,8 +18,8 @@ sdf run
 The sample data file used to run this test `./sample-data/data.txt` has the following records:
 
 ```bash
-{"fullName": "Alice", "age": 17}
-{"fullName": "Bob", "age": 32}
+{"full_name": "Alice", "age": 17}
+{"full_name": "Bob", "age": 32}
 ```
 
 Produce the data to the `citizens` topic:
@@ -41,7 +41,7 @@ fluvio consume citizens-public -Bd
 ```
 
 ```bash
-{"full_name":"Bob","age":32}
+{"fullName":"Bob","age":32}
 ```
 
 ### Clean-up

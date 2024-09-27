@@ -32,6 +32,7 @@ jobs:
             "primitives/key-value/output",
             "primitives/key-value/chained",
             "primitives/custom-serialization/struct/deserialize"
+            "primitives/custom-serialization/struct/serialize"
             "dataflows-inline/bank-processing",
             "dataflows-inline/car-processing",
             "dataflows-inline/helsinki-transit",
