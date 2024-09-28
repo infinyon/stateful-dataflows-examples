@@ -1,4 +1,4 @@
-# Map Operator Example
+# Custom Struct Serialization Example
 
 Example of how to rename the fields of sink structs during serialization. In this example, the `full_name` field on `citizen` is renamed to `fullName`.
 

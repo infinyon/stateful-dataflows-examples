@@ -1,6 +1,6 @@
 apiVersion: 0.5.0
 meta:
-  name: deserialize-struct-rename-example
+  name: custom-struct-deserialization-example
   version: 0.1.0
   namespace: examples
 
@@ -30,7 +30,7 @@ topics:
         type: citizen
 
 services:
-  map-service:
+  arbitrary-service:
     sources:
       - type: topic
         id: citizens

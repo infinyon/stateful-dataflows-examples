@@ -1,4 +1,4 @@
-# Map Operator Example
+# Custom Struct Deserialization Example
 
 Example of how to rename the fields of source structs during deserialization. In this example, the `fullName` field on `citizen` is renamed to `full_name`.
 
