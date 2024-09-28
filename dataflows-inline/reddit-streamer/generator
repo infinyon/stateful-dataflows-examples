@@ -83,6 +83,8 @@ fi
 
 IFS=',' read -r -a SUBREDDITS <<< "$1"
 
+fluvio topic create reddit-posts --retention-time 1m
+fluvio topic create reddit-comments --retention-time 1m
 for SUBREDDIT in "${SUBREDDITS[@]}"; do
   generate_connector "$SUBREDDIT"
   generate_comment_connector "$SUBREDDIT"

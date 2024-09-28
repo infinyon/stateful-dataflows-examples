@@ -160,23 +160,53 @@ services:
     transforms: 
       - operator: map
         dependencies:
+          - name: sdf-http
+            git: "https://github.com/infinyon/sdf-http-guest"
+            tag: "v0.4.0"
+          - name: serde_json
+            version: "1.0.60"
           - name: regex
             version: "1.10.0"
         run: |
-          fn extract_keywords(post: RedditPost) -> Result< RedditPostKeyword > {
+          fn extract_keywords(post: RedditPost) -> Result<RedditPostKeyword> {
+            use sdf_http::http::{Request, header};
+            use serde_json::Value;
             use regex::Regex;
-            use std::collections::HashSet;
 
-            let re = Regex::new(r"\s+").unwrap(); 
-            let mut ret = format!("{} {}",post.title,post.selftext);
-            ret = ret.chars()
-                .filter(|c| c.is_alphanumeric() || c.is_whitespace()) 
-                .collect::<String>().to_lowercase();
-            let keywords: HashSet<String> = ret
-                .split_whitespace()
-                .map(|s| s.to_string()).collect();
-            let keywords = keywords.into_iter().collect::<Vec<_>>().join("#");
+            let url = "https://api-inference.huggingface.co/models/vblagoje/bert-english-uncased-finetuned-pos";
+            let token = "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";
+            
+            let re = Regex::new(r"[[:punct:]]").unwrap();
+            let post_title = re.replace_all(&post.title, "").to_string();
+            let post_body = re.replace_all(&post.selftext, "").to_string();
+            let body = format!( "{{\"inputs\": \"{}. {}\"}}", post_title,post_body);
 
+            let request = Request::builder()
+                .method("POST")
+                .uri(url)
+                .header(header::CONTENT_TYPE, "application/json")
+                .header(header::AUTHORIZATION, format!("Bearer {}",token)) 
+                .body(body)?;
+            let response = sdf_http::blocking::send(request)?;
+            let mut listObj= String::from_utf8(response.into_body())?;
+            listObj = listObj.replace("#", "");
+            let mut keywords: String = String::new();
+            let entities: Vec<Value>= serde_json::from_str(&listObj)?;  
+            //Ok((Some(post.id),listObj))
+            for entity in entities {
+                if let Some(entity_group) = entity.get("entity_group") {
+                    if let Some(entity_group_str) = entity_group.as_str() {
+                        if entity_group_str == "NOUN" || entity_group_str == "PROPN" {
+                            if let Some(word) = entity.get("word") {
+                                if let Some(word_str) = word.as_str() {
+                                    if !keywords.is_empty()  { keywords.push('#'); }
+                                    keywords.push_str(word_str);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             Ok(RedditPostKeyword{
                 obj: post,
                 keywords: keywords,
