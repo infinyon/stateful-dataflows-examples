@@ -1,0 +1,2 @@
+{"fullName": "Alice", "age": 17}
+{"fullName": "Bob", "age": 32}

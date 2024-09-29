@@ -1,0 +1,47 @@
+apiVersion: 0.5.0
+meta:
+  name: custom-struct-serialization-example
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+
+types:
+  citizen:
+    type: object
+    properties:
+      full_name:
+        type: string
+        serialize:
+          rename: fullName 
+      age:
+        type: u16
+
+topics:
+  citizens:
+    schema:
+      value:
+        type: citizen
+
+  citizens-public:
+    schema:
+      value:
+        type: citizen
+
+services:
+  arbitrary-service:
+    sources:
+      - type: topic
+        id: citizens
+
+    transforms:
+      - operator: filter
+        run: |
+          fn filter_minors(citizen: Citizen) -> Result<bool> {
+            Ok(citizen.age > 17)
+          }
+
+    sinks:
+      - type: topic
+        id: citizens-public
