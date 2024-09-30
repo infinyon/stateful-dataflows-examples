@@ -22,7 +22,7 @@ RUN rustup target add wasm32-wasip1
     
 RUN curl -fsS https://hub.infinyon.cloud/install/install.sh?ctx=dc | bash && \
     echo 'source "${HOME}/.fvm/env"' >> ~/.bashrc && \
-    fvm install sdf-beta1
+    fvm install sdf-beta2
 
 RUN cd /workspace/connectors/ && \
     cdk hub download infinyon/http-source@0.3.8
