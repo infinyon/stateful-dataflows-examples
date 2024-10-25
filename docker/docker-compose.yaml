@@ -27,9 +27,7 @@ services:
       - sc
 
   sc-setup:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: fluvio:sdf
     container_name: sc-setup
     environment:
       - RUST_LOG=info
@@ -41,7 +39,7 @@ services:
       "
     depends_on:
       - sc
-      
+
   sdf:
     network_mode: host
     image: fluvio:sdf
