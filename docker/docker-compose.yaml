@@ -1,0 +1,68 @@
+services:
+  sc:
+    image: fluvio:sdf
+    container_name: sc
+    hostname: sc
+    ports:
+      - "9103:9003"
+    environment:
+      - RUST_LOG=info
+    command: "fluvio-run sc --local /fluvio/metadata"
+    volumes:
+      - fluvio-metadata:/fluvio/metadata
+
+  spu:
+    image: fluvio:sdf
+    container_name: spu
+    hostname: spu
+    volumes:
+      - fluvio-data:/fluvio/data
+    environment:
+      - RUST_LOG=info
+    ports:
+      - "9110:9010"
+      - "9111:9011"
+    command: "fluvio-run spu -i 5001 -p spu:9010 -v spu:9011 --sc-addr sc:9004 --log-base-dir /fluvio/data"
+    depends_on:
+      - sc
+
+  sc-setup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sc-setup
+    environment:
+      - RUST_LOG=info
+    entrypoint: >
+      /bin/sh -c "
+      fluvio profile add docker sc:9003 docker;
+      fluvio cluster spu register --id 5001 --public-server 0.0.0.0:9110 --public-server-local spu:9010 --private-server spu:9011;
+      exit 0;
+      "
+    depends_on:
+      - sc
+      
+  sdf:
+    network_mode: host
+    image: fluvio:sdf
+    container_name: sdf
+    hostname: sdf
+    volumes:
+      - sdf-data:/sdf/data
+    environment:
+      - RUST_LOG=info
+    ports:
+      - "8090:8000"
+    command: >
+      /bin/sh -c "
+        fluvio profile add docker 127.0.0.1:9103 docker &&
+        sdf worker launch --base-dir /sdf/data --worker-id sdf-worker
+      "
+    depends_on:
+      - sc-setup
+      - spu
+
+volumes:
+  fluvio-data:
+  fluvio-metadata:
+  sdf-data:
