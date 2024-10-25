@@ -1,0 +1,66 @@
+#!/bin/bash
+
+if [ "$#" -lt 2 ]; then
+  echo "Usage: ./generate_connector.sh <channel> <key> [<consume = true?>]"
+  exit 1
+fi
+
+CHANNEL=$1
+API_KEY=$2
+CONSUME=${3:-}  
+
+mkdir -p conn
+cat > conn/youtube-connector-${CHANNEL}.yaml <<EOL
+apiVersion: 0.1.0
+meta:
+  version: 0.3.8
+  name: youtube-connector
+  type: http-source
+  topic: youtube-stats
+  producer: 
+    batch-size: 10000
+http:
+  method: GET
+  endpoint: "https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forHandle=${CHANNEL}&key=${API_KEY}&maxResults=1"
+  interval: 15s
+transforms:
+  - uses: infinyon/jolt@0.4.1
+    with:
+      spec:
+        - operation: shift
+          spec:
+            items:
+              "0": 
+                snippet:
+                  title: "channel_tag"
+                  description: "description"
+                  customUrl: "customUrl"
+                  publishedAt: "recent_video_time"
+                  thumbnails:
+                    high:
+                      url: "thumbnailUrl"
+                statistics:
+                  viewCount: "statistics.viewCount"
+                  subscriberCount: "statistics.subscriberCount"
+                  videoCount: "statistics.videoCount"
+EOL
+
+echo "Connector file generated: conn/youtube-connector-${CHANNEL}.yaml"
+echo "++++++++++++++"
+echo "Making sure that http-source is installed"
+if [ -e "infinyon-http-source-0.3.8.ipkg" ]; then
+    echo "Package Found."
+else
+    echo "Package Not Found. Installing..."
+    cdk hub download infinyon/http-source@0.3.8
+fi
+echo "++++++++++++++"
+echo "Downloading jolt"
+fluvio hub sm download infinyon/jolt@0.4.1
+echo "++++++++++++++"
+echo "Starting connector"
+cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg --config conn/youtube-connector-"$CHANNEL".yaml
+
+if [ -n "$CONSUME" ]; then
+    fluvio consume youtube-stats
+fi

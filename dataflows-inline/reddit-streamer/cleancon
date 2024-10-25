@@ -1,0 +1,8 @@
+#!/bin/bash
+
+connectors=$(cdk deploy list | awk '{print $1}' | grep -v 'NAME')
+for connector in $connectors; do
+    echo "Deleting connector: $connector"
+    cdk deploy shutdown --name ${connector}
+done
+
