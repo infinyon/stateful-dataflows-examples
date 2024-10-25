@@ -1,10 +1,6 @@
 FROM rust:1-slim-bookworm
 
-
-# Sdf setup doesn't pick this up?
 RUN rustup target add wasm32-wasip1
-
-
 RUN apt-get update
 RUN apt-get install -y curl unzip
 RUN apt-get install -y tini openssl curl
@@ -14,6 +10,3 @@ ENV PATH "$PATH:/root/.fluvio/bin"
 ENV PATH "$PATH:/root/.fvm/bin"
 
 RUN sdf setup
-
-ENTRYPOINT [ "tini", "--" ]
-CMD ["sdf", "daemon"]
