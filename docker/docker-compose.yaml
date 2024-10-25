@@ -38,8 +38,9 @@ services:
       exit 0;
       "
     depends_on:
-      - sc      
+      - sc
   sdf:
+    network_mode: host
     image: fluvio:sdf
     container_name: sdf
     hostname: sdf
@@ -51,12 +52,13 @@ services:
       - "8090:8000"
     command: >
       /bin/sh -c "
-        fluvio profile add docker sc:9003 docker &&
+        fluvio profile add docker 127.0.0.1:9103 docker &&
         sdf worker launch --base-dir /sdf/data --worker-id sdf-worker
       "
     depends_on:
       - sc-setup
-      - spu      
+      - spu
+
 volumes:
   fluvio-data:
   fluvio-metadata:
