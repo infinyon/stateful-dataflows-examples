@@ -1,3 +1,6 @@
+# Build Environment
+docker build -t fluvio:sdf .
+
 # Run SDF in Docker
 docker compose up -d
 
