@@ -5,6 +5,7 @@
 #spaces may brake not sure 
 WATCHING_VAR ?= rust,fluvio,infinyon
 SUBS ?= rust,test,
+TOKEN ?=
 NEW_CONNECTOR ?= 
 
 clean:
@@ -19,7 +20,7 @@ clean:
 
 sdf:
 	@echo "Building SDF..."
-	sdf run --ephemeral --ui -e watching=$(WATCHING_VAR)
+	sdf run --ui -e watching=$(WATCHING_VAR)
 
 connectors:
 	@echo "Building building connectors..."
