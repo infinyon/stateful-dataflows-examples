@@ -1,22 +1,11 @@
-### Compile and Run
+## Run Docker
 
-Build Environment:
-`docker build -t fluvio:sdf .`
+```
+./setup.sh
+```
 
-Deploy:
-`docker compose up` or 
-`docker compose up -d`
+## Use CLI to Deploy Dataflows
 
-See volume mappings via:
-`docker volumes ls`
-
-remove volumes with compose down:
-`docker compose down --volumes` or `docker compose down -v`
-
-
-### Additional Commands
-
-Register the worker:
-`sdf worker register docker sdf-worker`
-
-
+```
+sdf deploy dataflow.yaml
+```
