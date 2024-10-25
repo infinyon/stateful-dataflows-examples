@@ -112,3 +112,4 @@ Stop the connector:
 ```bash
 cdk deploy shutdown --name hackernews
 ```
+
