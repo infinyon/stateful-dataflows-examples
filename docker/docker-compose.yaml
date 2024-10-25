@@ -1,4 +1,3 @@
-version: "3"
 services:
   sc:
     image: fluvio:sdf
@@ -10,13 +9,13 @@ services:
       - RUST_LOG=info
     command: "fluvio-run sc --local /fluvio/metadata"
     volumes:
-      - ./fluvio-metadata:/fluvio/metadata
+      - fluvio-metadata:/fluvio/metadata
   spu:
     image: fluvio:sdf
     container_name: spu
     hostname: spu
     volumes:
-      - ./fluvio-data:/fluvio/data
+      - fluvio-data:/fluvio/data
     environment:
       - RUST_LOG=info
     ports:
@@ -45,7 +44,7 @@ services:
     container_name: sdf
     hostname: sdf
     volumes:
-      - ./sdf-data:/sdf/data
+      - sdf-data:/sdf/data
     environment:
       - RUST_LOG=info
     ports:
@@ -58,3 +57,7 @@ services:
     depends_on:
       - sc-setup
       - spu      
+volumes:
+  fluvio-data:
+  fluvio-metadata:
+  sdf-data:
