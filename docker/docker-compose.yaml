@@ -39,12 +39,12 @@ services:
       "
     depends_on:
       - sc
-      
+
   sdf:
-    network_mode: host
     image: fluvio:sdf
     container_name: sdf
     hostname: sdf
+    network_mode: host
     volumes:
       - sdf-data:/sdf/data
     environment:
