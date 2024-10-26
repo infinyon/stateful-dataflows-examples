@@ -8,7 +8,7 @@ Deploy:
 `docker compose up -d`
 
 See volume mappings via:
-`docker volumes ls`
+`docker volume ls`
 
 remove volumes with compose down:
 `docker compose down --volumes` or `docker compose down -v`
