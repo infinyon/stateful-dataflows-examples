@@ -49,8 +49,6 @@ services:
       - sdf-data:/sdf/data
     environment:
       - RUST_LOG=info
-    ports:
-      - "8090:8000"
     command: >
       /bin/sh -c "
         fluvio profile add docker 127.0.0.1:9103 docker &&
