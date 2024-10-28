@@ -1,0 +1,433 @@
+apiVersion: 0.5.0
+meta:
+  name: reddit-reader
+  version: 0.1.0
+  namespace: reddit
+
+config:
+  converter: json
+
+types:
+  reddit-post:
+    type: object
+    properties:
+      subreddit: 
+        type: string
+      title: 
+        type: string
+      author: 
+        type: string
+      selftext: 
+        type: string
+      ups:
+        type: u32
+      permalink: 
+        type: string
+      id: 
+        type: string
+  reddit-post-keyword:
+    type: object
+    properties:
+      obj: 
+        type: reddit-post
+      keywords: 
+        type: string
+  reddit-comment:
+    type: object
+    properties:
+      subreddit: 
+        type: string
+      author: 
+        type: string
+      body: 
+        type: string
+      ups:
+        type: u32
+      permalink: 
+        type: string
+      id: 
+        type: string
+  reddit-comment-keyword:
+    type: object
+    properties:
+      obj: 
+        type: reddit-comment
+      keywords: 
+        type: string
+topics:
+  reddit-posts:
+    schema:
+      value:
+        type: reddit-post
+  reddit-posts-nodup:
+    schema:
+      value:
+        type: reddit-post
+  reddit-key:
+    schema:
+      value:
+        type: string
+  watched-post:
+    schema:
+      value:
+        type: reddit-post
+  reddit-comments:
+    schema:
+      value:
+        type: reddit-comment
+  reddit-comments-nodup:
+    schema:
+      value:
+        type: reddit-comment
+  watched-comment:
+    schema:
+      value:
+        type: reddit-comment
+
+services:
+  dedup-post:
+    sources:
+      - type: topic
+        id: reddit-posts
+    states:
+      tracker:
+        from: dedup-tracker-post.tracker
+    transforms:
+      - operator: filter
+        run: |
+          fn genfilter(obj : RedditPost) -> Result<bool> {
+            let track = tracker();
+            let trackrow = track.sql(&format!(
+                "select * from `tracker` where `id` = '{}'", obj.id
+            ))?;
+            let rows = trackrow.rows()?;
+            Ok(!rows.next())
+          }
+    sinks:
+      - type: topic
+        id: reddit-posts-nodup
+  dedup-tracker-post:
+    sources:
+      - type: topic
+        id: reddit-posts-nodup
+    states:
+      tracker: 
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: arrow-row
+            properties:
+              id:
+                type: string
+              subreddit:
+                type: string
+              selftext:
+                type: string
+              title:
+                type: string
+              ups:
+                type: u32
+              author:
+                type: string
+              permalink:
+                type: string
+    partition:
+      assign-key:
+        run: |
+          fn map_post(post: RedditPost) -> Result<String> {
+            Ok(post.id)
+          }
+      update-state:
+        run: |
+          fn track_read(post: RedditPost) -> Result<()> {
+            let mut track = tracker();
+            track.id= post.id;
+            track.subreddit= post.subreddit;
+            track.selftext = post.selftext;
+            track.title = post.title;
+            track.ups = post.ups;
+            track.author = post.author;
+            track.permalink = post.permalink;
+            track.update()?;
+            Ok(())
+          }
+  keyword-splitter-posts:
+    sources:
+      - type: topic 
+        id: reddit-posts-nodup
+    transforms: 
+      - operator: map
+        dependencies:
+          - name: sdf-http
+            git: "https://github.com/infinyon/sdf-http-guest"
+            tag: "v0.4.0"
+          - name: serde_json
+            version: "1.0.60"
+          - name: regex
+            version: "1.10.0"
+        run: |
+          fn extract_keywords(post: RedditPost) -> Result<RedditPostKeyword> {
+            use sdf_http::http::{Request, header};
+            use serde_json::Value;
+            use regex::Regex;
+
+            let url = "https://api-inference.huggingface.co/models/vblagoje/bert-english-uncased-finetuned-pos";
+            let token = "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";
+            //token = std::env::var("token")?;
+            
+            let re = Regex::new(r"[[:punct:]]").unwrap();
+            let post_title = re.replace_all(&post.title, "").to_string();
+            let post_body = re.replace_all(&post.selftext, "").to_string();
+            let body = format!( "{{\"inputs\": \"{}. {}\"}}", post_title,post_body);
+
+            let request = Request::builder()
+                .method("POST")
+                .uri(url)
+                .header(header::CONTENT_TYPE, "application/json")
+                .header(header::AUTHORIZATION, format!("Bearer {}",token)) 
+                .body(body)?;
+            let response = sdf_http::blocking::send(request)?;
+            let mut listObj= String::from_utf8(response.into_body())?;
+            listObj = listObj.replace("#", "");
+            let mut keywords: String = String::new();
+            let entities: Vec<Value>= serde_json::from_str(&listObj)?;  
+            //Ok((Some(post.id),listObj))
+            for entity in entities {
+                if let Some(entity_group) = entity.get("entity_group") {
+                    if let Some(entity_group_str) = entity_group.as_str() {
+                        if entity_group_str == "NOUN" || entity_group_str == "PROPN" {
+                            if let Some(word) = entity.get("word") {
+                                if let Some(word_str) = word.as_str() {
+                                    if !keywords.is_empty()  { keywords.push('#'); }
+                                    keywords.push_str(word_str);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Ok(RedditPostKeyword{
+                obj: post,
+                keywords: keywords,
+            })
+          }
+    sinks:
+      - type: topic
+        id: reddit-key
+        transforms:
+          - operator: flat-map
+            run: |
+              fn send_key(post : RedditPostKeyword) -> Result<Vec<String> >{
+                let ret: Vec<String> = post.keywords.split('#')
+                            .map(|str| str.to_string()).collect();
+                Ok(ret)
+              }
+      - type: topic
+        id: watched-post
+        transforms:
+          - operator: filter-map
+            run: |
+              fn has_watched(post : RedditPostKeyword) -> Result<Option<RedditPost> >{
+                use std::collections::HashSet;
+
+                let keywordslist: Vec<String> = post.keywords.split('#')
+                            .map(|str| str.to_string())
+                            .collect();
+                let watching_list = std::env::var("watching")?;
+                let watched: Vec<String> = watching_list.split(',')
+                            .map(|str| str.to_string()).collect();
+                
+                let set_key: HashSet<String> = keywordslist.iter().cloned().collect();
+                let set_watched: HashSet<String> = watched.iter().cloned().collect();
+                let inter: HashSet<String> = set_key.intersection(&set_watched).cloned().collect();
+
+                if !inter.is_empty() {
+                    return Ok(Some(post.obj));
+                }
+                Ok(None)
+              }
+  keyword-counter:
+    sources:
+      - type: topic 
+        id: reddit-key
+    states:
+      tabkeywords:
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: u32
+    partition:
+      assign-key:
+        run: |
+          fn map_keyword(keyword: String) -> Result<String > {
+            Ok(keyword)
+          }
+      update-state:
+        run: |
+          fn update_keyword(keyword: String) -> Result<()> {
+            tabkeywords().increment(1);
+            Ok(())
+          }
+  dedup-comment:
+    sources:
+      - type: topic
+        id: reddit-comments
+    states:
+      tracker:
+        from: dedup-tracker-comment.commentlist
+    transforms:
+      - operator: filter
+        run: |
+          fn genfilter_comment(obj : RedditComment) -> Result<bool> {
+            let track = commentlist();
+            let trackrow = track.sql(&format!(
+                "select * from `commentlist` where `id` = '{}'", obj.id
+            ))?;
+            let rows = trackrow.rows()?;
+            Ok(!rows.next())
+          }
+    sinks:
+      - type: topic
+        id: reddit-comments-nodup
+  dedup-tracker-comment:
+    sources:
+      - type: topic
+        id: reddit-comments-nodup
+    states:
+      commentlist: 
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: arrow-row
+            properties:
+              id:
+                type: string
+              subreddit:
+                type: string
+              body:
+                type: string
+              ups:
+                type: u32
+              author:
+                type: string
+              permalink:
+                type: string
+    partition:
+      assign-key:
+        run: |
+          fn map_comment(comment: RedditComment) -> Result<String> {
+            Ok(comment.id)
+          }
+      update-state:
+        run: |
+          fn track_subreddit_comment(comment: RedditComment) -> Result<()> {
+            let mut track = commentlist();
+            track.id= comment.id;
+            track.subreddit = comment.subreddit;
+            track.body= comment.body;
+            track.ups = comment.ups;
+            track.author = comment.author;
+            track.permalink = comment.permalink;
+            track.update()?;
+            Ok(())
+          }
+  keyword-splitter-comments:
+    sources:
+      - type: topic 
+        id: reddit-comments-nodup
+    transforms: 
+      - operator: map
+        dependencies:
+          - name: sdf-http
+            git: "https://github.com/infinyon/sdf-http-guest"
+            tag: "v0.4.0"
+          - name: serde_json
+            version: "1.0.60"
+          - name: regex
+            version: "1.10.0"
+        run: |
+          fn extract_keywords_comment(comment: RedditComment) -> Result< RedditCommentKeyword > {
+            use sdf_http::http::{Request, header};
+            use serde_json::Value;
+            use regex::Regex;
+
+            let url = "https://api-inference.huggingface.co/models/vblagoje/bert-english-uncased-finetuned-pos";
+            let token = "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";
+            
+            let re = Regex::new(r"[[:punct:]]").unwrap();
+            let comment_body = re.replace_all(&comment.body, "").to_string();
+            let body = format!( "{{\"inputs\": \"{}. \"}}", comment_body);
+
+            let request = Request::builder()
+                .method("POST")
+                .uri(url)
+                .header(header::CONTENT_TYPE, "application/json")
+                .header(header::AUTHORIZATION, format!("Bearer {}",token)) 
+                .body(body)?;
+            let response = sdf_http::blocking::send(request)?;
+            let mut listObj= String::from_utf8(response.into_body())?;
+            listObj = listObj.replace("#", "");
+            let mut keywords: String = String::new();
+            let entities: Vec<Value>= serde_json::from_str(&listObj)?;  
+            //Ok((Some(post.id),listObj))
+            for entity in entities {
+                if let Some(entity_group) = entity.get("entity_group") {
+                    if let Some(entity_group_str) = entity_group.as_str() {
+                        if entity_group_str == "NOUN" || entity_group_str == "PROPN" {
+                            if let Some(word) = entity.get("word") {
+                                if let Some(word_str) = word.as_str() {
+                                    if !keywords.is_empty()  { keywords.push('#'); }
+                                    keywords.push_str(word_str);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Ok(RedditCommentKeyword{
+                obj: comment,
+                keywords: keywords,
+            })
+          }
+    sinks:
+      - type: topic
+        id: reddit-key
+        transforms:
+          - operator: flat-map
+            run: |
+              fn send_key_comment(comment: RedditCommentKeyword) -> Result<Vec<String> >{
+                let ret: Vec<String> = comment.keywords.split('#')
+                            .map(|str| str.to_string()).collect();
+                Ok(ret)
+              }
+      - type: topic
+        id: watched-comment
+        transforms:
+          - operator: filter-map
+            run: |
+              fn has_watched_comment(comment: RedditCommentKeyword) -> Result<Option<RedditComment> >{
+                use std::collections::HashSet;
+
+                let keywordslist: Vec<String> = comment.keywords.split('#')
+                            .map(|str| str.to_string())
+                            .collect();
+                let watching_list = std::env::var("watching")?;
+                let watched: Vec<String> = watching_list.split(',')
+                            .map(|str| str.to_string()).collect();
+                
+                let set_key: HashSet<String> = keywordslist.iter().cloned().collect();
+                let set_watched: HashSet<String> = watched.iter().cloned().collect();
+                let inter: HashSet<String> = set_key.intersection(&set_watched).cloned().collect();
+
+                if !inter.is_empty() {
+                    return Ok(Some(comment.obj));
+                }
+                Ok(None)
+              }

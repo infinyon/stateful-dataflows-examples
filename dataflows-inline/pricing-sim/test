@@ -1,0 +1,93 @@
+apiVersion: 0.5.0
+meta:
+  name: dataflow-calc 
+  version: 0.1.0
+  namespace: reddit
+
+config:
+  converter: json
+types:
+  dataflow: 
+    type: object
+    properties:
+      user: 
+        type: string
+      id: 
+        type: string
+      dataflow_raw:
+        type: string
+  flowdata: 
+    type: object
+    properties:
+      payload: 
+        type: string
+      source: 
+        type: string
+      id:
+        type: string
+  flowlog: 
+    type: object
+    properties:
+      data: 
+        type: flowdata
+      log:
+        type: string
+      cost:
+        type: f32
+  updatelog:
+    type: object
+    properties:
+      dataflow: 
+        type: string
+      user: 
+        type: string
+      action: 
+        type: string
+      misc: 
+        type: string
+topics:
+  new-dataflow:
+    schema:
+      value:
+        type: dataflow
+  updatelog:
+    schema:
+      value:
+        type: updatelog
+  data-input:
+    schema:
+      value:
+        type: flowdata
+  data-output:
+    schema:
+      value:
+        type: flowlog
+
+services:
+  new-data:
+    sources:
+      - type: topic
+        id: data-input
+    states:
+      storedflows:
+        from: add-dataflow.storedflows
+    transforms:
+      - operator: map
+        dependencies: 
+          - name: serde_json
+            version: "1.0.60"
+        run: |
+          fn new_data(data: Flowdata) -> Result<Flowlog>{
+            return Ok(
+              Flowlog{
+                data: data,
+                log: "Failed to inserted data. ".to_string(),
+                cost: 0.0
+              }
+            );
+            
+            
+          }
+    sinks:
+      - type: topic
+        id: data-output

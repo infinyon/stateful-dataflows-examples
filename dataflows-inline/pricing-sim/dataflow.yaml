@@ -1,0 +1,338 @@
+apiVersion: 0.5.0
+meta:
+  name: dataflow-calc 
+  version: 0.1.0
+  namespace: reddit
+
+config:
+  converter: json
+types:
+  dataflow: 
+    type: object
+    properties:
+      user: 
+        type: string
+      id: 
+        type: string
+      dataflow_raw:
+        type: string
+  flowdata: 
+    type: object
+    properties:
+      payload: 
+        type: string
+      source: 
+        type: string
+      id:
+        type: string
+  flowlog: 
+    type: object
+    properties:
+      data: 
+        type: flowdata
+      log:
+        type: string
+      cost:
+        type: f32
+  updatelog:
+    type: object
+    properties:
+      id: 
+        type: string
+      user: 
+        type: string
+      action: 
+        type: string
+      misc: 
+        type: string
+topics:
+  new-dataflow:
+    schema:
+      value:
+        type: dataflow
+  data-input:
+    schema:
+      value:
+        type: flowdata
+  data-output:
+    schema:
+      value:
+        type: flowlog
+  updatelog:
+    schema:
+      value:
+        type: updatelog
+
+
+services:
+  new-data:
+    sources:
+      - type: topic
+        id: data-input
+    states:
+      storedflows:
+        from: update-logs.storedflows
+    transforms:
+      - operator: map
+        dependencies: 
+          - name: serde_json
+            version: "1.0.60"
+        run: |
+          fn new_data(data: Flowdata) -> Result<Flowlog>{
+            use std::collections::{HashMap, HashSet, VecDeque};
+            use serde_json::Value;
+
+            let track = storedflows();
+            let trackrow = track.sql(&format!(
+                "select * from `storedflows` where `flow_id` = '{}'", data.id
+            ))?;
+            let rows = trackrow.rows()?;
+
+            if(rows.next()){
+              //this runs the dfs traversal
+              let graphCol = trackrow.col("dataflow")?;
+              let graph: Value = serde_json::from_str(&rows.str(&graphCol)?)?;
+
+              let mut visited:HashSet<String> = HashSet::new();
+              let mut queue:VecDeque<String> = VecDeque::new();
+              let mut cost: f32 = 0.0;
+              queue.push_back(data.clone().source);
+              visited.insert(data.clone().source);
+              /*
+
+              while let Some(current) = queue.pop_front() {
+                  if let Some(neighbors) = graph.get(&current) {
+                      for (neighbor, weight) in neighbors {
+                          if !visited.contains(neighbor) {
+                              visited.insert(neighbor.clone());
+                              queue.push_back(neighbor.clone());
+                          }
+                         cost += weight;
+                      }
+                  }
+              }
+              */
+
+              return Ok(
+                Flowlog{
+                  data: data.clone(),
+                  log: format!("Successfully inserted data. Starting from {}, the cost is {}", data.clone().source, cost  ),
+                  cost: cost
+                }
+              );
+            }
+            return Ok(
+              Flowlog{
+                data: data,
+                log: "Failed to inserted data. ".to_string(),
+                cost: 0.0
+              }
+            );
+          }
+    sinks:
+      - type: topic
+        id: data-output
+  update-dataflow:
+    sources:
+      - type: topic
+        id: data-input
+    states:
+      storedflows:
+        from: update-logs.storedflows
+    transforms:
+      - operator: filter-map
+        run: |
+          fn filter_input(data: Flowdata) -> Result<Option<Updatelog> >{
+            let track = storedflows();
+            let trackrow = track.sql(&format!(
+                "select * from `storedflows` where `flow_id` = '{}'", data.id
+            ))?;
+            let rows = trackrow.rows()?;
+            if !rows.next(){
+              return Ok(None)
+            }
+            Ok(Some(
+              Updatelog{
+                id: data.id,
+                user: data.source,
+                action: "increment".to_string(),
+                misc: "".to_string()
+              }
+            ))
+          }
+    sinks:
+      - type: topic
+        id: updatelog
+    
+  add-dataflow:
+    sources:
+      - type: topic
+        id: new-dataflow
+    transforms:
+      - operator: map
+        dependencies:
+          - name: serde_json
+            version: "1.0.60"
+          - name: serde_yaml
+            version: "0.9.34"
+          - name: base64
+            version: "0.21"
+        run: |
+          fn extract_graph(data: Dataflow) -> Result<Updatelog> {
+            
+            use std::collections::{HashMap};
+            use serde_yaml::Value;
+            use base64::decode;
+            use std::str;
+            
+            struct Metadata{
+                conn: Vec<(String,f32)>,
+                node_type: String,
+                in_bound_connection: u32,
+                out_bound_connection: u32,
+            }
+            let decoded_data = decode(data.dataflow_raw)?;
+            let decoded_str = str::from_utf8(&decoded_data)?;
+            let docs: Value = serde_yaml::from_str(&decoded_str).expect("Failed to parse YAML");
+            let mut service_set : HashMap<String,(Vec<String>,Vec<String>)> = HashMap::new();
+
+            if let Some(service) = docs.get("services") {
+                if let Some(service_map) = service.as_mapping() {
+                    for (key, value) in service_map{
+                        let mut source_list= Vec::new();
+                        let mut sink_list= Vec::new();
+                        if let Some(key_str) = key.as_str() {
+                            if let Some(sources) = value.get("sources") {
+                                if let Some(source_vec) = sources.as_sequence() {
+                                    for source in source_vec {
+                                        if let Some(source_map) = source.as_mapping() {
+                                            if let Some(id) = source_map.get(&Value::from("id")) {
+                                                if let Some(id_str) = id.as_str() {
+                                                    source_list.push(id_str.to_string());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            //////
+                            if let Some(sources) = value.get("sinks") {
+                                if let Some(source_vec) = sources.as_sequence() {
+                                    for source in source_vec {
+                                        if let Some(source_map) = source.as_mapping() {
+                                            if let Some(id) = source_map.get(&Value::from("id")) {
+                                                if let Some(id_str) = id.as_str() {
+                                                    sink_list.push(id_str.to_string());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            //////
+                            if let Some(key_str) = key.as_str() {
+                                service_set.insert(key_str.to_string(),(source_list,sink_list));
+                            }
+                        }
+                    }
+                }
+            }
+
+            //generate graph
+            let mut edge_graph: HashMap<String, Metadata > = HashMap::new();
+            for (service_name, (inbound, outbound)) in &service_set{
+                for source in inbound {
+                    edge_graph
+                        .entry(source.to_string())
+                        .or_insert(Metadata {
+                            conn: vec![],
+                            node_type: "topic".to_string(),
+                            in_bound_connection: 0,
+                            out_bound_connection: 0,
+                        })
+                        .conn.push((service_name.to_string(), 0.5)); 
+                }
+                for sink in outbound {
+                    edge_graph
+                        .entry(service_name.to_string())
+                        .or_insert(Metadata {
+                            conn: vec![],
+                            node_type: "service".to_string(),
+                            in_bound_connection: 0,
+                            out_bound_connection: 0,
+                        })
+                        .conn.push((sink.to_string(), 0.5));
+                }
+              }
+              let mut json_output = String::from("{");
+              for (service_name, metadata) in &edge_graph {
+                  json_output.push_str(&format!("\"{}\":{{ \"conn\": [ ", service_name));
+                  for (connected_service, weight) in &metadata.conn {
+                    json_output.push_str(&format!("\"{}\",", connected_service));
+                  }
+                  json_output.pop();
+                  json_output.push_str(&format!("],\"node_type\":\"{}\"", metadata.node_type));
+                  json_output.push_str(&format!(",\"inbound\":{}", metadata.in_bound_connection));
+                  json_output.push_str(&format!(",\"outbound\":{}", metadata.out_bound_connection));
+                  json_output.push_str("},");
+              }
+              json_output.pop();
+              json_output.push('}');
+              Ok(Updatelog{
+                user: data.user,
+                id: data.id,
+                action: "create".to_string(),
+                misc: json_output.to_string()
+              })
+          }
+    sinks:
+      - type: topic
+        id: updatelog
+  update-logs:
+    sources:
+      - type: topic
+        id: updatelog
+    states:
+      storedflows:
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: arrow-row
+            properties:
+              flow_id:
+                type: string
+              user:
+                type: string
+              note:
+                type: string
+              dataflow:
+                type: string 
+              tracker:
+                type: u32
+    partition:
+      assign-key:
+        run: |
+          fn assign_flow(data: Updatelog) -> Result<String > {
+            Ok(format!("{}",data.id))
+          }
+      update-state:
+        run: |
+          fn add_flow(data: Updatelog) -> Result<()> {
+            let mut flow = storedflows();
+            if data.action == "create" {
+              flow.user = data.user;
+              flow.flow_id = data.id;
+              flow.note = format!("Created at now" );
+              flow.dataflow = data.misc;
+              flow.tracker = 0;
+            } else {
+              if data.action == "increment" {
+                flow.tracker+=1;
+              }
+            }
+            
+            flow.update()?;
+            Ok(())
+          }

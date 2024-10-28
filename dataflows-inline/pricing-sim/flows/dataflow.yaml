@@ -1,0 +1,188 @@
+apiVersion: 0.5.0
+meta:
+  name: dataflow-calc 
+  version: 0.1.0
+  namespace: reddit
+
+config:
+  converter: json
+types:
+  dataflow: 
+    type: object
+    properties:
+      user: 
+        type: string
+      name: 
+        type: string
+      dataflow_raw:
+        type: string
+topics:
+  new-dataflow:
+    schema:
+      value:
+        type: dataflow
+
+services:
+  add-dataflow:
+    sources:
+      - type: topic
+        id: new-dataflow
+    states:
+      storedflows:
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value: 
+            type: arrow-row
+            properties:
+              flow_id:
+                type: u32
+              user:
+                type: string
+              note:
+                type: string
+              dataflow:
+                type: string 
+              tracker:
+                type: u32
+    transforms:
+      - operator: map
+        dependencies:
+          - name: serde_json
+            version: "1.0.60"
+          - name: serde_yaml
+            version: "0.9.34"
+          - name: base64
+            version: "0.21"
+        run: |
+          fn extract_data_keywords(data: Dataflow) -> Result<Dataflow> {
+            use std::collections::{HashMap};
+            use serde_yaml::Value;
+            use base64::decode;
+            use std::str;
+            
+            struct Metadata{
+                conn: Vec<(String,f32)>,
+                node_type: String,
+                in_bound_connection: u32,
+                out_bound_connection: u32,
+            }
+            let decoded_data = decode(data.dataflow_raw)?;
+            let decoded_str = str::from_utf8(&decoded_data)?;
+            let docs: Value = serde_yaml::from_str(&decoded_str).expect("Failed to parse YAML");
+            let mut service_set = HashMap::new();
+
+            if let Some(service) = docs.get("services") {
+                if let Some(service_map) = service.as_mapping() {
+                    for (key, value) in service_map{
+                        let mut source_list= Vec::new();
+                        let mut sink_list= Vec::new();
+                        if let Some(key_str) = key.as_str() {
+                            if let Some(sources) = value.get("sources") {
+                                if let Some(source_vec) = sources.as_sequence() {
+                                    for source in source_vec {
+                                        if let Some(source_map) = source.as_mapping() {
+                                            if let Some(id) = source_map.get(&Value::from("id")) {
+                                                if let Some(id_str) = id.as_str() {
+                                                    source_list.push(id_str.to_string());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            //////
+                            if let Some(sources) = value.get("sinks") {
+                                if let Some(source_vec) = sources.as_sequence() {
+                                    for source in source_vec {
+                                        if let Some(source_map) = source.as_mapping() {
+                                            if let Some(id) = source_map.get(&Value::from("id")) {
+                                                if let Some(id_str) = id.as_str() {
+                                                    sink_list.push(id_str.to_string());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            //////
+                            if let Some(key_str) = key.as_str() {
+                                service_set.insert(key_str.to_string(),(source_list,sink_list));
+                            }
+                        }
+                    }
+                }
+            }
+
+            //generate graph
+            let mut edge_graph: HashMap<String, Metadata > = HashMap::new();
+            for (service_name, (inbound, outbound)) in &service_set{
+                for source in inbound {
+                    edge_graph
+                        .entry(source.to_string())
+                        .or_insert(Metadata {
+                            conn: vec![],
+                            node_type: "topic".to_string(),
+                            in_bound_connection: 0,
+                            out_bound_connection: 0,
+                        })
+                        .conn.push((service_name.to_string(), 0.5)); 
+                }
+                for sink in outbound {
+                    edge_graph
+                        .entry(service_name.to_string())
+                        .or_insert(Metadata {
+                            conn: vec![],
+                            node_type: "service".to_string(),
+                            in_bound_connection: 0,
+                            out_bound_connection: 0,
+                        })
+                        .conn.push((sink.to_string(), 0.5));
+                }
+              }
+              let mut json_output = String::from("{");
+              for (service_name, metadata) in &edge_graph {
+                  json_output.push_str(&format!("\"{}\":{{ \"conn\": [ ", service_name));
+                  for (connected_service, weight) in &metadata.conn {
+                    json_output.push_str(&format!("\"{}\",", connected_service));
+                  }
+                  json_output.pop();
+                  json_output.push_str(&format!("],\"node_type\":\"{}\"", metadata.node_type));
+                  json_output.push_str(&format!(",\"inbound\":{}", metadata.in_bound_connection));
+                  json_output.push_str(&format!(",\"outbound\":{}", metadata.out_bound_connection));
+                  json_output.push_str("},");
+              }
+              json_output.pop();
+              json_output.push('}');
+          
+              Ok(Dataflow{
+                user: data.user,
+                name: data.name,
+                dataflow_raw: json_output
+              })
+          }
+    partition:
+      assign-key:
+        run: |
+          fn assign_flow(data: Dataflow) -> Result<String > {
+            Ok(format!("{}{}",data.name,data.user))
+          }
+      update-state:
+        dependencies:
+          - name: "chrono"
+            version: "0.4"
+        run: |
+          fn add_flow(data: Dataflow) -> Result<()> {
+            use chrono;
+
+            let mut flow = storedflows();
+            flow.user = data.user;
+            //let now= chrono::offset::Local::now();
+            //flow.note = format!("Created at {}", now );
+            flow.note = format!("Created at now" );
+            flow.dataflow = data.dataflow_raw;
+            flow.tracker = 1231;
+            flow.update()?;
+            Ok(())
+          }
