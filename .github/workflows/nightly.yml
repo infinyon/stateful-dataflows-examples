@@ -6,13 +6,14 @@ concurrency:
 
 on:
   schedule:
-    - cron: "0 12 * * *"   
+    - cron: "0 12 * * *"
+  workflow_dispatch:
 
 jobs:
     checks:
       uses: ./.github/workflows/check.yml
       with:
-        sdf_version: sdf-beta2-dev
+        sdf_version: sdf-beta3-dev
         branch: ${{ github.ref }}
     done:
       name: Done
