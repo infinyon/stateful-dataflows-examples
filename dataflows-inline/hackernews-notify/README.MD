@@ -113,3 +113,4 @@ Stop the connector:
 cdk deploy shutdown --name hackernews
 ```
 
+[Install SDF and start a Fluvio cluster]: /README.MD#prerequisites

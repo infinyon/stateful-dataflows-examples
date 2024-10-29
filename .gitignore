@@ -1,6 +1,4 @@
 .DS_Store
-.sdf
 **.ipkg
 http-source*
-rust
-wit
+.sdf

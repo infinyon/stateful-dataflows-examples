@@ -1,0 +1,10 @@
+package example:mask-ssn-pkg;
+
+interface mask-ssn-service {
+    mask-ssn: func(text: string,) -> result<string,string>;
+}
+
+world mask-ssn-world {
+    export mask-ssn-service;
+    
+}
