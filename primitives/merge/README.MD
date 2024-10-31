@@ -12,7 +12,7 @@ The example reads events from the truck and sedan topics, converts them to a str
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run --ephemeral
+sdf run
 ```
 
 ### Test DataFlow

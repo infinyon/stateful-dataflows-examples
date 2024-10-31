@@ -10,7 +10,7 @@ In this example, we use the `update-state` operator to collect the `temperature`
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run --ephemeral
+sdf run
 ```
 
 ### Test DataFlow

@@ -20,7 +20,7 @@ Use `sdf` command line tool to run the dataflow:
 Run the dataflow:
 
 ```bash
-sdf run --ephemeral --ui
+sdf run --ui
 ```
 
 Use `--ui` to open the Studio.
@@ -112,3 +112,4 @@ Stop the connector:
 ```bash
 cdk deploy shutdown --name hackernews
 ```
+

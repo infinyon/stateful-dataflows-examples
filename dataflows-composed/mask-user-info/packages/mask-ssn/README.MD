@@ -21,7 +21,7 @@ The generator creates all necessary glue logic for a reusable package.
 
 ### Add Custom Code
 
-Let's update the content of `rust/mask-ssn/src/lib.rs` file with following code:
+Let's update the content of `rust/mask-ssn-pkg/src/mask_ssn.rs` file with following code:
 
 ```rust
 use std::sync::LazyLock;
@@ -51,7 +51,7 @@ mod test {
 }
 ```
 
-Next, add `regex` to the dependencies in `Cargo.toml`:
+Next, add `regex` to the dependencies in `rust/mask-ssn-pkg/Cargo.toml`:
 
 ```toml
 [dependencies]

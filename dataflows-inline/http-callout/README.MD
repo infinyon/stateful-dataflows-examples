@@ -27,7 +27,7 @@ The dataflow uses the following primitives:
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ephemeral --ui
+sdf run --ui
 ```
 
 Use `--ui` to open the Studio.

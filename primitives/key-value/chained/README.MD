@@ -19,7 +19,7 @@ In this example, we've defined a couple of functions. The first function `update
 With the `dataflow.yaml` file in the current directory, run the following commands:
 
 ```bash
-sdf run --ephemeral
+sdf run
 ```
 
 ### Test DataFlow

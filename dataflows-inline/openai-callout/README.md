@@ -32,7 +32,7 @@ Before you start:
 Assume you have an OpenAI API key in the environment variable `OPENAI_API_KEY`
 
 ```bash
-sdf run --ephemeral -e OPENAI_API_KEY=$OPENAI_API_KEY
+sdf run -e OPENAI_API_KEY=$OPENAI_API_KEY
 ```
 
 ### Inputing text
