@@ -2,21 +2,22 @@
 
 This is an example of building and testing a package that masks Social Security Numbers (SSNs) in a record.
 
-We've used the [sdf-package.yaml](./sdf-package.yaml) to generate the package and updated the following files:
+
+### Package Updates
+
+We've used the [sdf-package.yaml](./sdf-package.yaml) to generate the project, and change the following files.
 
 * [rust/mask-ssn-pkg/src/mask_ssn.rs](./rust/mask-ssn-pkg/src/mask_ssn.rs)
-* [rust/mask-ssn-pkg/src/Cargo.thml](./rust/mask-ssn-pkg/src/Cargo.toml)
-
+* [rust/mask-ssn-pkg/src/Cargo.thml](./rust/mask-ssn-pkg/Cargo.toml)
 
 
 ### Build the Package
 
-To build the code, run:
+Generate package binary:
 
 ```bash
 sdf build
 ```
-
 
 ### Test the Code with SDF
 
@@ -31,19 +32,18 @@ sdf test
 My SSN is ***-**-****.
 ```
 
-
 ### Test the code with `Cargo`
 
 Navigate to the `rust` and run the tests using Rust:
 
 ```bash
-cd rust
+cd rust/mask-ssn-pkg
 cargo test
 ```
 
-### Package Ready for use
+### Package Ready
 
-The package is ready to use in the [dataflow](../../).
+After building the package, it is ready to use in [dataflows](../dataflow).
 
 
 [Install SDF]: /README.MD#prerequisites

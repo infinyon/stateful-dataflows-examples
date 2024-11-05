@@ -1,0 +1,25 @@
+apiVersion: 0.5.0
+
+meta:
+  name: hello-world
+  version: 0.1.0
+  namespace: example
+
+types:
+  good:
+    type: string
+  great:
+    type: string
+
+functions:
+  hello-world:
+    operator: map
+    inputs:
+      - name: input
+        type: good
+    output:
+      type: great
+
+dev:
+  converter: raw
+  

@@ -1,13 +1,27 @@
-## Run Docker
+## Docker Scripts
 
+Docker compose start the fluvio cluster and an SDF worker.
+
+### Start
+
+Built a docker image, run the compose and create client profiles:
+
+```bash
+./start.sh
 ```
-./setup.sh
+
+### Shutdown
+
+Run docker compose down
+
+```bash
+./shutdown.sh
 ```
 
-## Use CLI to Deploy Dataflows
+### Nuke
 
-Navigate to a project director that has a `dataflow.yaml` file and deploy:
+Run docker compose down and remove volumes:
 
-```
-sdf deploy
+```bash
+./nuke.sh
 ```
