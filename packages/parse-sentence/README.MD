@@ -29,15 +29,21 @@ sdf test
 
 ```bash
 >> test function sentence-to-words --value "Hello, World!"
-["]
+Hello,
+World!
+```
+
+```bash
+>> test function word-length --value "Hello,"
+6
 ```
 
 ### Test the code with `Cargo`
 
-Navigate to the `rust` and run the tests using Rust:
+The following command will test the code with `cargo`:
 
 ```bash
-cd rust/mask-ssn-pkg && cargo test
+cd rust/parse-sentence && cargo test && cd ../..
 ```
 
 ### Package Ready

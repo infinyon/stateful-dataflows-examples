@@ -34,10 +34,10 @@ My SSN is ***-**-****.
 
 ### Test the code with `Cargo`
 
-Navigate to the `rust` and run the tests using Rust:
+The following command will test the code with `cargo`:
 
 ```bash
-cd rust/mask-ssn-pkg && cargo test
+cd rust/mask-ssn-pkg && cargo test && cd ../..
 ```
 
 ### Package Ready
