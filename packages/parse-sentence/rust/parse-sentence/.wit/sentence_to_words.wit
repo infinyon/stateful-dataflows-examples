@@ -1,0 +1,10 @@
+package example:parse-sentence;
+
+interface sentence-to-words-service {
+    sentence-to-words: func(sentence: string,) -> result<list<string>,string>;
+}
+
+world sentence-to-words-world {
+    export sentence-to-words-service;
+    
+}

@@ -1,0 +1,26 @@
+apiVersion: 0.5.0
+
+meta:
+  name: parse-sentence
+  version: 0.1.0
+  namespace: example
+
+functions:
+  sentence-to-words:
+    operator: flat-map
+    inputs:
+      - name: sentence
+        type: string
+    output:
+      type: string
+
+  word-length:
+    operator: map
+    inputs:
+      - name: word
+        type: string
+    output:
+      type: u32
+
+dev:
+  converter: raw

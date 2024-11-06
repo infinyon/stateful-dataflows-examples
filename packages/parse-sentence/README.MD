@@ -1,14 +1,14 @@
-# Mask Social Security Number (SSN) Package
+# Prase Sentence Package
 
-Example package that uses a third party library (Regex) to mask social security numbers.
+Example package that implements multiple functions for sentence and word processing operations.
 
 
 ### Package Implementation
 
 We used the `sdf generate` command with the [sdf-package.yaml](./sdf-package.yaml) file to generate the project and then applied code changes to the following files:
 
-* [rust/mask-ssn-pkg/src/mask_ssn.rs](./rust/mask-ssn-pkg/src/mask_ssn.rs)
-* [rust/mask-ssn-pkg/src/Cargo.thml](./rust/mask-ssn-pkg/Cargo.toml)
+* [rust/parse-sentence/src/sentence_to_words.rs](./rust/parse-sentence/src/sentence_to_words.rs)
+* [rust/parse-sentence/src/word_length.rs](./rust/parse-sentence/src/word_length.rs)
 
 
 ### Build the Package
@@ -28,8 +28,8 @@ sdf test
 ```
 
 ```bash
->> test function mask-ssn --value "My SSN is 534-34-3443."
-My SSN is ***-**-****.
+>> test function sentence-to-words --value "Hello, World!"
+["]
 ```
 
 ### Test the code with `Cargo`
