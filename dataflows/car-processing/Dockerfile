@@ -25,7 +25,7 @@ RUN curl -fsS https://hub.infinyon.cloud/install/install.sh?ctx=dc | bash && \
     fvm install sdf-beta2
 
 RUN cd /workspace/connectors/ && \
-    cdk hub download infinyon/http-source@0.3.8
+    cdk hub download infinyon/http-source@0.4.3
 
 CMD ["bash","run.sh"]
 

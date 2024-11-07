@@ -40,7 +40,7 @@ In a new terminal change direcotry to `./connectors`, download the connector bin
 
 ```bash
 cd ./connectors
-cdk hub download infinyon/http-source@0.3.8
+cdk hub download infinyon/http-source@0.4.3
 cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c car-callout-connector.yaml
 ```
 

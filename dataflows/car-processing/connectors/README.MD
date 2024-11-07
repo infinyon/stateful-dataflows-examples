@@ -8,7 +8,7 @@ Download HTTP Source Connector
 
 ```bash
 cd ./connectors
-cdk hub download infinyon/http-source@0.3.6
+cdk hub download infinyon/http-source@0.4.3
 ```
 
 ### Start the licenses connector

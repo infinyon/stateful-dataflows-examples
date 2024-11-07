@@ -7,7 +7,7 @@ The connector configuration file is located at [hackernews.yaml](hackernews.yaml
 ### 1. Download HTTP Source Connector
 
 ```bash
-cdk hub download infinyon/http-source@0.3.8
+cdk hub download infinyon/http-source@0.4.3
 ```
 
 ### 2. Download Smartmodules

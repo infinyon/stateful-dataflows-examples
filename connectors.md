@@ -18,7 +18,7 @@ InfinyOn provides several data sets that you can use to generate synthetic data,
 Use `CDK` to download the http-sink connector to your local machine.
 
 ```bash
-cdk hub download infinyon/http-source@0.3.6
+cdk hub download infinyon/http-source@0.4.3
 ```
 
 ### Start HTTP-Source Pull Connector
