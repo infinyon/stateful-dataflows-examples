@@ -43,7 +43,7 @@ World!
 The following command will test the code with `cargo`:
 
 ```bash
-cd rust/parse-sentence && cargo test && cd ../..
+(cd rust/parse-sentence && cargo test)
 ```
 
 ### Package Ready

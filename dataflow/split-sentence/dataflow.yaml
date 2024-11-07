@@ -13,17 +13,15 @@ topics:
     schema:
       value:
         type: string
-        converter: raw
   words:
     schema:
       value:
         type: string
-        converter: raw
   word-counts:
     schema:
       value:
         type: u32
-        converter: raw
+        converter: json
 
 services:
   sentence-words:
