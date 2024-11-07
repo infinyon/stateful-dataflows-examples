@@ -35,14 +35,16 @@ jobs:
             "primitives/custom-serialization/struct/serialize",
             "dataflows/bank-processing",
             "dataflows/car-processing",
+            "dataflows/hackernews-notify",
             "dataflows/helsinki-transit",
             "dataflows/http-callout",
+            "dataflows/mask-user-pii",
+            "dataflows/mask-user-pii/package-variant",
             "dataflows/openai-callout",
             "dataflows/split-sentence",
+            "dataflows/split-sentence/package-variant",
             "dataflows/word-counter",
             "dataflows/word-probe",
-            "dataflows-composed/mask-user-info",
-            "dataflows-composed/split-sentence",
           ]
           sdf-version: [
             "${{ inputs.sdf_version }}"
