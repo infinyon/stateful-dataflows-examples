@@ -6,26 +6,25 @@ meta:
   namespace: example
 
 imports:
-  - pkg: example/sentence-pkg@0.1.0
-    path: ./packages/sentence
+  - pkg: example/parse-sentence@0.1.0
     functions:
       - name: sentence-to-words
-      - name: augment-count
-
-config:
-  converter: raw
+      - name: word-length
 
 topics:
   sentences:
     schema:
       value:
         type: string
-        converter: raw
   words:
     schema:
       value:
         type: string
-        converter: raw
+  word-counts:
+    schema:
+      value:
+        type: u32
+        converter: json
 
 services:
   sentence-words:
@@ -36,16 +35,19 @@ services:
     transforms:
       - operator: flat-map
         uses: sentence-to-words
-      - operator: map
-        uses: augment-count
 
     sinks:
       - type: topic
         id: words
 
+      - type: topic
+        id: word-counts
+        transforms:
+          - operator: map
+            uses: word_length
 
-# Development only, it does not get published to hub
+# Development only, import from local environment rather than the Hub
 dev:
   imports:
-    - pkg: example/sentence-pkg@0.1.0
-      path: ./packages/sentence
+    - pkg: example/parse-sentence@0.1.0
+      path: ../../../packages/parse-sentence
