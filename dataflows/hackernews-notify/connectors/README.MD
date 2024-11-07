@@ -24,7 +24,7 @@ fluvio hub sm download infinyon-labs/array-map-json@0.1.1
 ### 3. Start the connector
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg -c hackernews.yaml
+cdk deploy start --ipkg infinyon-http-source-0.4.3.ipkg -c hackernews.yaml
 ```
 
 ### 4. Stop the connector

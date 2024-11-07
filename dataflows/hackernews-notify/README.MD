@@ -34,7 +34,7 @@ In a new terminal change direcotry to `./connectors`, download the connector bin
 ```bash
 cd ./connectors
 cdk hub download infinyon/http-source@0.4.3
-cdk deploy start --ipkg infinyon-http-source-0.3.8.ipkg --config ./hackernews.yaml
+cdk deploy start --ipkg infinyon-http-source-0.4.3.ipkg --config ./hackernews.yaml
 ```
 
 To see the events, run `fluvio consume hackernews -B`. The connector reads the RSS every 60 seconds.

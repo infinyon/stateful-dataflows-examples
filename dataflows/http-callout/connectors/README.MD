@@ -13,7 +13,7 @@ cdk hub download infinyon/http-source@0.4.3
 ### 2. Start the connector
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-callout-connector.yaml
+cdk deploy start --ipkg infinyon-http-source-0.4.3.ipkg -c car-callout-connector.yaml
 ```
 
 ### 3. Checkout  car events

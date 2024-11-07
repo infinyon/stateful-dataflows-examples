@@ -18,7 +18,7 @@ Checkout the connector configuration file [license-connector.yaml](license-conne
 Start the connector:
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c license-connector.yaml
+cdk deploy start --ipkg infinyon-http-source-0.4.3.ipkg -c license-connector.yaml
 ```
 
 This connector refreshes the licenses every hour. User fluvio to see the license numbers downloaded from the server:
@@ -33,7 +33,7 @@ fluvio consume licenses -Bd
 Checkout the connector configuration file [car-connector.yaml](car-connector.yaml) for context.
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.3.6.ipkg -c car-connector.yaml
+cdk deploy start --ipkg infinyon-http-source-0.4.3.ipkg -c car-connector.yaml
 ```
 
 The cars connector receives two car events every second. Use fluvio to see the events streaming in real-time:
