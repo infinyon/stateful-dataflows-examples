@@ -4,25 +4,23 @@ This repository offers a comprehensive range of dataflow examples from basic to 
 
 ## Prerequisites
 
-#### Install & Update Rust
+* Install and Updated Rust
 
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh rustup update
-```
+  ```bash
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh rustup update
+  ```
 
-#### Install Fluvio & SDF
+* Install Fluvio and SDF
 
-SDF is the abreviation for Stateful Dataflows.
+  ```bash
+  curl -fsS https://hub.infinyon.cloud/install/install.sh | bash fvm install sdf-beta3
+  ```
 
-```bash
-curl -fsS https://hub.infinyon.cloud/install/install.sh | bash fvm install sdf-beta3
-```
+* Start Cluster
 
-#### Start a cluster
-
-```bash
-fluvio cluster start
-```
+  ```bash
+  fluvio cluster start
+  ```
 
 ## DataFlows
 
