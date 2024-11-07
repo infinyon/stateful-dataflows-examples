@@ -22,6 +22,7 @@ This repository offers a comprehensive range of dataflow examples from basic to 
   fluvio cluster start
   ```
 
+
 ## DataFlows
 
 Dataflow examples:
@@ -37,16 +38,6 @@ Dataflow examples:
 * [word-counter](/dataflows/word-counter/)
 * [word-probe](/dataflows/word-probe/)
 
-## Packages
-
-Step-by-step instructions on how to build your own package:
-
-* [_hello-world_](/packages/_hello-world_/)
-
-Pre-built packages used in dataflows:
-
-* [mask-user-info](/dataflows-composed/mask-user-info/)
-* [split-sentence](/dataflows-composed/split-sentence/)
 
 ## Primitives
 
@@ -64,6 +55,18 @@ Examples centered around primitive concepts and operations.
 * [key-value (input)](/primitives/key-value/input)
 * [key-value (output)](/primitives/key-value/output)
 * [key-value (chained)](/primitives/key-value/chained)
+
+
+## Packages
+
+Step-by-step instructions on how to build your own package:
+
+* [_hello-world_](/packages/_hello-world_/)
+
+Pre-built packages used in dataflows:
+
+* [mask-user-info](/dataflows-composed/mask-user-info/)
+* [split-sentence](/dataflows-composed/split-sentence/)
 
 
 ## References
