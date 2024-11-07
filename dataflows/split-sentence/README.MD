@@ -87,8 +87,6 @@ show state sentence-words/sentence-to-words/metrics
 show state word-counts/word-length/metrics
 ```
 
-Congratulations! You've successfully built and run a dataflow!
-
 
 ### Clean-up
 

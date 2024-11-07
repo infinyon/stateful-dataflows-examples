@@ -1,13 +1,12 @@
 apiVersion: 0.5.0
 
 meta:
-  name: mask-user-info
+  name: mask-user-pii
   version: 0.1.0
   namespace: example
 
 imports:
-  - pkg: example/mask-ssn-pkg@0.1.0
-    path: ./packages/mask-ssn
+  - pkg: example/mask-ssn@0.1.0
     functions:
       - name: mask-ssn
 
@@ -25,7 +24,7 @@ topics:
         type: string
 
 services:
-  mask-ssn-service:
+  mask-pii-service:
     sources:
       - type: topic
         id: user-info
@@ -38,8 +37,7 @@ services:
       - type: topic
         id: masked
 
-# Development only, it does not get published to hub
 dev:
   imports:
-    - pkg: example/mask-ssn-pkg@0.1.0
-      path: ./packages/mask-ssn
+    - pkg: example/mask-ssn@0.1.0
+      path: ../../../packages/mask-ssn

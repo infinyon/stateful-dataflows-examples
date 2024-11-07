@@ -1,4 +1,4 @@
-package example:mask-ssn-pkg;
+package example:mask-ssn;
 
 interface mask-ssn-service {
     mask-ssn: func(text: string,) -> result<string,string>;

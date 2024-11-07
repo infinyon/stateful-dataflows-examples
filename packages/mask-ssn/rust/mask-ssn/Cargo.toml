@@ -1,5 +1,5 @@
 [package]
-name = "mask_ssn_pkg"
+name = "mask_ssn"
 version = "0.0.0"
 edition = "2021"
 description = ""

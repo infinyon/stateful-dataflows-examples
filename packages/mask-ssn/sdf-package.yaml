@@ -1,7 +1,7 @@
 apiVersion: 0.5.0
 
 meta:
-  name: mask-ssn-pkg
+  name: mask-ssn
   version: 0.1.0
   namespace: example
 
