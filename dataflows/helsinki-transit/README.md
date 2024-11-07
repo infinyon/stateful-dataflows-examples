@@ -1,13 +1,10 @@
-Demo of SSDK with helsinki metro MQTT
-
-
 
 # Start MQTT connector using cloud
 
 ## Download Jolt SmartModule
 
 ```
-$ fluvio hub smartmodule download infinyon/jolt@0.4.1
+fluvio hub smartmodule download infinyon/jolt@0.4.1
 ```
 
 ## Start MQTT connector
@@ -21,7 +18,7 @@ fluvio cloud connector create --config mqtt-helsinki.yaml
 You should see the following output:
 
 ```
-$ fluvio consume helsinki | jq
+$ fluvio consume helsinki -O json
 
 {
   "vehicle": 456,
