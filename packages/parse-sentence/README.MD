@@ -48,7 +48,7 @@ The following command will test the code with `cargo`:
 
 ### Package Ready
 
-After building the package, it is ready to use in [dataflows](../dataflow).
+After building the package, it is ready to use in [dataflows](../../dataflows/).
 
 
 [Install SDF]: /README.MD#prerequisites
