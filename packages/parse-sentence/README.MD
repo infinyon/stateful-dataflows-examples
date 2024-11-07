@@ -49,6 +49,6 @@ The following command will test the code with `cargo`:
 ### Package Ready
 
 After building the package, it is ready for use in dataflows:
-* [split-sentence](../../dataflows/split-sentence/README.MD)
+* [split-sentence](../../dataflows/split-sentence/package-variant/README.MD)
 
 [Install SDF]: /README.MD#prerequisites

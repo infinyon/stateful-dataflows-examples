@@ -43,7 +43,7 @@ The following command will test the code with `cargo`:
 ### Package Ready
 
 After building the package, it is ready for use in dataflows:
-* [mask-user-pii](../../dataflows/mask-user-pii/README.MD)
+* [mask-user-pii](../../dataflows/mask-user-pii/package-variant/README.MD)
 
 
 [Install SDF]: /README.MD#prerequisites
