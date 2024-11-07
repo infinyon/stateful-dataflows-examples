@@ -21,6 +21,3 @@ functions:
         type: string
     output:
       type: u32
-
-dev:
-  converter: raw

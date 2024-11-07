@@ -5,6 +5,9 @@ meta:
   version: 0.1.0
   namespace: example
 
+config:
+  converter: raw
+
 imports:
   - pkg: example/parse-sentence@0.1.0
     functions:
@@ -46,7 +49,6 @@ services:
           - operator: map
             uses: word-length
 
-# Development only, import from local environment rather than the Hub
 dev:
   imports:
     - pkg: example/parse-sentence@0.1.0

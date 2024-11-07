@@ -28,13 +28,13 @@ sdf test
 ```
 
 ```bash
->> test function sentence-to-words --value "Hello, World!"
+>> test function sentence-to-words --value "\"Hello, World!"\"
 Hello,
 World!
 ```
 
 ```bash
->> test function word-length --value "Hello,"
+>> test function word-length --value "\"Hello,"\"
 6
 ```
 
