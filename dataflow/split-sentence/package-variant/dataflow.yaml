@@ -44,7 +44,7 @@ services:
         id: word-counts
         transforms:
           - operator: map
-            uses: word_length
+            uses: word-length
 
 # Development only, import from local environment rather than the Hub
 dev:
