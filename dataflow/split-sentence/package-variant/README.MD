@@ -28,10 +28,12 @@ Make sure to [Install SDF & Start a Cluster].
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --ui
+sdf run --dev --ui
 ```
 
-Use `--ui` to generate the graphical representation and run the Studio.
+Where:
+  * `--dev` - runs the dataflow in development mode (reads the package from local file system).
+  * `--ui` - generates the graphical representation and run the Studio web server.
 
 
 ### Test the Dataflow
