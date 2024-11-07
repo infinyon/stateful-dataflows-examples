@@ -42,7 +42,8 @@ The following command will test the code with `cargo`:
 
 ### Package Ready
 
-After building the package, it is ready to use in [dataflows](../../dataflows/).
+After building the package, it is ready for use in dataflows:
+* [mask-user-pii](../../dataflows/mask-user-pii/README.MD)
 
 
 [Install SDF]: /README.MD#prerequisites
