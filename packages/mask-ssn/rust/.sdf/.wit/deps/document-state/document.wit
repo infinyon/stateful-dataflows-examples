@@ -1,0 +1,18 @@
+package sdf:document-state;
+
+interface document {
+
+  // holds document type
+  resource document-value {
+    get: func() -> list<u8>;
+    set: func(val: list<u8>);
+  }
+
+  resource list-document {
+    get: func() -> list<tuple<string, list<u8>>>;
+  }
+}
+
+world document-world {
+   import document;
+}

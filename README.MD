@@ -4,51 +4,44 @@ This repository offers a comprehensive range of dataflow examples from basic to 
 
 ## Prerequisites
 
-#### Install & Update Rust
+* Install and Updated Rust
 
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-rustup update
-```
+  ```bash
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh rustup update
+  ```
 
-#### Install Fluvio & SDF
+* Install Fluvio and SDF
 
-SDF is the abreviation for Stateful Dataflows.
+  ```bash
+  curl -fsS https://hub.infinyon.cloud/install/install.sh | bash fvm install sdf-beta3
+  ```
 
-```bash
-curl -fsS https://hub.infinyon.cloud/install/install.sh | bash
-fvm install sdf-beta2
-```
+* Start Cluster
 
-#### Start a cluster
+  ```bash
+  fluvio cluster start
+  ```
 
-```bash
-fluvio cluster start
-```
 
-## DataFlows (Inline)
+## DataFlows
 
-DataFlows defined inline:
+Dataflow examples:
 
-* [bank-processing](/dataflows-inline/bank-processing/)
-* [car-processing](/dataflows-inline/car-processing/)
-* [hackernews-notify](/dataflows-inline/hackernews-notify/)
-* [http-callout](/dataflows-inline/http-callout/)
-* [openai-callout](/dataflows-inline/openai-callout/)
-* [split-sentence](/dataflows-inline/split-sentence/)
-* [word-counter](/dataflows-inline/word-counter/)
-* [word-probe](/dataflows-inline/word-probe/)
+* [bank-processing](/dataflows/bank-processing/)
+* [car-processing](/dataflows/car-processing/)
+* [hackernews-notify](/dataflows/hackernews-notify/)
+* [helsinki-transit](/dataflows/helsinki-transit/)
+* [http-callout](/dataflows/http-callout/)
+* [mask-user-pii](/dataflows/mask-user-pii/) 
+* [openai-callout](/dataflows/openai-callout/)
+* [split-sentence](/dataflows/split-sentence/)
+* [word-counter](/dataflows/word-counter/)
+* [word-probe](/dataflows/word-probe/)
 
-## DataFlows (Composed)
-
-DataFlows defined via composable packages:
-
-* [mask-user-info](/dataflows-composed/mask-user-info/)
-* [split-sentence](/dataflows-composed/split-sentence/)
 
 ## Primitives
 
-Simple examples centered around primitive concepts and operations.
+Examples centered around primitive concepts and operations.
 
 * [map](/primitives/map/)
 * [filter](/primitives/filter/)
@@ -62,6 +55,19 @@ Simple examples centered around primitive concepts and operations.
 * [key-value (input)](/primitives/key-value/input)
 * [key-value (output)](/primitives/key-value/output)
 * [key-value (chained)](/primitives/key-value/chained)
+
+
+## Packages
+
+Step-by-step instructions on how to build your own package:
+
+* [_hello-world_](/packages/_hello-world_/)
+
+Pre-built packages used in dataflows:
+
+* [mask-user-info](/dataflows-composed/mask-user-info/)
+* [split-sentence](/dataflows-composed/split-sentence/)
+
 
 ## References
 * [connectors](connectors.md)

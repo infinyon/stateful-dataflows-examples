@@ -1,0 +1,30 @@
+package sdf:row-state;
+
+interface types {
+  use sdf:arrow/types.{ dtype, dvalue };
+}
+
+// row API
+interface row {
+
+  use types.{ dtype, dvalue  };
+
+  // similar to duckdb-value
+  // get and set row value
+  resource row-value {
+
+    schema: func() -> list<tuple<string,dtype>>;
+
+    // return values
+    get: func() -> list<tuple<string,dvalue>>;
+
+    // set values. return error if value is not compatible with existing value
+    set: func(val: list<tuple<string,dvalue>>) -> result<_,string>;
+  }
+
+}
+
+
+world row-world {
+  import row;
+}

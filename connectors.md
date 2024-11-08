@@ -1,4 +1,4 @@
-# How to Use Connectors with Stateful Services
+# How to Run Fluvio Connectors on your Local System
 
 Connectors are system components that link external services with a fluvio cluster. Connectors communicate with stateful streaming via topics.
 
@@ -18,12 +18,12 @@ InfinyOn provides several data sets that you can use to generate synthetic data,
 Use `CDK` to download the http-sink connector to your local machine.
 
 ```bash
-cdk hub download infinyon/http-source@0.3.6
+cdk hub download infinyon/http-source@0.4.3
 ```
 
 ### Start HTTP-Source Pull Connector
 
-The following configuration reads a `quote` periodically (every two seconds):
+The following configuration reads a `quote` every two seconds. Copy the file to your local system:
 
 ```yaml
 # quotes-periodic.yaml
@@ -38,10 +38,11 @@ http:
   interval: 2s
 ```
 
-Copy the configuration to a file and star the connector on your local machine:
+Use CDK to download and run the connector:
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.6.ipkg -c quotes-periodic.yaml
+cdk hub download infinyon/http-source@0.4.3
+cdk deploy start --ipkg infinyon-http-source-0.4.3.ipkg -c quotes-periodic.yaml
 ```
 
 Checkout the result:
@@ -78,7 +79,7 @@ http:
 Copy the configuration to a file and star the connector on your local machine:
 
 ```bash
-cdk deploy start --ipkg infinyon-http-source-0.6.ipkg -c quotes-stream.yaml
+cdk deploy start --ipkg infinyon-http-source-0.4.3.ipkg -c quotes-stream.yaml
 ```
 
 Checkout the result:

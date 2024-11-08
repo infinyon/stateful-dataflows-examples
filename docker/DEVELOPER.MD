@@ -1,14 +1,28 @@
 ### Compile and Run
 
-Build Environment:
-`docker build -t fluvio:sdf .`
+* Build Environment:
 
-Deploy:
-`docker compose up` or 
-`docker compose up -d`
+  ```bash
+  docker build -t fluvio:sdf .
+  ```
+
+* Deploy:
+
+  ```bash
+  docker compose up -d
+  ```
+
+* Remove (including volumes)
+
+  ```bash
+  docker compose down --volumes
+  ```
+
+
+### Miscellaneous
 
 See volume mappings via:
-`docker volume ls`
 
-remove volumes with compose down:
-`docker compose down --volumes` or `docker compose down -v`
+```bash
+docker volume ls
+```

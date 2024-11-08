@@ -1,0 +1,55 @@
+apiVersion: 0.5.0
+
+meta:
+  name: split-sentence
+  version: 0.1.0
+  namespace: example
+
+config:
+  converter: raw
+
+imports:
+  - pkg: example/parse-sentence@0.1.0
+    functions:
+      - name: sentence-to-words
+      - name: word-length
+
+topics:
+  sentences:
+    schema:
+      value:
+        type: string
+  words:
+    schema:
+      value:
+        type: string
+  word-counts:
+    schema:
+      value:
+        type: u32
+        converter: json
+
+services:
+  sentence-words:
+    sources:
+      - type: topic
+        id: sentences
+
+    transforms:
+      - operator: flat-map
+        uses: sentence-to-words
+
+    sinks:
+      - type: topic
+        id: words
+
+      - type: topic
+        id: word-counts
+        transforms:
+          - operator: map
+            uses: word-length
+
+dev:
+  imports:
+    - pkg: example/parse-sentence@0.1.0
+      path: ../../../packages/parse-sentence

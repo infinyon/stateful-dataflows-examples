@@ -1,0 +1,10 @@
+package example:parse-sentence;
+
+interface word-length-service {
+    word-length: func(word: string,) -> result<u32,string>;
+}
+
+world word-length-world {
+    export word-length-service;
+    
+}
