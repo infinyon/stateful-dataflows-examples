@@ -1,0 +1,124 @@
+package sdf:df;
+
+interface df {
+
+  use sdf:arrow/wasm-io.{ data-frame };
+
+  resource table-value {
+      get-data-frame: func() -> data-frame;
+  }
+
+}
+
+interface lazy {
+
+  type index = u16;
+
+  type expressions = list<expr>;
+
+  // list of expr node based on https://datafusion.apache.org/user-guide/expressions.html
+  variant operation {
+    filter(expressions)
+  }
+
+  // content of the each AST
+  variant expr {
+    binary(binary-exp),
+    col(column),
+    lit(lit),
+  }
+
+  record binary-exp {
+    operator: operator,
+    left: index,
+    right: index
+  }
+
+
+  variant operator {
+      plus,
+      minus,
+      lt-eq,
+      eq,
+      gt
+  }
+
+  record column {
+    name: string
+  }
+
+  variant lit {
+    %string(string),
+    %f64(f64),
+    %f32(f32),
+    %i64(s64),
+    %i32(s32),
+    %i16(s16),
+    %i8(s8),
+    %u64(u64),
+    %u32(u32),
+    %u16(u16),
+    %u8(u8),
+    %bool(bool),
+  }
+
+  record sort-options {
+    descending: list<bool>,
+    maintain-order: bool,
+  }
+
+  record column-names {
+    names: list<string>
+  }
+
+  variant dtype {
+    %string,
+    %f64,
+    %f32,
+    %i64,
+    %i32,
+    %i16,
+    %i8,
+    %u64,
+    %u32,
+    %u16,
+    %u8,
+    %bool
+  }
+
+
+  record column-schema {
+    name: string,
+    index: u8,
+    schema: dtype
+  }
+
+  // presents data frame as resource
+  resource df-value {
+      // find: static func(name: string) -> option<df-value>;
+      run: func(ops: operation) -> result<df-value, string>;
+      select: func(columns: column-names) -> result<df-value,string>;
+      sort: func(columns: column-names, options: sort-options) -> result<df-value,string>;
+      shape: func() -> tuple<u64,u64>;
+      schema: func(columns: column-names) -> result<list<column-schema>,string>;
+      rows: func() -> result<row-value,string>;
+      sql: func(sql: string) -> result<df-value,string>;
+      head: func(rows: u64) -> result<df-value,string>;
+      name: func() -> string;
+  }
+
+  resource row-value {
+      end: func() -> bool;
+      next: func() -> bool;
+      index: func() -> s64;
+      skip: func(row: s64) -> bool;
+      value: func(col: u8) -> option<lit>;
+  }
+
+
+}
+
+world arrow-world {
+  import df;
+  import lazy;
+}

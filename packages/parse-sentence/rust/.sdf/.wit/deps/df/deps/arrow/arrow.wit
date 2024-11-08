@@ -1,0 +1,151 @@
+package sdf:arrow;
+
+interface types {
+
+  // arrow types
+  variant dtype {
+    %bool,
+    %i32,
+    %i64,
+    %float32,
+    %float64,
+    %string,
+    %timestamp,
+    %u8,
+    %u16,
+    %u32,
+    %u64,
+    %i8,
+    %i16,
+  }
+
+  variant dvalue {
+     %bool(bool),
+     %i32(s32),
+     %i64(s64),
+     %float32(f32),
+     %float64(f64),
+     %string(string),
+     %timestamp(u64),
+     %u8(u8),
+     %u16(u16),
+     %u32(u32),
+     %u64(u64),
+     %i8(s8),
+     %i16(s16),
+  }
+}
+
+// pass arrow data thru wasm boundary
+interface wasm-io {
+
+  use types.{ dtype };
+
+  record view {
+    offset: u32,
+    prefix: u32,
+    length: u32,
+    buffer-idx: u32,
+  }
+
+  record utf8-view-array {
+     views: list<view>,
+     buffers: list<list<u8>>,
+     len: u64,
+     bitmap: option<list<u8>>
+  }
+
+  record bool-array {
+    values: tuple<list<u8>, u64>,
+    len: u64,
+    bitmap: option<list<u8>>
+  }
+
+    record %u8-array {
+    values: list<u8>,
+    len: u64,
+    bitmap: option<list<u8>>
+  }
+
+  record %u16-array {
+    values: list<u16>,
+    len: u64,
+    bitmap: option<list<u8>>
+  }
+
+  record %u32-array {
+    values: list<u32>,
+    len: u64,
+    bitmap: option<list<u8>>
+  }
+
+  record %u64-array {
+    values: list<u64>,
+    len: u64,
+    bitmap: option<list<u8>>
+  }
+
+  record i8-array {
+    values: list<s8>,
+      len: u64,
+      bitmap: option<list<u8>>
+  }
+
+  record i16-array {
+    values: list<s16>,
+    len: u64,
+    bitmap: option<list<u8>>
+  }
+
+  record i32-array {
+      values: list<s32>,
+      len: u64,
+      bitmap: option<list<u8>>
+  }
+
+  record i64-array {
+      values: list<s64>,
+      len: u64,
+      bitmap: option<list<u8>>
+  }
+
+  record f32-array {
+      values: list<f32>,
+      len: u64,
+      bitmap: option<list<u8>>
+  }
+
+  record f64-array {
+      values: list<f64>,
+      len: u64,
+      bitmap: option<list<u8>>
+  }
+
+  // list of array chunks
+  variant array {
+    utf8(utf8-view-array),
+    i32(i32-array),
+    i64(i64-array),
+    %u8(%u8-array),
+    %f32(f32-array),
+    %f64(f64-array),
+    %bool(%bool-array),
+    i8(i8-array),
+    i16(i16-array),
+    %u16(%u16-array),
+    %u32(%u32-array),
+    %u64(%u64-array),
+  }
+
+  type chunks = list<array>;
+
+  record column {
+      name: string,
+      chunks: chunks,
+      dtype: dtype
+  }
+
+  record data-frame {
+     columns: list<column>
+  }
+}

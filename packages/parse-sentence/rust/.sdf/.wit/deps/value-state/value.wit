@@ -1,0 +1,20 @@
+package sdf:value-state;
+
+// simple primitive resource value
+interface values {
+
+  // holds 32 value
+  resource value32 {
+    get: func() -> s32;
+    set: func(val: s32);
+    increment: func(val: s32) -> s32;
+  }
+
+  resource list32 {
+    get: func() -> list<tuple<string, s32>>;
+  }
+}
+
+world value-world {
+   import values;
+}

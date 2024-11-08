@@ -1,0 +1,14 @@
+package sdf:row-state;
+
+interface test-guest {
+    use row.{ row-value };
+
+    // initialize row resource
+    init-row: func(row: row-value) ;
+    run: func();
+
+}
+
+world test-world  {
+  export test-guest;
+}
