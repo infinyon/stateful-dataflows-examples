@@ -1,6 +1,6 @@
 apiVersion: 0.1.0
 meta:
-  version: 0.2.8
+  version: 0.2.9
   name: helsinki-mqtt
   type: mqtt-source
   topic: helsinki
