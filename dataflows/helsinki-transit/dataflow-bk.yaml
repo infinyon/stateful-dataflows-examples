@@ -151,6 +151,8 @@ services:
             let mut top_vehicles = vec![];
             let key = top5.key()?;
             let speed_value = top5.col("speed")?;
+            println!("row shape: {:#?}", rows.shape());
+            
             while rows.next() {
               let vehicle = rows.str(&key)?;
               let speed = rows.f64(&speed_value)?;

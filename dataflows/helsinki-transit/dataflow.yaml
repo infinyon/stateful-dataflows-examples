@@ -131,7 +131,7 @@ services:
         type: keyed-state
         properties:
           key:
-            type: u32
+            type: i32
           value:
             type: arrow-row
             properties:
@@ -142,7 +142,7 @@ services:
 
     window:
       tumbling:
-        duration: 1s
+        duration: 5s
 
       assign-timestamp:
         run: |
@@ -153,8 +153,8 @@ services:
       partition:
         assign-key:
           run: |
-            fn assign_key(vp: VehiclePosition) -> Result<String> {
-              Ok(vp.vehicle.to_string())
+            fn assign_key(vp: VehiclePosition) -> Result<i32> {
+              Ok(vp.vehicle)
             }
 
         update-state:
@@ -164,6 +164,7 @@ services:
               veh.route = vp.route.clone();
               veh.speed = (veh.speed + vp.speed) / 2.0f64;
               veh.update()?;
+              println!("update speed for vehicle {}", vp.vehicle);
               Ok(())
             }
 
