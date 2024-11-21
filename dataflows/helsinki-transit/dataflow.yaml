@@ -164,7 +164,7 @@ services:
               veh.route = vp.route.clone();
               veh.speed = (veh.speed + vp.speed) / 2.0f64;
               veh.update()?;
-              // println!("update speed for vehicle {}", vp.vehicle);
+              println!("update speed for vehicle {}", vp.vehicle);
               Ok(())
             }
 
