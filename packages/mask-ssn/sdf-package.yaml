@@ -8,6 +8,9 @@ meta:
 functions:
   mask-ssn:
     operator: map
+    dependencies:
+      - name: regex
+        version: "1.11"
     inputs:
       - name: text
         type: string
