@@ -10,7 +10,7 @@ functions:
     operator: map
     dependencies:
       - name: regex
-        version: 1.11
+        version: "1.11"
     inputs:
       - name: text
         type: string
