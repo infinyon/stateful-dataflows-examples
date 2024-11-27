@@ -1,0 +1,13 @@
+package example:openai;
+
+interface chat-service {
+    use example:openai-types/types.{ openai-request };
+    use example:openai-types/types.{ openai-response };
+    chat: func(request: openai-request,) -> result<openai-response,string>;
+}
+
+world chat-world {
+    export chat-service;
+    
+    import  example:openai-types/types;
+}
