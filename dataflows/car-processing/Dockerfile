@@ -18,11 +18,11 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     # Install a specific version of Rust
     rustup install 1.80.0 && \
     rustup default 1.80.0
-RUN rustup target add wasm32-wasip1
+RUN rustup target add wasm32-wasip2
     
 RUN curl -fsS https://hub.infinyon.cloud/install/install.sh?ctx=dc | bash && \
     echo 'source "${HOME}/.fvm/env"' >> ~/.bashrc && \
-    fvm install sdf-beta2
+    fvm install sdf-beta4
 
 RUN cd /workspace/connectors/ && \
     cdk hub download infinyon/http-source@0.4.3

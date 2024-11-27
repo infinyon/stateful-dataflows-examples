@@ -79,9 +79,13 @@ jobs:
           run: |
             fvm install ${{ matrix.sdf-version }}
 
+        - name: install fluvio
+          run: |
+            fluvio cluster start
+
         - name: Run sdf setup
           run: |
-            sdf setup
+            sdf setup || true
 
         - name: Run tests
           working-directory: ./${{ matrix.example_path }}
