@@ -1,0 +1,21 @@
+{
+    "id": "12",
+    "object": "chat.completion",
+    "created": 1732752947,
+    "model": "gpt-4o-2024-08-06",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "Once upon a time..."
+            },
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 11,
+        "completion_tokens": 661,
+        "total_tokens": 672
+    }
+}

@@ -37,3 +37,7 @@ anyhow = "1"
 serde =  { version = "1", features = ["std", "derive"]}
 sdfg = { version = "0.8.1" , features=[ "row"]  }
 ## END OF GENERATED DEPENDENCIES
+
+[dev-dependencies]
+sjdiff = "0.0.5"
+serde_json = "1.0"
