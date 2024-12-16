@@ -111,9 +111,8 @@ services:
         # Read the full state and compute the top 3 words sorted by count.
         run: |
           fn compute_most_used_words() -> Result<TopWords> {
-            let word_counts = count_per_word();
 
-            let top3 = word_counts.sql("select * from count_per_word order by count desc limit 3")?;
+            let top3 = sql("select * from count_per_word order by count desc limit 3")?;
             let rows = top3.rows()?;
             let columns = top3.schema(["_key","count"])?;
 

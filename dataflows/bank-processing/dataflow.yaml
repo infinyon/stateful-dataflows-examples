@@ -275,11 +275,10 @@ services:
                   DataOperation::DebitAccount(debit) => debit,
                 };
 
-                let accounts = account_balance();
 
-                let account = accounts.sql(&format!("select * from `account-balance` where name = '{}'", ev.name))?;
+                let account = sql(&format!("select * from `account-balance` where name = '{}'", ev.name))?;
 
-                let rows = accounts.rows()?;
+                let rows = account.rows()?;
 
                 if !rows.next() {
                   return Ok(None)
@@ -407,16 +406,11 @@ services:
           - operator: filter-map
             run: |
               fn generate_overdraft_event_due_transfer(ev: DataEvent) -> Result<Option<OverdraftEvent>> {
-
                 let withdrawal = match ev.operation {
                   DataOperation::CreditAccount(_) => return Ok(None),
                   DataOperation::DebitAccount(debit) => debit,
                 };
-
-                let accounts = account_balance();
-
-                let account = accounts.sql(&format!("select * from `account-balance` where name = '{}'", ev.name))?;
-
+                let account = sql(&format!("select * from `account-balance` where name = '{}'", ev.name))?;
                 let rows = account.rows()?;
 
                 if !rows.next() {

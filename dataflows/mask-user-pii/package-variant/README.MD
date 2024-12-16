@@ -26,11 +26,10 @@ Use the following command to compile the package:
 Use `sdf` command line tool to run the dataflow:
 
 ```bash
-sdf run --dev --ui
+sdf run --ui
 ```
 
 Where:
-  * `--dev` - runs the dataflow in development mode (reads the package from local file system).
   * `--ui` - generates the graphical representation and run the Studio web server.
 
 

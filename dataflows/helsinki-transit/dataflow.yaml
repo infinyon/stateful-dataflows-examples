@@ -145,8 +145,7 @@ services:
       flush:
         run: |
           fn compute_top_vehicle() -> Result<TopVehicle> {
-            let mut stat = vehicle_stat();
-            let top5 = stat.sql("select * from vehicle_stat order by speed desc limit 5")?;
+            let top5 = sql("select * from vehicle_stat order by speed desc limit 5")?;
             let rows = top5.rows()?;
             let mut top_vehicles = vec![];
             let key = top5.key()?;
