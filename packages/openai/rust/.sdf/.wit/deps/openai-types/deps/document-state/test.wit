@@ -1,0 +1,14 @@
+package sdf:document-state;
+
+interface test-guest {
+    use document.{ document-value };
+
+    // initialize row resource
+    init-document: func(doc: document-value) ;
+    run: func();
+
+}
+
+world test-world  {
+  export test-guest;
+}
