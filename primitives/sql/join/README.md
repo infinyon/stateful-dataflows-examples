@@ -1,4 +1,4 @@
-# SQL (simple query)
+# SQL (join)
 
 In this example, we'll count the occurrences of words in two topics. We will use the CLI interface to run some SQL queries and then use a JOIN query on a service to find the number of occurrences of a word in both topics.
 
