@@ -33,11 +33,6 @@ topics:
     schema:
       value:
         type: vehicle-data-type
-  vehicle-check:
-    schema:
-      value:
-        type: string
-        converter: raw
 services:
   collect-sensor-data:
     sources:

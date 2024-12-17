@@ -117,15 +117,21 @@ Produce to `probe-word` topic to see the result:
 fluvio produce probe-word -f ./sample-data/probe-word.txt
 ```
 
+Checkout the data in `probe-word` topic:
+
+```bash
+fluvio consume probe-word -Bd
+```
+
 Check the output in the `word-count` topic:
 
 ```bash
 $ fluvio consume word-count -Bd
-"key: the count: 29"
-"key: in count: 6"
-"key: into count: 3"
-"key: love count: 2"
-"key: fluvio count: 0"
+"key: `the` count: 29"
+"key: `in` count: 6"
+"key: `into` count: 3"
+"key: `love` count: 2"
+"key: `fluvio` count: 0"
 ```
 
 ### Clean-up
