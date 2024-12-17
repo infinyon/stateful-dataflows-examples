@@ -1,4 +1,4 @@
 # Split Examples
 
-* [split (filter)](/primitives/split/filter)
-* [split (filter-map)](/primitives/split/filter-map)
+* [split (filter)](./filter)
+* [split (filter-map)](./filter-map)

@@ -1,0 +1,174 @@
+apiVersion: 0.5.0
+meta:
+  name: probe-word-counter
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+topics:
+  source-a:
+    schema:
+      value:
+        type: string
+
+  source-b:
+    schema:
+      value:
+        type: string
+
+  probe-word:
+    schema:
+      value:
+        type: string
+
+  word-count:
+    schema:
+      value:
+        type: string
+
+services:
+  word-count-source-a:
+    sources:
+      - type: topic
+        id: source-a
+
+    states:
+      count-per-word-a:
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: arrow-row
+            properties:
+              occurrences:
+                type: i32
+
+    transforms:
+      - operator: flat-map
+        run: |
+          fn split_sequence(sentence: String) -> Result<Vec<String>> {
+            let texts = sentence
+                .split_whitespace()
+                .map(|word| word.chars().filter(|c| c.is_alphanumeric()).collect::<String>())
+                .filter(|word| !word.is_empty())
+                .collect();
+            Ok(texts)
+          }
+
+    partition:
+      assign-key:
+        run: |
+          fn assign_key_word(word: String) -> Result<String> {
+            Ok(word.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect())
+          }
+      update-state:
+        run: |
+          fn count_word(_word: String) -> Result<()> {
+            let mut state = count_per_word_a();
+            state.occurrences += 1;
+            state.update()?;
+            Ok(())
+          }
+
+  word-count-source-b:
+    sources:
+      - type: topic
+        id: source-b
+
+    states:
+      count-per-word-b:
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: arrow-row
+            properties:
+              occurrences:
+                type: i32
+
+    transforms:
+      - operator: flat-map
+        run: |
+          fn split_sequence_b(sentence: String) -> Result<Vec<String>> {
+            let texts = sentence
+                .split_whitespace()
+                .map(|word| word.chars().filter(|c| c.is_alphanumeric()).collect::<String>())
+                .filter(|word| !word.is_empty())
+                .collect();
+            Ok(texts)
+          }
+
+    partition:
+      assign-key:
+        run: |
+          fn assign_key_word_b(word: String) -> Result<String> {
+            Ok(word.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect())
+          }
+      update-state:
+        run: |
+          fn count_word_b(_word: String) -> Result<()> {
+            let mut state = count_per_word_b();
+            state.occurrences += 1;
+            state.update()?;
+            Ok(())
+          }
+
+  look-up-word:
+    sources:
+      - type: topic
+        id: probe-word
+    states:
+      count-per-word-a:
+        from: word-count-source-a.count-per-word-a
+      count-per-word-b:
+        from: word-count-source-b.count-per-word-b
+
+    transforms:
+      - operator: flat-map
+        run: |
+          fn split_sequence_final(sentence: String) -> Result<Vec<String>> {
+            let texts = sentence
+                .split_whitespace()
+                .map(|word| word.chars().filter(|c| c.is_alphanumeric()).collect::<String>())
+                .filter(|word| !word.is_empty())
+                .collect();
+            Ok(texts)
+          }
+
+      - operator: map
+        run: |
+          fn map_words_to_occurrence(key: String) -> Result<String> {
+              let count = sql(
+                &format!("
+                SELECT
+                  SUM(COALESCE(a.occurrences,0) + COALESCE(b.occurrences, 0)) AS total_count
+                FROM
+                  count_per_word_a a
+                FULL OUTER JOIN
+                 count_per_word_b b
+                ON
+                  a._key = b._key
+                WHERE
+                  a._key = '{key}' OR b._key = '{key}'"
+                ))?;
+              let rows = count.rows()?;
+              let columns = count.schema(["total_count"])?;
+              match &columns[..] {
+                [v] => {
+                  if rows.next() {
+                    let c = rows.i32(&v)?;
+                    return Ok(format!("key: `{}` count: {}",key, c))
+                  } else {
+                    return Ok(format!("key: `{}`` count: 0",key));
+                  }
+              },
+                _ => panic!("unexpected schema"),
+            }
+          }
+
+    sinks:
+      - type: topic
+        id: word-count

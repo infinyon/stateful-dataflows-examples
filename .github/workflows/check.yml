@@ -33,6 +33,8 @@ jobs:
             "primitives/split/filter",
             "primitives/split/filter-map",
             "primitives/update-state",
+            "primitives/sql/cli",
+            "primitives/sql/join",
             "dataflows/bank-processing",
             "dataflows/car-processing",
             "dataflows/hackernews-notify",
