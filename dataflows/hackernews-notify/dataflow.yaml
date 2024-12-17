@@ -141,12 +141,11 @@ services:
         run: |
           fn match_words(article_data: ArticleData) -> Result<Option<(Option<String>, ArticleData)>> {
             use format_sql_query::{Table, Column, QuotedData};
-            let table = notify_table();
             let query = format!("SELECT * FROM `{}` WHERE {} = {}", 
-                  Table("notify-table".into()), 
+                  Table("notify_table".into()), 
                   Column("_key".into()), QuotedData(&article_data.word.to_lowercase())
             );
-            let emails = match table.sql(&query) {
+            let emails = match sql(&query) {
               Ok(emails) => emails,
               Err(e) => {
                 println!("Error: {}", e);

@@ -315,8 +315,7 @@ services:
       - operator: filter-map
         run: |
           fn check_license_plate(car: Car) -> Result<Option<StolenPlate>> {
-            let plates = licence_plates();
-            let lp = plates.sql(&format!("select * from `licence-plates` where _key = '{}'", car.license))?;
+            let lp = sql(&format!("select * from licence_plates where _key = '{}'", car.license))?;
             let rows = lp.rows()?;
 
             let maker_col = lp.col("maker")?;

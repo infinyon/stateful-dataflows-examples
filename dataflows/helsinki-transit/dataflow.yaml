@@ -170,6 +170,7 @@ services:
 
       flush:
         run: |
+<<<<<<< HEAD
           fn compute_average_speed() -> Result<AverageSpeedList> {
             let mut stat = vehicle_stat();
             let result = stat.sql("select * from vehicle_stat")?;
@@ -181,6 +182,14 @@ services:
             let speed_col = result.col("speed")?;
             let route_col = result.col("route")?;
 
+=======
+          fn compute_top_vehicle() -> Result<TopVehicle> {
+            let top5 = sql("select * from vehicle_stat order by speed desc limit 5")?;
+            let rows = top5.rows()?;
+            let mut top_vehicles = vec![];
+            let key = top5.key()?;
+            let speed_value = top5.col("speed")?;
+>>>>>>> main
             while rows.next() {
               let vehicle = rows.str(&key)?;
               let route = rows.str(&route_col)?;

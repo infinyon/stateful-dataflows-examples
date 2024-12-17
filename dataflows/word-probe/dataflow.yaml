@@ -84,8 +84,7 @@ services:
       - operator: map
         run: |
           fn query_word_count(word: String) -> Result<WordCount> {
-            let df = count_per_word();
-            let count = df.sql(&format!("select * from `count-per-word` where _key = '{}'", word))?;
+            let count = sql(&format!("select * from count_per_word where _key = '{}'", word))?;
             let rows = count.rows()?;
             let columns = count.schema(["_key","count"])?;
             match &columns[..] {

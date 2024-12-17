@@ -1,0 +1,80 @@
+apiVersion: 0.5.0
+meta:
+  name: sql-example
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+
+types:
+  vehicle-data-type:
+    type: object
+    properties:
+      vehicle_id:
+        type: string
+      latitude:
+        type: f64
+      longitude:
+        type: f64
+      sensor_status:
+        type: string
+      fuel_consumption:
+        type: u32
+      engine_rpm:
+        type: u32
+      engine_temperature:
+        type: i32
+      speed:
+        type: float32
+
+topics:
+  vehicle-sensor:
+    schema:
+      value:
+        type: vehicle-data-type
+services:
+  collect-sensor-data:
+    sources:
+      - type: topic
+        id: vehicle-sensor
+    states:
+      vehicle-data:
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: arrow-row
+            properties:
+              latitude:
+                type: f64
+              longitude:
+                type: f64
+              fuel_consumption:
+                type: u32
+              sensor_status:
+                type: string
+              engine_temperature:
+                type: i32
+
+    partition:
+      assign-key:
+        run: |
+          fn key_by_id(data: VehicleDataType) -> Result<String> {
+            Ok(data.vehicle_id)
+          }
+
+      update-state:
+        run: |
+          fn update_temperature(data: VehicleDataType) -> Result<()> {
+            let mut vd = vehicle_data();
+
+            vd.latitude = data.latitude;
+            vd.longitude = data.longitude;
+            vd.fuel_consumption = data.fuel_consumption;
+            vd.engine_temperature = data.engine_temperature;
+            vd.sensor_status = data.sensor_status;
+            vd.update()?;
+            Ok(())
+          }
