@@ -368,7 +368,7 @@ Congratulations! You've successfully built and run a dataflow!
 
 ## Clean-up
 
-Note that your connectors will continue to run in the background until you shut them down:
+Note that your connector will continue to run in the background until you shut it down:
 
 ```bash
 cdk deploy shutdown --name car-connector
