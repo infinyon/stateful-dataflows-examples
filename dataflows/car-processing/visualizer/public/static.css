@@ -1,0 +1,62 @@
+body{
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+#viewContainer{
+    display: grid;
+    position: absolute;
+    height: 95vh;
+    width: 95vw;
+    grid-template-rows: 80% 20%;
+}
+#infoGrapher{
+    display: grid;
+    grid-template-rows: 75% 25%;
+}
+#messageHeader{
+    background-color: black;
+    width: fit-content;
+    color: white;
+    padding: 0px 7px;
+}
+#messages{
+    background-color: #bdbdbd;
+    display: grid;
+    font-size: 0.5rem;
+    overflow: scroll;
+    height: 100%;
+    padding: 3px 15px;
+}
+#colorGraph{
+    background-color: #bdbdbd;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+#printSpliterCont{
+    display: grid;
+    grid-template-columns: 40% 60%;
+    grid-template-rows: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+.printCarInfo{
+    margin: 3px;
+    border: 1px black solid;
+    overflow-y: scroll;
+    border-radius: 10px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+} 
+th {
+    background-color: #a5a5a5;
+    position: sticky; /* Makes the header sticky */
+    top: 0; /* Stick to the top of the table/container */
+    z-index: 1; /* Ensures the header is above other content */
+}
