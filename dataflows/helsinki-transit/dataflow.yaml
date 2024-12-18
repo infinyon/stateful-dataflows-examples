@@ -1,6 +1,6 @@
 apiVersion: 0.5.0
 meta:
-  name: helsinki-stat
+  name: helsinki-stats
   version: 0.1.0
   namespace: my-org
 
@@ -169,7 +169,7 @@ services:
       flush:
         run: |
           fn collect_vehicle_stats() -> Result<AverageSpeedList> {
-            let vs = sql("select * from vehicle_stat")?;
+            let vs = sql("select * from vehicle_stat order by speed desc limit 5")?;
             let vehicle_col = vs.key()?;
             let speed_col = vs.col("speed")?;
             let route_col = vs.col("route")?;
