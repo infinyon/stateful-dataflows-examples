@@ -29,7 +29,7 @@ The following configuration reads a `quote` every two seconds. Copy the file to 
 # quotes-periodic.yaml
 apiVersion: 0.2.0
 meta:
-  version: 0.3.6
+  version: 0.4.3
   name: quotes-periodic
   type: http-source
   topic: quotes
@@ -65,7 +65,7 @@ The following configuration streams from the `stream-quote` endpoint, which is p
 # quotes-stream.yaml
 apiVersion: 0.2.0
 meta:
-  version: 0.3.6
+  version: 0.4.3
   name: quotes-stream
   type: http-source
   topic: quotes
