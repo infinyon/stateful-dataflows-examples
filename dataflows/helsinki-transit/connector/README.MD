@@ -28,7 +28,7 @@ Start the connector:
 cdk deploy start --ipkg infinyon-mqtt-source-0.2.9.ipkg -c mqtt-helsinki.yaml
 ```
 
-This connector refreshes the licenses every hour. User fluvio to see the license numbers downloaded from the server:
+This connector refreshes the licenses every hour. Use fluvio to see the license numbers downloaded from the server:
 
 ```bash
 fluvio consume helsinki
