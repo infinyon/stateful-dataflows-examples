@@ -39,8 +39,6 @@ sdf run --ui
 
 Use `--ui` to open the Studio.
 
-**Note:** The `transfer-service` uses Polars, a library that has not yet been optimized, and will it make take a while the compile. We'll optimize this in a future release.
-
 
 ### 2. Test the Dataflow
 

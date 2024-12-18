@@ -1,8 +1,6 @@
-# Perform word count on sentences in non windowed transformation
-
 apiVersion: 0.5.0
 meta:
-  name: helsinki-stat
+  name: helsinki-stats
   version: 0.1.0
   namespace: my-org
 
@@ -14,14 +12,30 @@ config:
       position: End
 
 types:
-  # VP is the vehicle position
-  vp:
+  event:
     type: object
     properties:
       vehicle:
         type: i32
+      speed:
+        type: f64
+        optional: true
+      lat:
+        type: f64
+        optional: true
+      long:
+        type: f64
+        optional: true
+      route:
+        type: string
       tst:
         type: string
+
+  vehicle-position:
+    type: object
+    properties:
+      vehicle:
+        type: i32
       speed:
         type: f64
       lat:
@@ -30,133 +44,154 @@ types:
         type: f64
       route:
         type: string
+      ts:
+        type: i64
 
-  vehicle-count:
+  average-speed:
     type: object
     properties:
       vehicle:
         type: i32
-      speed:
-        type: f64
-
-  vp-stat:
-    type: object
-    properties:
-      vehicle:
+      route:
         type: string
       speed:
         type: f64
 
-  top-vehicle:
+  average-speed-list:
     type: list
     items:
-      type: vp-stat
+      type: average-speed
+
 
 topics:
   events:
     name: helsinki
     schema:
       value:
-        type: string
-        converter: raw
+        type: event
 
-  top-vehicle:
-    name: top-vehicle
+  vehicle-position:
     schema:
       value:
-        type: top-vehicle
+        type: vehicle-position
+
+  average-speed:
+    schema:
+      value:
+        type: average-speed-list
 
 services:
-  read-transit:
+  clean-events:
     sources:
       - type: topic
         id: events
+        
+    transforms:
+      - operator: filter
+        run: |
+          fn remove_incomplete_events(event: Event) -> Result<bool> {
+            let allow = event.lat.is_some() && event.long.is_some() && event.speed.is_some();
+            Ok(allow)
+          }
+
+      - operator: map
+        dependencies:
+          - name: chrono
+            version: "0.4.38"
+        run: |
+          fn clean_events(event: Event) -> Result<VehiclePosition> {
+            use chrono::naive::NaiveDateTime;
+            let no_timezone = NaiveDateTime::parse_from_str(&event.tst, "%Y-%m-%dT%H:%M:%S.%fZ")?;
+            let ts = no_timezone.and_utc().timestamp_millis();
+
+            let vp = VehiclePosition {
+              vehicle: event.vehicle,
+              route: event.route,
+              speed: event.speed.unwrap_or(0.0),
+              lat: event.lat.unwrap_or(0.0),
+              long: event.long.unwrap_or(0.0),
+              ts: ts,
+            };
+
+            Ok(vp)
+          }
+    sinks:
+      - type: topic
+        id: vehicle-position
+
+  generate-vehicle-stats:
+    sources:
+      - type: topic
+        id: vehicle-position
+
     states:
       vehicle-stat:
         type: keyed-state
         properties:
           key:
-            type: u32
+            type: i32
           value:
             type: arrow-row
             properties:
-              events:
-                type: i32
-              speed:
-                type: f64
               route:
                 type: string
-
-    transforms:
-      - operator: filter-map
-        dependencies:
-          - name: serde_json
-            version: "1.0.60"
-        run: |
-          fn parse_event(event: String) -> Result<Option<Vp>> {
-
-              match serde_json::from_str(&event) {
-                Ok(vp) => Ok(Some(vp)),
-                Err(e) => {
-                  println!("Failed to parse event: {}", e);
-                  Ok(None)
-                }
-              }
-
-          }
+              speed:
+                type: f64
 
     window:
       tumbling:
         duration: 5s
 
       assign-timestamp:
-        dependencies:
-          - name: chrono
-            version: "0.4.23"
         run: |
-          fn assign_timestamp(event: Vp, _event_time: i64) -> Result<i64> {
-            use chrono::{DateTime, FixedOffset};
-            fn parse_utc(timestamp: &str) -> anyhow::Result<i64> {
-              let time = DateTime::<FixedOffset>::parse_from_str(timestamp, "%+")
-                .map_err(|err| anyhow::anyhow!("time parse error: {}", err))?;
-              Ok(time.timestamp_millis())
-            }
-            parse_utc(&event.tst)
+          fn assign_timestamp(vp: VehiclePosition, _event_time: i64) -> Result<i64> {
+            Ok(vp.ts)
           }
 
       partition:
         assign-key:
           run: |
-            fn assign_key(event: Vp) -> Result<String> {
-              Ok(event.vehicle.to_string())
+            fn assign_key(vp: VehiclePosition) -> Result<i32> {
+              Ok(vp.vehicle)
             }
 
         update-state:
           run: |
-            fn update_speed(event: Vp) -> Result<()> {
+            fn compute_average_speed(vp: VehiclePosition) -> Result<()> {
               let mut veh = vehicle_stat();
-              veh.events += 1;
-              veh.route = event.route.clone();
-              veh.speed = (veh.speed + event.speed) / 2.0f64;
+              veh.route = vp.route.clone();
+              veh.speed = (veh.speed + vp.speed) / 2.0f64;
               veh.update()?;
+              println!("update speed for vehicle {}", vp.vehicle);
               Ok(())
             }
 
       flush:
         run: |
-          fn compute_top_vehicle() -> Result<TopVehicle> {
-            let top5 = sql("select * from vehicle_stat order by speed desc limit 5")?;
-            let rows = top5.rows()?;
-            let mut top_vehicles = vec![];
-            let key = top5.key()?;
-            let speed_value = top5.col("speed")?;
+          fn collect_vehicle_stats() -> Result<AverageSpeedList> {
+            let vs = sql("select * from vehicle_stat")?;
+            let vehicle_col = vs.key()?;
+            let speed_col = vs.col("speed")?;
+            let route_col = vs.col("route")?;
+
+            let mut avg_speed = vec![];
+
+            let rows = vs.rows()?;
             while rows.next() {
-              let vehicle = rows.str(&key)?;
-              let speed = rows.f64(&speed_value)?;
-              top_vehicles.push(VpStat {vehicle, speed});
+              let vehicle = rows.str(&vehicle_col)?;
+              let route = rows.str(&route_col)?;
+              let speed = rows.f64(&speed_col)?;
+              avg_speed.push(AverageSpeed {
+                  vehicle: vehicle.parse()?, 
+                  route, 
+                  speed,
+                }
+              );
             }
-            Ok(top_vehicles)
+
+            Ok(avg_speed)
           }
+
     sinks:
       - type: topic
-        id: top-vehicle
+        id: average-speed

@@ -71,8 +71,6 @@ sdf run --ui
 * Use `--ui` to generate the graphical representation and run the Studio.
 * Using `sdf run` as opposed to `sdf deploy` will run the dataflow with an ephemeral worker, which will be cleaned up on exit.
 
-**Note:** The `check-license-plates` service uses Polars, a library that has not yet been optimized, and will it make take a while the compile. We'll optimize this in a future release.
-
 
 ### 2. Read the licenses:
 
