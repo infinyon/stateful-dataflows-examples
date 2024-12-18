@@ -170,34 +170,28 @@ services:
 
       flush:
         run: |
-<<<<<<< HEAD
           fn compute_average_speed() -> Result<AverageSpeedList> {
-            let mut stat = vehicle_stat();
-            let result = stat.sql("select * from vehicle_stat")?;
-            let rows = result.rows()?;
+            let vs = sql("select * from vehicle_stat")?;
+            let vehicle_col = vs.key()?;
+            let speed_col = vs.col("speed")?;
+            let route_col = vs.col("route")?;
 
-            let mut av_speed_list = vec![];
+            let mut avg_speed = vec![];
 
-            let key = result.key()?;
-            let speed_col = result.col("speed")?;
-            let route_col = result.col("route")?;
-
-=======
-          fn compute_top_vehicle() -> Result<TopVehicle> {
-            let top5 = sql("select * from vehicle_stat order by speed desc limit 5")?;
-            let rows = top5.rows()?;
-            let mut top_vehicles = vec![];
-            let key = top5.key()?;
-            let speed_value = top5.col("speed")?;
->>>>>>> main
+            let rows = vs.rows()?;
             while rows.next() {
-              let vehicle = rows.str(&key)?;
+              let vehicle = rows.str(&vehicle_col)?;
               let route = rows.str(&route_col)?;
               let speed = rows.f64(&speed_col)?;
-              av_speed_list.push(AverageSpeed {vehicle: vehicle.parse()?, route, speed});
+              avg_speed.push(AverageSpeed {
+                  vehicle: vehicle.parse()?, 
+                  route, 
+                  speed,
+                }
+              );
             }
 
-            Ok(av_speed_list)
+            Ok(avg_speed)
           }
 
     sinks:
