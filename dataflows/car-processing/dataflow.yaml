@@ -107,6 +107,10 @@ topics:
       value:
         type: car-colors
   licenses:
+    consumer: 
+      default_starting_offset:
+        value: 0
+        position: Beginning
     schema:
       value:
         type: licenses
