@@ -1,0 +1,14 @@
+[2m2024-12-18T14:21:25.503236Z[0m [32m INFO[0m [2mmqtt_source[0m[2m:[0m Using EnvSecretStore
+[2m2024-12-18T14:21:25.503325Z[0m [32m INFO[0m [2mmqtt_source[0m[2m:[0m Reading config file from: /Users/aj/local/github/stateful-dataflows-examples/dataflows/helsinki-transit/connector/mqtt-helsinki.yaml
+[2m2024-12-18T14:21:25.504128Z[0m [32m INFO[0m [2mmqtt_source[0m[2m:[0m Starting Processing [3mconn_type[0m[2m=[0m"mqtt-source" [3mconn_name[0m[2m=[0m"helsinki-mqtt" [3mconn_version[0m[2m=[0m"0.2.9"
+[2m2024-12-18T14:21:25.507029Z[0m [32m INFO[0m [2mfluvio::fluvio[0m[2m:[0m Connecting to Fluvio cluster [3mfluvio_crate_version[0m[2m=[0m"0.23.3"
+[2m2024-12-18T14:21:25.507535Z[0m [32m INFO[0m [1mconnect[0m[2m:[0m [2mfluvio_socket::versioned[0m[2m:[0m connect to socket [3madd[0m[2m=[0m127.0.0.1:9003
+[2m2024-12-18T14:21:25.509436Z[0m [32m INFO[0m [1mconnect[0m[2m:[0m[1mconnect_with_config[0m[2m:[0m[1mconnect[0m[2m:[0m [2mfluvio_socket::versioned[0m[2m:[0m connect to socket [3madd[0m[2m=[0m127.0.0.1:9003
+[2m2024-12-18T14:21:25.510205Z[0m [32m INFO[0m [1mdispatcher_loop[0m[1m{[0m[3mself[0m[2m=[0mMultiplexDisp(8)[1m}[0m[2m:[0m [2mfluvio_socket::multiplexing[0m[2m:[0m multiplexer terminated
+[2m2024-12-18T14:21:25.512032Z[0m [32m INFO[0m [1mconnect[0m[2m:[0m [2mfluvio_socket::versioned[0m[2m:[0m connect to socket [3madd[0m[2m=[0m127.0.0.1:9003
+[2m2024-12-18T14:21:25.525004Z[0m [32m INFO[0m [1mdispatcher_loop[0m[1m{[0m[3mself[0m[2m=[0mMultiplexDisp(8)[1m}[0m[2m:[0m [2mfluvio_socket::multiplexing[0m[2m:[0m multiplexer terminated
+[2m2024-12-18T14:21:25.676895Z[0m [32m INFO[0m [2mfluvio_connector_common::monitoring[0m[2m:[0m using default metric path: /tmp/fluvio-connector.sock
+[2m2024-12-18T14:21:25.676916Z[0m [32m INFO[0m [2mmqtt_source::source[0m[2m:[0m [3mtimeout[0m[2m=[0m60s [3mmqtt_url[0m[2m=[0mmqtt://mqtt.hsl.fi?client_id=fd315b54-3e96-4fa7-94d6-b37a943415a0 [3mconfig.topic[0m[2m=[0m/hfp/v2/journey/ongoing/vp/bus/# [3mconfig.client_id[0m[2m=[0mfd315b54-3e96-4fa7-94d6-b37a943415a0
+[2m2024-12-18T14:21:25.676961Z[0m [32m INFO[0m [2mfluvio_connector_common::monitoring[0m[2m:[0m metric file already exists, deleting: /tmp/fluvio-connector.sock
+[2m2024-12-18T14:21:25.677918Z[0m [32m INFO[0m [2mfluvio_connector_common::monitoring[0m[2m:[0m monitoring started
+[2m2024-12-18T14:21:26.337674Z[0m [32m INFO[0m [1mrun[0m[2m:[0m[1mcreate_serial_socket_from_leader[0m[1m{[0m[3mleader_id[0m[2m=[0m5001[1m}[0m[2m:[0m[1mconnect_to_leader[0m[1m{[0m[3mleader[0m[2m=[0m5001[1m}[0m[2m:[0m[1mconnect[0m[2m:[0m [2mfluvio_socket::versioned[0m[2m:[0m connect to socket [3madd[0m[2m=[0mlocalhost:9010
