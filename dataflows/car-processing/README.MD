@@ -159,7 +159,7 @@ Let's run a simple select:
 select * from license_plates
 ```
 
-Now we can look-up how many models does toyota have:
+Now we can look-up how many models toyota has:
 
 ```sql
 select * from license_plates where maker = 'Toyota'
