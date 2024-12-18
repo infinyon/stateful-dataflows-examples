@@ -1,4 +1,4 @@
-# SQL (simple query)
+# SQL (cli & query)
 
 In this example, we'll collect `vehicle-data` records from a `vehicle-sensor` topic, store them in a `vehicle_data` state, and query the data using the SQL CLI interface.
 

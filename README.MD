@@ -51,6 +51,8 @@ Examples centered around primitive concepts and operations.
 * [split (filter-map)](/primitives/split/filter-map)
 * [merge](/primitives/merge/)
 * [regex](/primitives/regex/)
+* [sql (cli)](/primitives/sql/cli)
+* [sql (join)](/primitives/sql/join)
 * [update-state](/primitives/update-state/)
 * [key-value (input)](/primitives/key-value/input)
 * [key-value (output)](/primitives/key-value/output)
