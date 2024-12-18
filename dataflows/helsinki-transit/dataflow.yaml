@@ -169,7 +169,7 @@ services:
       flush:
         run: |
           fn collect_vehicle_stats() -> Result<AverageSpeedList> {
-            let vs = sql("select * from vehicle_stat order by speed desc limit 5")?;
+            let vs = sql("select * from vehicle_stat")?;
             let vehicle_col = vs.key()?;
             let speed_col = vs.col("speed")?;
             let route_col = vs.col("route")?;
