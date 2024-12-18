@@ -52,7 +52,7 @@ The dataset is hosted by the InfinyOn Synthetic data generator at `demo-data.inf
   ```
 
 
-The connector sends events to `licenses` topic.
+The connector sends events to the `licenses` topic.
 
 ## Step-by-step
 
