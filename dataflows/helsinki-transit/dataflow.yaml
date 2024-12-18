@@ -119,7 +119,7 @@ services:
       - type: topic
         id: vehicle-position
 
-  compute-average-speed:
+  generate-vehicle-stats:
     sources:
       - type: topic
         id: vehicle-position
@@ -157,7 +157,7 @@ services:
 
         update-state:
           run: |
-            fn update_speed(vp: VehiclePosition) -> Result<()> {
+            fn compute_average_speed(vp: VehiclePosition) -> Result<()> {
               let mut veh = vehicle_stat();
               veh.route = vp.route.clone();
               veh.speed = (veh.speed + vp.speed) / 2.0f64;
@@ -168,7 +168,7 @@ services:
 
       flush:
         run: |
-          fn compute_average_speed() -> Result<AverageSpeedList> {
+          fn collect_vehicle_stats() -> Result<AverageSpeedList> {
             let vs = sql("select * from vehicle_stat")?;
             let vehicle_col = vs.key()?;
             let speed_col = vs.col("speed")?;
