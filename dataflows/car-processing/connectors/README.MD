@@ -30,7 +30,7 @@ Use <Ctrl-C> to exit
 
 ### Clean-up
 
-Stop the connectors:
+Stop the connector:
 
 ```bash
 cdk deploy shutdown --name car-connector
