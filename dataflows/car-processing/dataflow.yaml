@@ -107,7 +107,7 @@ topics:
       value:
         type: car-colors
   licenses:
-    consumer:
+    consumer: 
       default_starting_offset:
         value: 0
         position: Beginning
@@ -216,8 +216,11 @@ services:
           key:
             type: string
           value:
-            type: u32
-
+            type: arrow-row
+            properties:
+              count:
+                type: u32
+                
     window:
       tumbling:
         duration: 30s
@@ -236,21 +239,28 @@ services:
 
         update-state:
           run: |
-            fn increment_color_count(cl: CarLocation) -> Result<()> {
-              count_by_color().increment(1);
+            fn increment_color_count(_cl: CarLocation) -> Result<()> {
+              let mut cbc = count_by_color();
+              cbc.count += 1;
+              cbc.update()?;
               Ok(())
             }
 
       flush:
         run: |
           fn get_car_color_count() -> Result<CarColors> {
-            let cc = count_by_color().clone();
-            Ok(cc.into_iter().map(|(color, count)|
-              Color {
-                color,
-                count
-              }
-            ).collect())
+            let cc = sql(&format!("SELECT * FROM count_by_color"))?;
+            let rows = cc.rows()?;
+            let color_col = cc.key()?;
+            let count_col = cc.col("count")?;
+
+            let mut colors = vec![];
+            while rows.next() {
+              let color = rows.str(&color_col)?;
+              let count = rows.u32(&count_col)?;
+              colors.push(Color {color, count});
+            }
+            Ok(colors)
           }
 
     sinks:
@@ -264,7 +274,7 @@ services:
         id: licenses
 
     states:
-      licence-plates:
+      license-plates:
         type: keyed-state
         properties:
           key:
@@ -294,7 +304,7 @@ services:
       update-state:
         run: |
           fn add_license_plate(license: License) -> Result<()> {
-            let mut lp = licence_plates();
+            let mut lp = license_plates();
             lp.maker = license.maker;
             lp.model = license.model;
             lp.update()?;
@@ -308,14 +318,14 @@ services:
         id: cars
 
     states:
-      licence-plates:
-        from: save-license-plates.licence-plates
+      license-plates:
+        from: save-license-plates.license-plates
 
     transforms:
       - operator: filter-map
         run: |
           fn check_license_plate(car: Car) -> Result<Option<StolenPlate>> {
-            let lp = sql(&format!("select * from licence_plates where _key = '{}'", car.license))?;
+            let lp = sql(&format!("select * from license_plates where _key = '{}'", car.license))?;
             let rows = lp.rows()?;
 
             let maker_col = lp.col("maker")?;

@@ -1,6 +1,6 @@
 apiVersion: 0.1.0
 meta:
-  version: 0.3.8
+  version: 0.4.3
   name: hackernews 
   type: http-source
   topic: hackernews
