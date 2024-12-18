@@ -85,12 +85,8 @@ To see the licenses, run `fluvio consume licenses -Bd -O json`.
 
 ### 3. Start the car connector:
 
-<<<<<<< HEAD
-In a new terminal change directory to `./connectors`, download the connector binary, and start connector:
-=======
 
 In a new terminal change directory to `./connectors`, download the connector binary, and start the connector:
->>>>>>> car-processing
 
 ```bash
 cd ./connectors
