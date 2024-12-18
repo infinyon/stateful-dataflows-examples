@@ -1,5 +1,3 @@
-# Perform word count on sentences in non windowed transformation
-
 apiVersion: 0.5.0
 meta:
   name: helsinki-stat
@@ -11,7 +9,7 @@ config:
   consumer:
     default_starting_offset:
       value: 0
-      position: Beginning
+      position: End
 
 types:
   event:
