@@ -42,6 +42,7 @@ jobs:
             "dataflows/http-callout",
             "dataflows/mask-user-pii",
             "dataflows/mask-user-pii/package-variant",
+            "dataflows/ny-transit",
             "dataflows/openai-callout",
             "dataflows/split-sentence",
             "dataflows/split-sentence/package-variant",

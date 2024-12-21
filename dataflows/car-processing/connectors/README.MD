@@ -1,6 +1,6 @@
-# Connectors to Generate Licenses & Car Events
+# Connectors to Generate Car Events
 
-Use http-source connector to install license plates and read cars from the InfinyOn synthetic data server.
+Use http-source connector to read cars from the InfinyOn data server.
 
 ### Prerequisites
 
@@ -11,7 +11,7 @@ cd ./connectors
 cdk hub download infinyon/http-source@0.4.3
 ```
 
-### Start the car connector
+### Start the connector
 
 Checkout the connector configuration file [car-connector.yaml](car-connector.yaml) for context.
 

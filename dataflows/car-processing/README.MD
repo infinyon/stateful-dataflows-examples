@@ -71,10 +71,12 @@ sdf run --ui
 * Use `--ui` to generate the graphical representation and run the Studio.
 * Using `sdf run` as opposed to `sdf deploy` will run the dataflow with an ephemeral worker, which will be cleaned up on exit.
 
+**Note:** It is  important to run the dataflow first, as it creates the topics for you.
+
 
 ### 2. Read the licenses:
 
-Create a new topic and add the licenses from the data generator:
+Read license plates from the data generator and add them to the `licenses` topic:
 
 ```bash
 curl -s https://demo-data.infinyon.com/api/car/licenses | fluvio produce licenses
