@@ -13,57 +13,59 @@ config:
 
 types:
   trip:
-    key:                # We'll generate a key.
-      type: string
-      optional: true
-    do-location-id:
-      type: i32
-    pu-location-id:
-      type: i32
-    access-a-ride-flag:
-      type: string
-    airport-fee:
-      type: f64
-    base-passenger-fare:
-      type: f64
-    bcf:
-      type: f64
-    congestion-surcharge:
-      type: f64
-    dispatching-base-num:
-      type: string
-    driver-pay:
-      type: f64
-    hvfhs-license-num:
-      type: string
-    originating-base-num:
-      type: string
-    pickup-datetime:
-      type: string
-    request-datetime:
-      type: string
-    on-scene-datetime:
-      type: string
-    dropoff-datetime:
-      type: string
-    sales-tax:
-      type: f64
-    shared-match-flag:
-      type: string
-    shared-request-flag:
-      type: string
-    tips:
-      type: f64
-    tolls:
-      type: f64
-    trip-miles:
-      type: f64
-    trip-time:
-      type: i32
-    wav-match-flag:
-      type: string
-    wav-request-flag:
-      type: string
+    type: object
+    properties:
+      key:                # We'll generate a key.
+        type: string
+        optional: true
+      do-location-id:
+        type: i32
+      pu-location-id:
+        type: i32
+      access-a-ride-flag:
+        type: string
+      airport-fee:
+        type: f64
+      base-passenger-fare:
+        type: f64
+      bcf:
+        type: f64
+      congestion-surcharge:
+        type: f64
+      dispatching-base-num:
+        type: string
+      driver-pay:
+        type: f64
+      hvfhs-license-num:
+        type: string
+      originating-base-num:
+        type: string
+      pickup-datetime:
+        type: string
+      request-datetime:
+        type: string
+      on-scene-datetime:
+        type: string
+      dropoff-datetime:
+        type: string
+      sales-tax:
+        type: f64
+      shared-match-flag:
+        type: string
+      shared-request-flag:
+        type: string
+      tips:
+        type: f64
+      tolls:
+        type: f64
+      trip-miles:
+        type: f64
+      trip-time:
+        type: i32
+      wav-match-flag:
+        type: string
+      wav-request-flag:
+        type: string
 
   locations:
     type: list
@@ -110,7 +112,7 @@ topics:
     schema:
       value:
         type: vendors
-    vendor: 
+    consumer: 
       default_starting_offset:
         value: 0
         position: Beginning
@@ -264,8 +266,10 @@ services:
             
             hasher.update(t.pu_location_id.to_string().as_bytes());
             hasher.update(t.do_location_id.to_string().as_bytes());
+            hasher.update(t.hvfhs_license_num.as_bytes());
 
-            t.key = Some(format!("{:x}", hasher.finalize()));
+            let hash = format!("{:x}", hasher.finalize());
+            t.key = Some(hash[..16].to_string());
 
             Ok(t)
           } 
@@ -275,9 +279,15 @@ services:
         duration: 30s
 
       assign-timestamp:
+        dependencies:
+          - name: chrono
+            version: "0.4.38"
         run: |
           fn assign_event_timestamp(trip: Trip, _event_time: i64) -> Result<i64> {
-            Ok(trip.dropoff_datetime)
+            use chrono::{DateTime, Utc};
+
+            let datetime: DateTime<Utc> = trip.dropoff_datetime.parse()?;
+            Ok(datetime.timestamp_millis())
           }
 
       partition:
