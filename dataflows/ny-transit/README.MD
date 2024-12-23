@@ -41,5 +41,53 @@ Read vendors from the data generator and add them to the `vendors` topic:
 curl -s https://demo-data.infinyon.com/api/ny-transit/vendors | fluvio produce vendors
 ```
 
+### 2. Start the http connector:
+
+In a new terminal change directory to `./connectors`, download the connector binary, and start connector:
+
+```bash
+cd ./connectors
+cdk hub download infinyon/http-source@0.4.3
+cdk deploy start --ipkg infinyon-http-source-0.4.3.ipkg -c trips-connector.yaml
+```
+
+The NY transit connector receives 10 events per second. Use fluvio to see the events streaming in real-time:
+
+```bash
+fluvio consume trips
+```
+
+Use <Ctrl-C> to exit
+
+
+### Test SQL
+
+SQL commands:
+
+```sql
+select count(*) as rides, sum(`base-passenger-fare`), sum(tips), sum(tolls), sum(`congestion-surcharge`), sum(`driver-pay`), sum(`airport-fee`), sum(`sales-tax`) from trips_tbl t
+```
+
+SQL for congestion surcharge:
+
+```sql
+select count(*) as rides, sum(`base-passenger-fare`), sum(tips), sum(tolls), sum(`congestion-surcharge`), sum(`driver-pay`), sum(`airport-fee`), sum(`sales-tax`) from trips_tbl t where t.`congestion-surcharge` > 0
+```
+
+
+### Clean-up
+
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
+
+```bash
+sdf clean --force
+```
+
+Stop the connector:
+
+```bash
+cdk deploy shutdown --name trips-connector
+```
+
 
 [Install SDF and start a Fluvio cluster]: /README.MD#prerequisites
