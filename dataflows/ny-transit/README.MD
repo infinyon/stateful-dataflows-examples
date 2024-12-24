@@ -2,6 +2,11 @@
 
 New York transit dataflow shows how join and query data sets for stream analytics use cases.
 
+The source of the data and the schemas are available at:
+
+* https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+* https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_hvfhs.pdf
+
 
 <p align="center">
  <img width="700" src="img/xyz.jpg">
