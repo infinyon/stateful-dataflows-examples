@@ -137,7 +137,6 @@ services:
           fn get_car_maker(car: Car) -> Result<Maker> {
             let maker = car.maker.replace(" ", "%20");
             let url = format!("https://demo-data.infinyon.com/api/maker/{maker}");
-            let request = sdf_http::http::Request::builder().uri(url).body("")?;
             let response = sdf_http::get(url)?;
             let m: Maker = serde_json::from_slice(response.as_slice())?;
             Ok(m)
