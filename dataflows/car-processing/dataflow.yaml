@@ -130,20 +130,15 @@ services:
       - operator: map
         dependencies:
           - name: sdf-http
-            git: "https://github.com/infinyon/sdf-http-guest"
-            tag: "v0.4.0"
+            version: "0.4.2"
           - name: serde_json
             version: "1"
         run: |
           fn get_car_maker(car: Car) -> Result<Maker> {
             let maker = car.maker.replace(" ", "%20");
             let url = format!("https://demo-data.infinyon.com/api/maker/{maker}");
-            let request = sdf_http::http::Request::builder().uri(url).body("")?;
-
-            let response = sdf_http::blocking::send(request)?;
-            let body = response.into_body();
-
-            let m: Maker = serde_json::from_slice(&*body)?;
+            let response = sdf_http::get(url)?;
+            let m: Maker = serde_json::from_slice(response.as_slice())?;
             Ok(m)
           }
 
