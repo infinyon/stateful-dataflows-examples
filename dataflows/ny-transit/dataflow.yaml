@@ -274,51 +274,40 @@ services:
             Ok(t)
           } 
 
-    window:
-      tumbling:
-        duration: 30s
 
-      assign-timestamp:
-        dependencies:
-          - name: chrono
-            version: "0.4.38"
+
+    partition:
+
+
+      assign-key:
         run: |
-          fn assign_event_timestamp(trip: Trip, _event_time: i64) -> Result<i64> {
-            use chrono::{DateTime, Utc};
-
-            let datetime: DateTime<Utc> = trip.dropoff_datetime.parse()?;
-            Ok(datetime.timestamp_millis())
+          fn assgn_trip_key(trip: Trip) -> Result<String> {
+            Ok(trip.key.unwrap_or("".to_string()))
           }
 
-      partition:
-        assign-key:
-          run: |
-            fn assgn_trip_key(trip: Trip) -> Result<String> {
-              Ok(trip.key.unwrap_or("".to_string()))
-            }
+      update-state:
+        run: |
+          fn update_trips_tbl(trip: Trip) -> Result<()> {
+            let mut tt = trips_tbl();
+            tt.do_location_id = trip.do_location_id;
+            tt.pu_location_id = trip.pu_location_id;
+            tt.airport_fee = trip.airport_fee;
+            tt.base_passenger_fare = trip.base_passenger_fare;
+            tt.bcf = trip.bcf;
+            tt.congestion_surcharge = trip.congestion_surcharge;
+            tt.driver_pay = trip.driver_pay;
+            tt.hvfhs_license_num = trip.hvfhs_license_num;
+            tt.pickup_datetime = trip.pickup_datetime;
+            tt.request_datetime = trip.request_datetime;
+            tt.on_scene_datetime = trip.on_scene_datetime;
+            tt.dropoff_datetime = trip.dropoff_datetime;
+            tt.sales_tax = trip.sales_tax;
+            tt.tips = trip.tips;
+            tt.tolls = trip.tolls;
+            tt.trip_miles = trip.trip_miles;
+            tt.trip_time = trip.trip_time;
+            tt.update()?;
 
-        update-state:
-          run: |
-            fn update_trips_tbl(trip: Trip) -> Result<()> {
-              let mut tt = trips_tbl();
-              tt.do_location_id = trip.do_location_id;
-              tt.pu_location_id = trip.pu_location_id;
-              tt.airport_fee = trip.airport_fee;
-              tt.base_passenger_fare = trip.base_passenger_fare;
-              tt.bcf = trip.bcf;
-              tt.congestion_surcharge = trip.congestion_surcharge;
-              tt.driver_pay = trip.driver_pay;
-              tt.hvfhs_license_num = trip.hvfhs_license_num;
-              tt.pickup_datetime = trip.pickup_datetime;
-              tt.request_datetime = trip.request_datetime;
-              tt.on_scene_datetime = trip.on_scene_datetime;
-              tt.dropoff_datetime = trip.dropoff_datetime;
-              tt.sales_tax = trip.sales_tax;
-              tt.tips = trip.tips;
-              tt.tolls = trip.tolls;
-              tt.trip_miles = trip.trip_miles;
-              tt.trip_time = trip.trip_time;
-              tt.update()?;
+            Ok(())
+          }
 
-              Ok(())
-            }
