@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Taxi Average Tip Visualization</title>
+    <style>
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <iframe src="nyc_taxi_zones_map.html" title="NYC Taxi Fare map" id="taxiMap"></iframe>
+    <script>
+        setInterval(function () {
+            document.getElementById('taxiMap').src += '';
+        }, 5000);
+    </script>
+    id="taxiMap"
+</body>
+
+</html>
