@@ -20,7 +20,7 @@ for idx, record in enumerate( consumer.stream(Offset.from_end(0)) ):
 
     tips_dict = {}
     for tip in tips:
-        pu_zone = tip.get("pu_zone")
+        pu_zone = int(tip.get("pu_zone"))
         avg_tip = tip.get("avg_tip")
         tips_dict[pu_zone] = avg_tip
         print(f"Zone: {pu_zone}, Avg Tip: {avg_tip}")
@@ -30,16 +30,28 @@ for idx, record in enumerate( consumer.stream(Offset.from_end(0)) ):
     nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
 
     # Add Taxi Zones to the map
-    for _, zone in taxi_zones.iterrows():
-        print("zone: ", zone["Name"])
+    for idx, zone in taxi_zones.iterrows():
+        
         # Extract geometry and tooltip information
+        tip_info = tips_dict.get(idx, 0.0)
+
+        fill_opacity = 0.0
+        
+        
+        if tip_info > 0.0:
+            print("tip_info: ", zone["zone"],tip_info)
+            #fill_opacity = min(max(tip_info / 10.0, 0.0), 1.0)
+            #print("fill_opacity: ", fill_opacity)
+            fill_opacity = 1.0
+
+
         geo_json = folium.GeoJson(
             data=zone["geometry"],
             style_function=lambda x: {
                 "fillColor": "blue",
                 "color": "black",
                 "weight": 2.0,
-                "fillOpacity": 0.0
+                "fillOpacity": fill_opacity
             },
             tooltip=folium.Tooltip(zone["zone"]),
         )
