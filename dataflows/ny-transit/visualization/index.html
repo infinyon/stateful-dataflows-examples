@@ -22,8 +22,8 @@
 <script>
     window.setInterval(reloadIFrame, 3000);
     function reloadIFrame() {
-        const iframe = document.getElementById('myIframe');
-        const hiddenIframe = document.getElementById('hiddenIframe');
+        var iframe = document.getElementById('myIframe');
+        var hiddenIframe = document.getElementById('hiddenIframe');
 
         hiddenIframe.src = iframe.src; // Refresh hidden iframe
 
