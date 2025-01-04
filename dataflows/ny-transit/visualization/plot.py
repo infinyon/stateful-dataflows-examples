@@ -7,16 +7,8 @@ import json
 def process_tips_and_generate_map(tips):
 
     nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11)
-    nyc_map.get_root().html.add_child(folium.Element('''
-        <script type="text/javascript">
-            setTimeout(function(){
-                location.reload(true);
-            }, 5000);
-        </script>
-    '''))
-
     tips_count = len(tips)
-    nyc_map.get_root().html.add_child(folium.Element('<h1>NYC Taxi Zones count: {}</h1>'.format(tips_count)))
+    nyc_map.get_root().html.add_child(folium.Element('<h1>Number zones with fare: {}</h1>'.format(tips_count)))
 
     for idx, zone in taxi_zones.iterrows():
         tip_info = tips.get(idx, 0.0)

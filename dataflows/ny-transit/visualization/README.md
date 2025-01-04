@@ -21,12 +21,11 @@ pip install geopandas folium matplotlib fluvio
 ```
 python3 plot.py
 ```
-
-Open browser "nyc_taxi_zones_map.html" to see the map.
+Open browser on "index.html" to see the map.
 
 On mac:
 ```
-open nyc_taxi_zones_map.html
+open index.html
 ```
 
 The map will continously update with the latest data from the Fluvio topic every 30 seconds.
