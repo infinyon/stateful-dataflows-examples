@@ -15,24 +15,26 @@
 </head>
 
 <body style="margin: 0; height: 100vh">
-    <div id="map-container" style="margin: 0; height: 100vh">
-        <iframe id="myIframe" src="nyc_taxi_zones_map.html"></iframe>
-    </div>
-
+    <iframe id="myIframe" src="nyc_taxi_zones_map.html"></iframe>
     <iframe id="hiddenIframe" src="nyc_taxi_zones_map.html" style="display: none;"></iframe>
 </body>
 
 <script>
 
-    var current_offset = -1000;
+    var current_offset = -1;
+    var loading_frame = document.getElementById('hiddenIframe');
+    var current_iframe = document.getElementById('myIframe');
+    var swapping = false;
+
     window.addEventListener(
         "message",
         (event) => {
-            if (event.data === current_offset) {
+            const new_ofset = event.data;
+            if (new_ofset === current_offset) {
                 console.log("same ignoring offset: ", event.data);
             } else {
-                console.log("offset changed: ", event.data);
-                swapFrame(event.data);
+                console.log("new offset received: ", new_ofset);
+                swapFrame(new_ofset);
             }
 
         },
@@ -42,33 +44,30 @@
     window.setInterval(reloadIFrame, 3000);
 
     function reloadIFrame() {
-        console.log("reloading iframe with offset: ", current_offset);
-        var new_iframe = document.getElementById('hiddenIframe');
-        if (new_iframe === undefined || new_iframe === null) {
-            console.log("no iframe exists, recreating");
-            new_iframe = document.createElement('iframe');
-            new_iframe.id = 'hiddenIframe';
-            new_iframe.style.display = 'none';  // set to invisible
-            body.appendChild(new_iframe);
+        if (swapping) {
+            console.log("still swapping, ignoring reload");
         } else {
-            console.log("old frame exist loading");
-            new_iframe.src = new_iframe.src;
+            console.log("reloading iframe");
+            loading_frame.src = loading_frame.src;
         }
     }
 
     function swapFrame(offset) {
-        console.log("swapping frame, old offset: ", current_offset, " new offset: ", offset);
-        var new_iframe = document.getElementById('hiddenIframe');
-        if (new_iframe === undefined || new_iframe === null) {
-            // new_frame.id = 'myIframe';
-            var map_container = document.getElementById('map-container');
-            var old_iframe = document.getElementById('myIframe');
-            map_container.replaceChild(new_iframe, old_iframe);
-            new_iframe.style.display = 'block';  // set to visible
-            current_offset = offset;
-        } else {
-            console.log("swapping: new_frame is null,no effectt");
+        if (swapping) {
+            console.log("still swapping, ignoring swap");
+            return;
         }
+
+        swapping = true;
+        const temp = current_iframe;
+        current_iframe = loading_frame;
+        loading_frame = temp;
+        current_iframe.style.display = 'block';
+        loading_frame.style.display = 'none';
+        current_offset = offset;
+        swapping = false;
+        console.log("swapped to offset: ", offset);
+
     }
 </script>
 

@@ -8,12 +8,51 @@ def process_tips_and_generate_map(tips,offset):
 
     nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11, prefer_canvas=True)
     tips_count = len(tips)
-    nyc_map.get_root().html.add_child(folium.Element('<h1>Number zones with fare: {} offset: {}</h1>'.format(tips_count,offset)))
+
     nyc_map.get_root().html.add_child(folium.Element('''
-        <script type="text/javascript">
-            window.parent.postMessage({},"*");
-        </script>
-    '''.format(offset)))
+            <script type="text/javascript">                                 
+                function startCountdown(seconds) {
+                    var timeRemaining = seconds;
+
+                    const intervalId = setInterval(() => {
+                        const display = document.getElementById("countdown"); 
+                        display.textContent = "Number of seconds to refresh:  " + timeRemaining;
+
+                        timeRemaining--;
+
+                        if (timeRemaining < 0) {
+                            clearInterval(intervalId);
+                            display.textContent = "Refreshing...";
+                        }
+                    }, 1000); // 1000 milliseconds = 1 second
+                }
+
+                startCountdown(30);
+            </script>
+        '''))    
+
+    if offset >= 0:
+        nyc_map.get_root().html.add_child(folium.Element('''
+            <div style="display: flex; justify-content: space-between;">
+            <div>Number zones with fare: {} offset: {}</div>
+            <div id="countdown"></div>
+            </div>
+        '''.format(tips_count, offset)))
+        nyc_map.get_root().html.add_child(folium.Element(f'''
+            <script type="text/javascript">                                 
+                window.addEventListener("load", (event) => {{
+                    window.parent.postMessage({offset},"*");
+                }});
+            </script>
+        '''))
+    else:
+        nyc_map.get_root().html.add_child(folium.Element('''
+            <div style="display: flex; justify-content: space-between;">
+            <div>No data</div>
+            <div id="countdown"></div>
+            </div>
+        '''))
+    
 
 
     for idx, zone in taxi_zones.iterrows():
@@ -46,8 +85,7 @@ taxi_zones = gpd.read_file("zones")
 taxi_zones = taxi_zones.to_crs("EPSG:4326")
 
 # generate empty map
-count = -1
-process_tips_and_generate_map({},count)
+process_tips_and_generate_map({},-1)
 
 TOPIC_NAME = "pu-tips"
 
