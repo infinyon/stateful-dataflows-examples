@@ -3,10 +3,9 @@ import folium
 from fluvio import Fluvio, Offset
 import json
 
+
 # Load NYC Taxi Zone shapefile
-
 taxi_zones = gpd.read_file("zones")
-
 # Ensure CRS is set correctly (e.g., WGS84 for Folium)
 taxi_zones = taxi_zones.to_crs("EPSG:4326")
 
@@ -36,24 +35,22 @@ for idx, record in enumerate( consumer.stream(Offset.from_end(0)) ):
         tip_info = tips_dict.get(idx, 0.0)
 
         fill_opacity = 0.0
-        
+
         
         if tip_info > 0.0:
             print("tip_info: ", zone["zone"],tip_info)
-            #fill_opacity = min(max(tip_info / 10.0, 0.0), 1.0)
-            #print("fill_opacity: ", fill_opacity)
-            fill_opacity = 1.0
-
+            fill_opacity = min(max(tip_info / 10.0, 0.0), 1.0)
+            print("fill_opacity: ", fill_opacity)
 
         geo_json = folium.GeoJson(
             data=zone["geometry"],
-            style_function=lambda x: {
+            style_function=lambda x, fill_opacity=fill_opacity: {
                 "fillColor": "blue",
                 "color": "black",
                 "weight": 2.0,
                 "fillOpacity": fill_opacity
             },
-            tooltip=folium.Tooltip(zone["zone"]),
+            tooltip=folium.Tooltip(zone["zone"]+" "+str(tip_info)),
         )
         # print("zone: ", zone["zone"])
         geo_json.add_to(nyc_map)
