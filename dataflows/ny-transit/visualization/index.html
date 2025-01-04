@@ -22,18 +22,18 @@
 <script>
     window.setInterval(reloadIFrame, 3000);
     function reloadIFrame() {
-        var iframe = document.getElementById('myIframe');
-        var hiddenIframe = document.getElementById('hiddenIframe');
+        var old_iframe = document.getElementById('myIframe');
+        var new_iframe = document.getElementById('hiddenIframe');
 
-        hiddenIframe.src = iframe.src; // Refresh hidden iframe
+        new_iframe.src = new_iframe.src;
 
-        hiddenIframe.onload = () => {
-            iframe.style.display = 'none';
-            hiddenIframe.style.display = 'block';
+        new_iframe.onload = () => {
+            new_iframe.style.display = 'block';
             // Swap references
-            const temp = iframe;
-            iframe = hiddenIframe;
-            hiddenIframe = temp;
+            const temp = old_iframe;
+            old_iframe = new_iframe;
+            new_iframe = temp;
+            new_iframe.style.display = 'none';
         };
     }
 </script>
