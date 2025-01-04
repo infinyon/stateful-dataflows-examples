@@ -4,11 +4,12 @@ from fluvio import Fluvio, Offset
 import json
 
 
-def process_tips_and_generate_map(tips):
+def process_tips_and_generate_map(tips,offset):
 
     nyc_map = folium.Map(location=[40.7128, -74.0060], zoom_start=11, prefer_canvas=True)
     tips_count = len(tips)
-    nyc_map.get_root().html.add_child(folium.Element('<h1>Number zones with fare: {}</h1>'.format(tips_count)))
+    nyc_map.get_root().html.add_child(folium.Element('<h1>Number zones with fare: {} offset: {}</h1>'.format(tips_count,offset)))
+
 
     for idx, zone in taxi_zones.iterrows():
         tip_info = tips.get(idx, 0.0)
@@ -40,13 +41,15 @@ taxi_zones = gpd.read_file("zones")
 taxi_zones = taxi_zones.to_crs("EPSG:4326")
 
 # generate empty map
-process_tips_and_generate_map({})
+count = -1
+process_tips_and_generate_map({},count)
 
 TOPIC_NAME = "pu-tips"
 
 fluvio = Fluvio.connect()
 
 consumer = fluvio.partition_consumer(TOPIC_NAME, 0)
+
 for idx, record in enumerate( consumer.stream(Offset.from_end(0)) ):
     tips = json.loads(record.value_string())
 
@@ -57,6 +60,5 @@ for idx, record in enumerate( consumer.stream(Offset.from_end(0)) ):
         tips_dict[pu_zone] = avg_tip
         print(f"Zone: {pu_zone}, Avg Tip: {avg_tip}")
 
-
-    process_tips_and_generate_map(tips_dict)
+    process_tips_and_generate_map(tips_dict,record.offset())
 
