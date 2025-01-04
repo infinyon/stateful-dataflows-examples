@@ -95,6 +95,20 @@ types:
       name:
         type: string
 
+  pu-tip:
+    type: object
+    properties:
+      pu-zone:
+        type: i32
+      avg-tip:
+        type: f64
+
+  pu-tips:
+    type: list
+    items:
+      type: pu-tip
+
+
 topics:
   trips:
     schema:
@@ -116,6 +130,11 @@ topics:
       default_starting_offset:
         value: 0
         position: Beginning
+
+  pu-tips:
+    schema:
+      value:
+        type: pu-tips
 
 
 services:
@@ -274,40 +293,80 @@ services:
             Ok(t)
           } 
 
+    window:
+      tumbling:
+        duration: 30s
 
-
-    partition:
-
-
-      assign-key:
+      assign-timestamp:
+        dependencies:
+          - name: chrono
+            version: "0.4.38"
         run: |
-          fn assgn_trip_key(trip: Trip) -> Result<String> {
-            Ok(trip.key.unwrap_or("".to_string()))
+          fn assign_event_timestamp(trip: Trip, _event_time: i64) -> Result<i64> {
+            use chrono::{DateTime, Utc};
+
+            let datetime: DateTime<Utc> = trip.dropoff_datetime.parse()?;
+            Ok(datetime.timestamp_millis())
           }
 
-      update-state:
-        run: |
-          fn update_trips_tbl(trip: Trip) -> Result<()> {
-            let mut tt = trips_tbl();
-            tt.do_location_id = trip.do_location_id;
-            tt.pu_location_id = trip.pu_location_id;
-            tt.airport_fee = trip.airport_fee;
-            tt.base_passenger_fare = trip.base_passenger_fare;
-            tt.bcf = trip.bcf;
-            tt.congestion_surcharge = trip.congestion_surcharge;
-            tt.driver_pay = trip.driver_pay;
-            tt.hvfhs_license_num = trip.hvfhs_license_num;
-            tt.pickup_datetime = trip.pickup_datetime;
-            tt.request_datetime = trip.request_datetime;
-            tt.on_scene_datetime = trip.on_scene_datetime;
-            tt.dropoff_datetime = trip.dropoff_datetime;
-            tt.sales_tax = trip.sales_tax;
-            tt.tips = trip.tips;
-            tt.tolls = trip.tolls;
-            tt.trip_miles = trip.trip_miles;
-            tt.trip_time = trip.trip_time;
-            tt.update()?;
+      partition:
 
-            Ok(())
+
+        assign-key:
+          run: |
+            fn assgn_trip_key(trip: Trip) -> Result<String> {
+              Ok(trip.key.unwrap_or("".to_string()))
+            }
+
+        update-state:
+          run: |
+            fn update_trips_tbl(trip: Trip) -> Result<()> {
+              let mut tt = trips_tbl();
+              tt.do_location_id = trip.do_location_id;
+              tt.pu_location_id = trip.pu_location_id;
+              tt.airport_fee = trip.airport_fee;
+              tt.base_passenger_fare = trip.base_passenger_fare;
+              tt.bcf = trip.bcf;
+              tt.congestion_surcharge = trip.congestion_surcharge;
+              tt.driver_pay = trip.driver_pay;
+              tt.hvfhs_license_num = trip.hvfhs_license_num;
+              tt.pickup_datetime = trip.pickup_datetime;
+              tt.request_datetime = trip.request_datetime;
+              tt.on_scene_datetime = trip.on_scene_datetime;
+              tt.dropoff_datetime = trip.dropoff_datetime;
+              tt.sales_tax = trip.sales_tax;
+              tt.tips = trip.tips;
+              tt.tolls = trip.tolls;
+              tt.trip_miles = trip.trip_miles;
+              tt.trip_time = trip.trip_time;
+              tt.update()?;
+
+              Ok(())
+            }
+
+      flush:
+
+        run: |
+          fn compute_pu_tips() -> Result<PuTips> {
+              
+              let tips_query = sql("select `pu-location-id` as pu_zone, avg(tips) as average_tip from trips_tbl group by `pu-location-id`")?;
+              let rows = tips_query.rows()?;
+
+              let mut tips  = vec![];
+              let pu_zone_col = tips_query.col("pu_zone")?;
+              let avg_tips_col = tips_query.col("average_tip")?;
+
+              while rows.next() {
+                let pu_zone = rows.i32(&pu_zone_col)?;
+                let avg_tip = rows.f64(&avg_tips_col)?;
+                if avg_tip > 0.0 {
+                  tips.push(PuTip { pu_zone, avg_tip });
+                }
+              }
+
+              Ok(tips)
           }
 
+    sinks:
+      - type: topic
+        id: pu-tips
