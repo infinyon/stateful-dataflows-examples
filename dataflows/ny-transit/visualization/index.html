@@ -8,20 +8,34 @@
     <style>
         iframe {
             width: 100%;
-            height: 500px;
-            border: 1px solid #ccc;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
 
-<body>
-    <iframe src="nyc_taxi_zones_map.html" title="NYC Taxi Fare map" id="taxiMap"></iframe>
-    <script>
-        setInterval(function () {
-            document.getElementById('taxiMap').src += '';
-        }, 5000);
-    </script>
-    id="taxiMap"
+<body style="margin: 0; height: 100vh; overflow: hidden;"></body>
+<iframe id="myIframe" src="nyc_taxi_zones_map.html"></iframe>
+<iframe id="hiddenIframe" src="nyc_taxi_zones_map.html" style="display: none;"></iframe>
 </body>
+
+<script>
+    window.setInterval(reloadIFrame, 3000);
+    function reloadIFrame() {
+        const iframe = document.getElementById('myIframe');
+        const hiddenIframe = document.getElementById('hiddenIframe');
+
+        hiddenIframe.src = iframe.src; // Refresh hidden iframe
+
+        hiddenIframe.onload = () => {
+            iframe.style.display = 'none';
+            hiddenIframe.style.display = 'block';
+            // Swap references
+            const temp = iframe;
+            iframe = hiddenIframe;
+            hiddenIframe = temp;
+        };
+    }
+</script>
 
 </html>
