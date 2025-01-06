@@ -31,6 +31,7 @@ Dataflow examples:
 * [car-processing](/dataflows/car-processing/)
 * [hackernews-notify](/dataflows/hackernews-notify/)
 * [helsinki-transit](/dataflows/helsinki-transit/)
+* [ny-transit](/dataflows/ny-transit/)
 * [http-callout](/dataflows/http-callout/)
 * [mask-user-pii](/dataflows/mask-user-pii/) 
 * [openai-callout](/dataflows/openai-callout/)
