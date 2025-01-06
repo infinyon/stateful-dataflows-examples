@@ -117,8 +117,7 @@ services:
         - operator: map
           dependencies:
             - name: sdf-http
-              git: "https://github.com/infinyon/sdf-http-guest"
-              tag: "v0.4.0"
+              version: "0.4.2"
             - name: serde_json
               version: 1.0.117
           run: |
