@@ -116,4 +116,20 @@ fluvio consume average-speed -O json
 
 :tada: Congratulations! You have just learned how to use the SQL interface to analyze the data and improve your dataflow based on your analysis.
 
+
+### Clean-up
+
+Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
+
+```bash
+sdf clean --force
+```
+
+Stop the connector:
+
+```bash
+cdk deploy shutdown --name helsinki-mqtt
+```
+
+
 [Install SDF and Start a Cluster]: /README.MD#prerequisites

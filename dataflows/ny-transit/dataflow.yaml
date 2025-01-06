@@ -1,0 +1,375 @@
+apiVersion: 0.5.0
+meta:
+  name: ny-transit
+  version: 0.1.0
+  namespace: examples
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: End
+
+types:
+  trip:
+    type: object
+    properties:
+      key:                # We'll generate a key.
+        type: string
+        optional: true
+      do-location-id:
+        type: i32
+      pu-location-id:
+        type: i32
+      access-a-ride-flag:
+        type: string
+      airport-fee:
+        type: f64
+      base-passenger-fare:
+        type: f64
+      bcf:
+        type: f64
+      congestion-surcharge:
+        type: f64
+      dispatching-base-num:
+        type: string
+      driver-pay:
+        type: f64
+      hvfhs-license-num:
+        type: string
+      originating-base-num:
+        type: string
+      pickup-datetime:
+        type: string
+      request-datetime:
+        type: string
+      on-scene-datetime:
+        type: string
+      dropoff-datetime:
+        type: string
+      sales-tax:
+        type: f64
+      shared-match-flag:
+        type: string
+      shared-request-flag:
+        type: string
+      tips:
+        type: f64
+      tolls:
+        type: f64
+      trip-miles:
+        type: f64
+      trip-time:
+        type: i32
+      wav-match-flag:
+        type: string
+      wav-request-flag:
+        type: string
+
+  locations:
+    type: list
+    items:
+      type: location
+  location:
+    type: object
+    properties:
+      location-id:
+        type: i32
+      borough:
+        type: string
+      zone:
+        type: string
+      service-zone:
+        type: string
+
+  vendors:
+    type: list
+    items:
+      type: vendor
+  vendor:
+    type: object
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+
+  pu-tip:
+    type: object
+    properties:
+      pu-zone:
+        type: i32
+      avg-tip:
+        type: f64
+
+  pu-tips:
+    type: list
+    items:
+      type: pu-tip
+
+
+topics:
+  trips:
+    schema:
+      value:
+        type: trip
+  locations:
+    schema:
+      value:
+        type: locations
+    consumer: 
+      default_starting_offset:
+        value: 0
+        position: Beginning
+  vendors:
+    schema:
+      value:
+        type: vendors
+    consumer: 
+      default_starting_offset:
+        value: 0
+        position: Beginning
+
+  pu-tips:
+    schema:
+      value:
+        type: pu-tips
+
+
+services:
+
+  save-locations:
+    sources:
+      - type: topic
+        id: locations
+
+    states:
+      location-tbl:
+        type: keyed-state
+        properties:
+          key:
+            type: string       # location-id
+          value:
+            type: arrow-row
+            properties:
+              location:
+                type: i32
+              borough:
+                type: string
+              zone:
+                type: string
+    
+    transforms:
+      - operator: flat-map
+        run: |
+          fn flatten_locations(locations: Locations) -> Result<Vec<Location>> {
+            Ok(locations)
+          }
+
+    partition:
+      assign-key:
+        run: |
+          fn set_location_key(location: Location) -> Result<String> {
+            Ok(location.location_id.to_string())
+          }
+
+      update-state:
+        run: |
+          fn update_location_tbl(location: Location) -> Result<()> {
+            let mut lt = location_tbl();
+            lt.location = location.location_id;
+            lt.borough = location.borough;
+            lt.zone = location.zone;
+            lt.update()?;
+            Ok(())
+          }
+
+  save-vendors:
+    sources:
+      - type: topic
+        id: vendors
+
+    states:
+      vendor-tbl:
+        type: keyed-state
+        properties:
+          key:
+            type: string    # code
+          value:
+            type: arrow-row
+            properties:
+              name:
+                type: string
+    
+    transforms:
+      - operator: flat-map
+        run: |
+          fn flatten_vendors(vendors: Vendors) -> Result<Vec<Vendor>> {
+            Ok(vendors)
+          }
+
+    partition:
+      assign-key:
+        run: |
+          fn set_vendor_key(vendor: Vendor) -> Result<String> {
+            Ok(vendor.code)
+          }
+
+      update-state:
+        run: |
+          fn update_vendor_tbl(vendor: Vendor) -> Result<()> {
+            let mut vt = vendor_tbl();
+            vt.name = vendor.name;
+            vt.update()?;
+            Ok(())
+          }
+
+  build-trips-table:
+    sources:
+      - type: topic
+        id: trips
+
+    states:
+      trips-tbl:
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: arrow-row
+            properties:
+              do-location-id: 
+                type: i32
+              pu-location-id: 
+                type: i32
+              airport-fee: 
+                type: f64
+              base-passenger-fare:
+                type: f64
+              bcf:
+                type: f64
+              congestion-surcharge:
+                type: f64
+              driver-pay:
+                type: f64
+              hvfhs-license-num:
+                type: string
+              pickup-datetime:
+                type: string
+              request-datetime:
+                type: string
+              on-scene-datetime:
+                type: string
+              dropoff-datetime:
+                type: string
+              sales-tax:
+                type: f64
+              tips:
+                type: f64
+              tolls:
+                type: f64
+              trip-miles:
+                type: f64
+              trip-time:
+                type: i32
+
+    transforms:
+      - operator: map
+        dependencies:
+          - name: sha2
+            version: "0.10.8"
+        run: |
+          fn generate_key(trip: Trip) -> Result<Trip> {
+            use sha2::{Sha256, Digest};
+
+            let mut t = trip.clone();
+            let mut hasher = Sha256::new();
+            
+            hasher.update(t.pu_location_id.to_string().as_bytes());
+            hasher.update(t.do_location_id.to_string().as_bytes());
+            hasher.update(t.hvfhs_license_num.as_bytes());
+
+            let hash = format!("{:x}", hasher.finalize());
+            t.key = Some(hash[..16].to_string());
+
+            Ok(t)
+          } 
+
+    window:
+      tumbling:
+        duration: 30s
+
+      assign-timestamp:
+        dependencies:
+          - name: chrono
+            version: "0.4.38"
+        run: |
+          fn assign_event_timestamp(trip: Trip, _event_time: i64) -> Result<i64> {
+            use chrono::{DateTime, Utc};
+
+            let datetime: DateTime<Utc> = trip.dropoff_datetime.parse()?;
+            Ok(datetime.timestamp_millis())
+          }
+
+      partition:
+
+
+        assign-key:
+          run: |
+            fn assgn_trip_key(trip: Trip) -> Result<String> {
+              Ok(trip.key.unwrap_or("".to_string()))
+            }
+
+        update-state:
+          run: |
+            fn update_trips_tbl(trip: Trip) -> Result<()> {
+              let mut tt = trips_tbl();
+              tt.do_location_id = trip.do_location_id;
+              tt.pu_location_id = trip.pu_location_id;
+              tt.airport_fee = trip.airport_fee;
+              tt.base_passenger_fare = trip.base_passenger_fare;
+              tt.bcf = trip.bcf;
+              tt.congestion_surcharge = trip.congestion_surcharge;
+              tt.driver_pay = trip.driver_pay;
+              tt.hvfhs_license_num = trip.hvfhs_license_num;
+              tt.pickup_datetime = trip.pickup_datetime;
+              tt.request_datetime = trip.request_datetime;
+              tt.on_scene_datetime = trip.on_scene_datetime;
+              tt.dropoff_datetime = trip.dropoff_datetime;
+              tt.sales_tax = trip.sales_tax;
+              tt.tips = trip.tips;
+              tt.tolls = trip.tolls;
+              tt.trip_miles = trip.trip_miles;
+              tt.trip_time = trip.trip_time;
+              tt.update()?;
+
+              Ok(())
+            }
+
+      flush:
+
+        run: |
+          fn compute_pu_tips() -> Result<PuTips> {
+              
+              let tips_query = sql("select `pu-location-id` as pu_zone, avg(tips) as average_tip from trips_tbl group by `pu-location-id`")?;
+              let rows = tips_query.rows()?;
+
+              let mut tips  = vec![];
+              let pu_zone_col = tips_query.col("pu_zone")?;
+              let avg_tips_col = tips_query.col("average_tip")?;
+
+              while rows.next() {
+                let pu_zone = rows.i32(&pu_zone_col)?;
+                let avg_tip = rows.f64(&avg_tips_col)?;
+                if avg_tip > 0.0 {
+                  tips.push(PuTip { pu_zone, avg_tip });
+                }
+              }
+
+              Ok(tips)
+          }
+
+    sinks:
+      - type: topic
+        id: pu-tips

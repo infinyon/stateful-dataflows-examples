@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Taxi Average Tip Visualization</title>
+    <style>
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+
+<body style="margin: 0; height: 100vh">
+    <iframe id="myIframe" src="nyc_taxi_zones_map.html"></iframe>
+    <iframe id="hiddenIframe" src="nyc_taxi_zones_map.html" style="display: none;"></iframe>
+</body>
+
+<script>
+
+    var current_offset = -1;
+    var loading_frame = document.getElementById('hiddenIframe');
+    var current_iframe = document.getElementById('myIframe');
+    var swapping = false;
+
+    window.addEventListener(
+        "message",
+        (event) => {
+            const new_ofset = event.data;
+            if (new_ofset === current_offset) {
+                console.log("same ignoring offset: ", event.data);
+            } else {
+                console.log("new offset received: ", new_ofset);
+                swapFrame(new_ofset);
+            }
+
+        },
+        false,
+    );
+
+    window.setInterval(reloadIFrame, 3000);
+
+    function reloadIFrame() {
+        if (swapping) {
+            console.log("still swapping, ignoring reload");
+        } else {
+            console.log("reloading iframe");
+            loading_frame.src = loading_frame.src;
+        }
+    }
+
+    function swapFrame(offset) {
+        if (swapping) {
+            console.log("still swapping, ignoring swap");
+            return;
+        }
+
+        swapping = true;
+        const temp = current_iframe;
+        current_iframe = loading_frame;
+        loading_frame = temp;
+        current_iframe.style.display = 'block';
+        loading_frame.style.display = 'none';
+        current_offset = offset;
+        swapping = false;
+        console.log("swapped to offset: ", offset);
+
+    }
+</script>
+
+</html>
