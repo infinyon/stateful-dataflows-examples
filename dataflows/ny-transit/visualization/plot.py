@@ -33,7 +33,7 @@ def process_tips_and_generate_map(tips,offset):
 
     if offset >= 0:
         nyc_map.get_root().html.add_child(folium.Element('''
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; padding:5px 10px;">
             <div>Number zones with fare: {} offset: {}</div>
             <div id="countdown"></div>
             </div>
@@ -47,7 +47,7 @@ def process_tips_and_generate_map(tips,offset):
         '''))
     else:
         nyc_map.get_root().html.add_child(folium.Element('''
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; padding:5px 10px;">
             <div>No data</div>
             <div id="countdown"></div>
             </div>
