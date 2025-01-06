@@ -1,4 +1,4 @@
-# Prase Sentence Package
+# Parse Sentence Package
 
 Example package that implements multiple functions for sentence and word processing operations.
 

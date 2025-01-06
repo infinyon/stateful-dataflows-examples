@@ -13,6 +13,7 @@ functions:
         type: string
     output:
       type: string
+      list: true
 
   word-length:
     operator: map
