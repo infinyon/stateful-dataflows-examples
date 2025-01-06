@@ -137,12 +137,31 @@ SELECT
   l.zone as pu_zone_name,
   avg(tips) as average_tip 
 FROM trips_tbl t
-JOIN location_tbl l 
+JOIN location_tbl l
 ON t.`pu-location-id` = l.location
 WHERE tips > 0.0
 GROUP BY l.zone, `pu-location-id`
 ORDER BY average_tip DESC
 ```
+
+We are also interested in determining which vendor receives the highest average tip—Uber or Lyft. To achieve this, we need to perform a 3-way join between the `trips_tbl`, `location_tbl`, and `vendor_tbl` tables:
+
+```sql
+SELECT
+  `pu-location-id` AS pu_zone,
+  l.zone as pu_zone_name,
+  avg(tips) as average_tip,
+  v.name as vendor
+FROM trips_tbl t
+JOIN location_tbl l
+  ON t.`pu-location-id` = l.location
+JOIN vendor_tbl v
+  ON t.`hvfhs-license-num` = v._key
+WHERE tips > 0.0
+GROUP BY l.zone, `pu-location-id`, v.name
+ORDER BY average_tip DESC
+```
+
 
 Feel free to explore the data further.
 
