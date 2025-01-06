@@ -68,8 +68,8 @@ Step-by-step instructions on how to build your own package:
 
 Pre-built packages used in dataflows:
 
-* [mask-user-info](/dataflows-composed/mask-user-info/)
-* [split-sentence](/dataflows-composed/split-sentence/)
+* [mask-ssn](/packages/mask-ssn)
+* [parse-sentence](/packages/parse-sentence)
 
 
 ## References
