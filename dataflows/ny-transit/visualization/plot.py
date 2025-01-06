@@ -15,8 +15,8 @@ def process_tips_and_generate_map(tips,offset):
                     var timeRemaining = seconds;
 
                     const intervalId = setInterval(() => {
-                        const display = document.getElementById("countdown"); 
-                        display.textContent = "Number of seconds to refresh:  " + timeRemaining;
+                        const display = document.getElementById("countdown");
+                        display.innerHTML = "Next refresh in <b>" + timeRemaining + "</b> seconds";
 
                         timeRemaining--;
 
@@ -34,7 +34,7 @@ def process_tips_and_generate_map(tips,offset):
     if offset >= 0:
         nyc_map.get_root().html.add_child(folium.Element('''
             <div style="display: flex; justify-content: space-between; padding:5px 10px;">
-            <div>Number zones with fare: {} offset: {}</div>
+            <div>Number zones with fare: <b>{}</b> (offset: {})</div>
             <div id="countdown"></div>
             </div>
         '''.format(tips_count, offset)))
