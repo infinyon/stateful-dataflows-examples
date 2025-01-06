@@ -149,10 +149,12 @@ services:
         type: keyed-state
         properties:
           key:
-            type: i32       # location-id
+            type: string       # location-id
           value:
             type: arrow-row
             properties:
+              location:
+                type: i32
               borough:
                 type: string
               zone:
@@ -168,14 +170,15 @@ services:
     partition:
       assign-key:
         run: |
-          fn set_location_key(location: Location) -> Result<i32> {
-            Ok(location.location_id)
+          fn set_location_key(location: Location) -> Result<String> {
+            Ok(location.location_id.to_string())
           }
 
       update-state:
         run: |
           fn update_location_tbl(location: Location) -> Result<()> {
             let mut lt = location_tbl();
+            lt.location = location.location_id;
             lt.borough = location.borough;
             lt.zone = location.zone;
             lt.update()?;
