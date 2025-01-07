@@ -39,14 +39,14 @@ Dataflow examples:
 
 ## Callouts
 
-Sample dataflows that make external calls to send or receive data from external services:
+Dataflows that make external calls to send or receive data from external services:
 
 * [http-callout](/callouts/http-callout/)
 * [openai-callout](/callouts/openai-callout/)
 
 ## Primitives
 
-Examples centered around primitive concepts and operations.
+Dataflows centered around primitive concepts and operations.
 
 * [map](/primitives/map/)
 * [filter](/primitives/filter/)
