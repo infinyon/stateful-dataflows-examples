@@ -32,13 +32,17 @@ Dataflow examples:
 * [hackernews-notify](/dataflows/hackernews-notify/)
 * [helsinki-transit](/dataflows/helsinki-transit/)
 * [ny-transit](/dataflows/ny-transit/)
-* [http-callout](/dataflows/http-callout/)
 * [mask-user-pii](/dataflows/mask-user-pii/) 
-* [openai-callout](/dataflows/openai-callout/)
 * [split-sentence](/dataflows/split-sentence/)
 * [word-counter](/dataflows/word-counter/)
 * [word-probe](/dataflows/word-probe/)
 
+## Callouts
+
+Callouts are sample dataflows that make external calls to send or receive data from external services:
+
+* [http-callout](/callouts/http-callout/)
+* [openai-callout](/callouts/openai-callout/)
 
 ## Primitives
 
