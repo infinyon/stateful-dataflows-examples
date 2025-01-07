@@ -39,7 +39,7 @@ Dataflow examples:
 
 ## Callouts
 
-Callouts are sample dataflows that make external calls to send or receive data from external services:
+Sample dataflows that make external calls to send or receive data from external services:
 
 * [http-callout](/callouts/http-callout/)
 * [openai-callout](/callouts/openai-callout/)
