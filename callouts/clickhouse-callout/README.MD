@@ -16,6 +16,6 @@ The dataflow includes the following services:
 
 1. Read events from the transit topic and create an SDF table that aggregates the events in 20-second intervals.
 2. Send the aggregated table to Clickhouse.
-3. Read historical aggregates from Clickhouse and publish trends.
+3. Read historical aggregates from Clickhouse and compare long term aggregate vs local aggregate.
 
 
