@@ -43,6 +43,7 @@ Dataflows that make external calls to send or receive data from external service
 
 * [http-callout](/callouts/http-callout/)
 * [openai-callout](/callouts/openai-callout/)
+* [clichouse-callout](/callouts/clichouse-callout/)
 
 ## Primitives
 

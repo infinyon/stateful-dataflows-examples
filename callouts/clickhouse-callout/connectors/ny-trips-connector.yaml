@@ -1,0 +1,15 @@
+# ny-trips-connector.yaml
+apiVersion: 0.2.0
+meta:
+  version: 0.4.3
+  name: ny-trips-connector
+  type: http-source
+  topic:
+    version: 0.1.0
+    meta:
+      name: ny-trips
+http:
+  endpoint: https://demo-data.infinyon.com/api/ny-transit
+  method: GET
+  stream: true
+  delimiter: "\n\n"

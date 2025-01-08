@@ -129,7 +129,7 @@ GROUP BY `pu-location-id`
 ORDER BY average_tip DESC
 ```
 
-Unfortunately, the pick-up zone is not human-readable, but we can join the `trips_tbl` table with the `location_tbl` table to get the zone name:
+The pick-up zone is not human-readable, so we'll join the `trips_tbl` table with the `location_tbl` table to name:
 
 ```sql
 SELECT
@@ -144,7 +144,7 @@ GROUP BY l.zone, `pu-location-id`
 ORDER BY average_tip DESC
 ```
 
-We are also interested in determining which vendor receives the highest average tip—Uber or Lyft. To achieve this, we need to perform a 3-way join between the `trips_tbl`, `location_tbl`, and `vendor_tbl` tables:
+We are also interested in determining which vendor receives the highest average tip: Uber or Lyft. To achieve this, we need to perform a 3-way join between the `trips_tbl`, `location_tbl`, and `vendor_tbl` tables:
 
 ```sql
 SELECT
