@@ -31,9 +31,9 @@ services:
             version: "1"
         run: |
           pub(crate) fn mask_ssn(text: String) -> Result<String> {
-            use regex::Regex;
             use std::sync::LazyLock;
-            
+            use regex::Regex;
+
             static SSN_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\d{3}-\d{2}-\d{4}").unwrap());
 
             let output = SSN_RE.replace_all(text.as_str(), "***-**-****").to_string();
