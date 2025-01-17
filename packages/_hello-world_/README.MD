@@ -40,6 +40,7 @@ Open the `rust/hello-world/src/hello_world.rs` file and add the following code:
 
 ```rust
 use std::sync::LazyLock;
+
 use regex::Regex;
 
 static REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"good").unwrap());
