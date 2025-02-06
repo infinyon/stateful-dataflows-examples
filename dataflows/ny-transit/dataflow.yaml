@@ -296,7 +296,7 @@ services:
 
     window:
       tumbling:
-        duration: 300s
+        duration: 30s
 
       assign-timestamp:
         dependencies:
