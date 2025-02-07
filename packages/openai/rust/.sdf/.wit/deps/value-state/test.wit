@@ -1,0 +1,13 @@
+package sdf:value-state;
+
+// guest interface
+interface test-guest {
+    use values.{ value32  };
+
+    // initialize state
+    init-state: func(count: value32) ;
+}
+
+world test-world  {
+  export test-guest;
+}
