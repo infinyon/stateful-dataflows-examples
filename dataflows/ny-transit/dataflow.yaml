@@ -15,7 +15,7 @@ types:
   trip:
     type: object
     properties:
-      key:                # We'll generate a key.
+      key: # We'll generate a key.
         type: string
         optional: true
       do-location-id:
@@ -40,6 +40,7 @@ types:
         type: string
       originating-base-num:
         type: string
+        optional: true
       pickup-datetime:
         type: string
       request-datetime:
@@ -108,7 +109,6 @@ types:
     items:
       type: pu-tip
 
-
 topics:
   trips:
     schema:
@@ -118,7 +118,7 @@ topics:
     schema:
       value:
         type: locations
-    consumer: 
+    consumer:
       default_starting_offset:
         value: 0
         position: Beginning
@@ -126,7 +126,7 @@ topics:
     schema:
       value:
         type: vendors
-    consumer: 
+    consumer:
       default_starting_offset:
         value: 0
         position: Beginning
@@ -136,9 +136,7 @@ topics:
       value:
         type: pu-tips
 
-
 services:
-
   save-locations:
     sources:
       - type: topic
@@ -149,7 +147,7 @@ services:
         type: keyed-state
         properties:
           key:
-            type: string       # location-id
+            type: string # location-id
           value:
             type: arrow-row
             properties:
@@ -159,7 +157,7 @@ services:
                 type: string
               zone:
                 type: string
-    
+
     transforms:
       - operator: flat-map
         run: |
@@ -195,13 +193,13 @@ services:
         type: keyed-state
         properties:
           key:
-            type: string    # code
+            type: string # code
           value:
             type: arrow-row
             properties:
               name:
                 type: string
-    
+
     transforms:
       - operator: flat-map
         run: |
@@ -239,11 +237,11 @@ services:
           value:
             type: arrow-row
             properties:
-              do-location-id: 
+              do-location-id:
                 type: i32
-              pu-location-id: 
+              pu-location-id:
                 type: i32
-              airport-fee: 
+              airport-fee:
                 type: f64
               base-passenger-fare:
                 type: f64
@@ -294,7 +292,7 @@ services:
             t.key = Some(hash[..16].to_string());
 
             Ok(t)
-          } 
+          }
 
     window:
       tumbling:
@@ -313,8 +311,6 @@ services:
           }
 
       partition:
-
-
         assign-key:
           run: |
             fn assgn_trip_key(trip: Trip) -> Result<String> {
@@ -348,7 +344,6 @@ services:
             }
 
       flush:
-
         run: |
           fn compute_pu_tips() -> Result<PuTips> {
               

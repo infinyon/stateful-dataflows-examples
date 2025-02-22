@@ -1,4 +1,4 @@
-use anyhow::Result;
+use sdfg::anyhow::Result;
 use sdfg::sdf;
 
 #[sdf(fn_name = "word-length")]

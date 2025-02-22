@@ -33,9 +33,8 @@ panic = "abort"
 
 [dependencies]
 ## GENERATED DEPENDENCIES
-anyhow = "1"
 serde =  { version = "1", features = ["std", "derive"]}
-sdfg = { version = "0.7.0" , features=[ "row"]  }
+sdfg = { version = "0.10.2" , features=[ "row"]  }
 ## END OF GENERATED DEPENDENCIES
 
 regex = "1"
