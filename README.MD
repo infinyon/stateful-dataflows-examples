@@ -16,6 +16,14 @@ This repository offers a comprehensive range of dataflow examples from basic to 
   curl -fsS https://hub.infinyon.cloud/install/install.sh | bash fvm install sdf-beta7
   ```
 
+* Run SDF setup to install dependencies
+
+```bash
+sdf setup
+```
+
+You might be prompted to install wasm dependency. Copy paste the command and run.
+
 * Start Cluster
 
   ```bash
