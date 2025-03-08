@@ -1,0 +1,13 @@
+package_format_version: '0.3'
+name: map-event
+version: 0.1.0
+group: unreal
+description: Describe the module here
+license: e.g. Apache2
+manifest:
+- ../dataflow.yaml
+repository_url: null
+tags:
+- tag: sdf-kind
+  value: dataflow
+visibility: public

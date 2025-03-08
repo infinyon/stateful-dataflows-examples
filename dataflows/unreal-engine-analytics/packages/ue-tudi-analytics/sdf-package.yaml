@@ -1,0 +1,56 @@
+apiVersion: 0.5.0
+meta:
+  name: ue-tudi-analytics
+  version: 0.0.2
+  namespace: fluvio
+
+# Version
+# 0.2.0 - update to new format
+# 0.3.0 - unknown mapped completely
+
+types:
+  # copy of types from ue-analytics-core
+  attribute:
+    type: object
+    properties:
+      key:
+        type: string
+      val:
+        type: string
+
+  attribute-list:
+    type: list
+    items:
+      type: attribute
+
+  analytics-event:
+    type: object
+    properties:
+      event_name:
+        type: string
+      attributes:
+        type: attribute-list
+
+  # tudi game spacific types (if any)
+
+
+functions:
+  tudi-counter-enhance:
+    operator: flat-map
+    inputs:
+      - name: key
+        type: string
+        kind: key
+      - name: evt
+        type: analytics-event
+    output:
+      type: key-value
+      properties:
+        key:
+          type: string
+        value:
+          type: analytics-event
+      list: true
+
+dev:
+  converter: raw

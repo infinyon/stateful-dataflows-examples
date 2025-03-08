@@ -1,0 +1,213 @@
+{
+	"eventName": "AnalyticsSessionStart",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300"
+	}
+}
+{
+	"eventName": "beginPlay",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"time": "1740171617.799"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "1429.486265",
+		"mapy": "-1333.850036"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "2511.640748",
+		"mapy": "-1212.198897"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "3089.897009",
+		"mapy": "-1461.728799"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "3112.486281",
+		"mapy": "-1271.037813"
+	}
+}
+{
+	"eventName": "AnalyticsSessionStart",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300"
+	}
+}
+{
+	"eventName": "beginPlay",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"time": "1740172164.976"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "2044.863956",
+		"mapy": "-1141.849982"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "1883.402336",
+		"mapy": "-1158.622338"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "1288.06546",
+		"mapy": "-1333.849957"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "1153.224897",
+		"mapy": "-1333.850024"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "1B12CA07743E43BC800000000000A300",
+		"mapx": "1677.63406",
+		"mapy": "-1260.497023"
+	}
+}
+{
+	"eventName": "AnalyticsSessionStart",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500"
+	}
+}
+{
+	"eventName": "beginPlay",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"time": "1740179327.879"
+	}
+}
+{
+	"eventName": "sampleLocation",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"mapx": "780.0",
+		"mapy": "-1333.849968"
+	}
+}
+{
+	"eventName": "sampleLocation",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"mapx": "847.271576",
+		"mapy": "-1333.849968"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"mapx": "971.57366",
+		"mapy": "-1333.849968"
+	}
+}
+{
+	"eventName": "sampleLocation",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"mapx": "975.878391",
+		"mapy": "-1163.456202"
+	}
+}
+{
+	"eventName": "sampleLocation",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"mapx": "1297.450557",
+		"mapy": "-1333.849985"
+	}
+}
+{
+	"eventName": "sampleLocation",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"mapx": "1646.747749",
+		"mapy": "-1277.486333"
+	}
+}
+{
+	"eventName": "jump",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"mapx": "1612.664078",
+		"mapy": "-1293.161881"
+	}
+}
+{
+	"eventName": "sampleLocation",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"mapx": "1057.282826",
+		"mapy": "-932.856206"
+	}
+}
+{
+	"eventName": "endPlay",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500",
+		"time": "1740179334.587"
+	}
+}
+{
+	"eventName": "AnalyticsSessionEnd",
+	"attributes":
+	{
+		"sessionID": "FE30CA07AC0A45A18000000000007500"
+	}
+}

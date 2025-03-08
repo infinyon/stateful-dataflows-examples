@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Apache Echarts: WebSocket Plot</title>
+    <!-- try apache echarts -->
+    <script src=" https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js "></script>
+</head>
+<body>
+    <div>
+      <label for="access-key">Access Key:</label>
+      <input type="text" id="access-key" placeholder="tudi-analytics-ro key" value="puNSxlwgIDc7cDFuxksPDjvdbJ2fcYAa">
+      <button onclick="updateAccessKey()">Apply Access Key</button>
+    </div>
+
+    <div id="chart" style="width: 600px; height: 400px;"></div>
+    <script>
+        // attribute: sessionID, value: series index
+        var sessionIDvsSeriesIndex = {};
+
+        // chart options
+        var option = initialChartOptions();
+
+        // reset chart config and data to initial state
+        function initialChartOptions() {
+          sessionIDvsSeriesIndex = {}; // reset sessionIDvsSeriesIndex
+          var opts = {
+            // dataZoom: [
+            //   {
+            //     type: 'slider'
+            //   },
+            //   {
+            //     type: 'inside'
+            //   }
+            // ],
+            xAxis: {
+              type: 'value',
+              min: 0,
+              max: 3500,
+            },
+            yAxis: {
+              type: 'value',
+              min: -2500,
+              max: -600,
+            },
+            series: [],
+            // series: [{
+            //   type: 'scatter',
+            //   data: []
+            // }]
+          };
+          return opts;
+        }
+
+        // Initialize ECharts chart
+        function updateAccessKey() {
+          const accessKey = document.getElementById('access-key').value;
+          const wsUrl = `wss://infinyon.cloud/wsr/v1/simple/consume?access_key=${accessKey}&head=0`;
+
+          // https://echarts.apache.org/handbook/en/how-to/chart-types/scatter/basic-scatter
+          var chart = echarts.init(document.querySelector("#chart"));
+          // reset chart options
+          option = initialChartOptions();
+          chart.setOption(option);
+
+          // Connect to WebSocket
+          const ws = new WebSocket(wsUrl);
+          ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            dataFilter(data);
+            chart.setOption(option);
+          };
+        }
+
+        // function evt_has_attr(evt_obj, attr) {
+
+        // }
+        // sample Unreal Engine Analytics Event object
+        // var evt_obj = {
+        //   "eventName": "sampleLocation",
+        //   "attributes": {
+        //     "mapx": "1057.282826",
+        //     "mapy": "-932.856206",
+        //     "sessionID": "FE30CA07AC0A45A18000000000007500",
+        //   },
+        // };
+
+        // take in event object and accumulate to chart data "option""
+        function dataFilter(evt_obj) {
+          if (!"sessionID" in evt_obj.attributes) {
+            return;
+          }
+          if (!("mapx" in evt_obj.attributes) || !("mapy" in evt_obj.attributes)) {
+            return;
+          }
+          var sid = evt_obj.attributes.sessionID;
+          var x = parseFloat(evt_obj.attributes.mapx);
+          var y = parseFloat(evt_obj.attributes.mapy);
+
+          // find sessionID in seriesIndex
+          if (sid in sessionIDvsSeriesIndex) {
+            // get index out of seriesIndex
+            var sidx = sessionIDvsSeriesIndex[sid];
+            option.series[sidx].data.push([x, y]);
+          } else {
+            // create new seriesIndex
+            var sidx = option.series.length;
+            sessionIDvsSeriesIndex[sid] = sidx;
+            option.series.push({
+              type: 'scatter',
+              data: [[x, y]],
+              label: sid,
+              symbol: 'circle'
+              // type: 'line'
+            });
+          }
+        }
+    </script>
+</body>
+</html>

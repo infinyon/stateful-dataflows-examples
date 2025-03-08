@@ -1,0 +1,77 @@
+
+default:
+	just -l --unsorted
+
+# test crates
+crate-test:
+	#!/bin/sh
+	cd crates/unreal-analytics-core
+	cargo test
+
+build-pkg: build-pkg1 build-pkg2
+
+# clean publish
+publish: build-pkg
+	#!/bin/sh
+	cd packages/ue-analytics-core
+	sdf publish
+	cd packages/ue-tudi-analytics
+	sdf publish
+
+# build sdf package
+build-pkg1:
+	#!/bin/sh
+	cd packages/ue-analytics-core
+	rm -rf rust/.sdf/
+	sdf build
+
+# build sdf package
+build-pkg2:
+	#!/bin/sh
+	cd packages/ue-tudi-analytics
+	rm -rf rust/.sdf/
+	sdf build
+
+# run sdf dataflow map events
+me-run:
+	#!/bin/sh
+	cd dataflows/map-events
+	sdf run
+
+# deploy sdf dataflow map events
+me-deploy:
+	#!/bin/sh
+	cd dataflows/map-events
+	sdf deploy
+
+ct-run:
+	#!/bin/sh
+	cd dataflows/counters
+	sdf run
+
+def-profile:="demo-viz1"
+me-view:
+	#!/bin/sh
+	fluvio -P {{def-profile}} partition list
+
+t-list:
+	#!/bin/sh
+	fluvio -P {{def-profile}} topic list
+
+proc-jsonl:
+	#!/bin/sh
+	cd samples
+	jq -c '.' ./analysis-events.jsonl > analysis-events-proc.jsonl
+
+clean:
+	#!/bin/sh
+	rm -rf .sdf/
+	pushd dataflows/flush-experiment
+	rm -rf .sdf/
+	popd
+
+	pushd dataflows/counters
+	rm -rf .sdf/
+	popd
+
+

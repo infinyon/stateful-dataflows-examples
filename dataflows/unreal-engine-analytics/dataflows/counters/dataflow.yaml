@@ -1,0 +1,105 @@
+apiVersion: 0.5.0
+meta:
+  name: counters
+  version: 0.1.0
+  namespace: unreal
+
+config:
+  converter: json
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: Beginning
+
+imports:
+  - pkg: fluvio/ue-analytics-core@0.0.2
+    types:
+      - name: attribute
+      - name: attribute-list
+      - name: analytics-event
+  - pkg: fluvio/ue-tudi-analytics@0.0.2
+    functions:
+      - name: tudi-counter-enhance
+
+dev:
+  imports:
+    - pkg: fluvio/ue-analytics-core@0.0.2
+      path: ../../packages/ue-analytics-core
+    - pkg: fluvio/ue-tudi-analytics@0.0.2
+      path: ../../packages/ue-tudi-analytics
+# types:
+
+topics:
+  analytics-src:
+    name: tudi-analytics-events
+    schema:
+      key:
+        type: string
+      value:
+        type: analytics-event
+
+  analytics-enriched:
+    name: tudi-analytics-enriched
+    schema:
+      value:
+        type: analytics-event
+
+services:
+  event-enrich:
+    sources:
+      - type: topic
+        id: analytics-src
+    sinks:
+      - type: topic
+        id: analytics-enriched
+
+    transforms:
+      - operator: flat-map
+        uses: tudi-counter-enhance
+
+  event-counter:
+    sources:
+      - type: topic
+        id: analytics-enriched
+    # sinks:
+    #   - type: topic
+    #     id: analytics-count
+
+    # key: event_type
+    states:
+      event-count-tbl:
+        type: keyed-state
+        properties:
+          key:
+            type: string
+          value:
+            type: arrow-row
+            properties:
+              count:
+                type: u64
+
+    partition:
+      assign-key:
+        run: |
+          fn assign_count_key(evt: AnalyticsEvent) -> Result<String> {
+            let label = match evt.event_name.as_str() {
+              "AnalyticsSessionStart" => "session_start",
+              "AnalyticsSessionEnd" => "session_end",
+              "jump" => "jump",
+              "sampleLocation" => "sample_location",
+              "mapFault" => "map_fault",
+              _ => "other",
+            };
+            Ok(label.to_string())
+          }
+
+      update-state:
+        run: |
+          fn update_count(_evt: AnalyticsEvent) -> Result<()>{
+            let mut row = event_count_tbl();
+            row.count += 1;
+            row.update()?;
+            Ok(())
+          }
+
+
