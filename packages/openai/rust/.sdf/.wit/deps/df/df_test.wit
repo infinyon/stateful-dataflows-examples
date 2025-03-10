@@ -1,0 +1,20 @@
+package sdf:df;
+
+
+interface test-df-guest {
+    use lazy.{ df-value };
+
+    init-df: func(df: df-value);
+    test-count: func() -> u64;
+    test-select: func() -> u64;
+    test-row: func() -> u64;
+    test-sort: func() -> u64;
+    test-sql: func() -> u64;
+ //   test-row-resource: func() -> u64;
+}
+
+
+world test-df-world  {
+  import lazy;
+  export test-df-guest;
+}
