@@ -1,0 +1,54 @@
+apiVersion: 0.5.0
+meta:
+  name: map-event
+  version: 0.1.0
+  namespace: unreal
+
+imports:
+  - pkg: fluvio/ue-analytics-core@0.0.2
+    functions:
+      - name: ue-evt-map
+
+dev:
+  imports:
+    - pkg: fluvio/ue-analytics-core@0.0.2
+      path: ../../packages/ue-analytics-core
+
+config:
+  converter: raw
+
+  consumer:
+    default_starting_offset:
+      value: 0
+      position: Beginning
+
+# types:
+#   nada:
+#     type: string
+
+topics:
+  analytics-src:
+    name: tudi-analytics
+    schema:
+      value:
+        type: bytes
+
+  analytics-snk:
+    name: tudi-analytics-events
+    schema:
+      value:
+        type: string
+
+services:
+  converter:
+    sources:
+      - type: topic
+        id: analytics-src
+
+    sinks:
+      - type: topic
+        id: analytics-snk
+
+    transforms:
+      - operator: map
+        uses: ue-evt-map

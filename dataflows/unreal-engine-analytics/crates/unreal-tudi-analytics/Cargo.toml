@@ -1,0 +1,11 @@
+[package]
+name = "unreal-tudi-analytics"
+version = "0.1.0"
+edition = "2024"
+description = "unreal-tudi-analytics processing specific to tudi demo project"
+
+[dependencies]
+anyhow = "1.0.96"
+unreal-analytics-core = { path = "../unreal-analytics-core" }
+# serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"

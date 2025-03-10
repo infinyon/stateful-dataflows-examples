@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabulator with WebSocket</title>
+    <link href="https://unpkg.com/tabulator-tables@5.5.4/dist/css/tabulator.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #tabulator-table {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://unpkg.com/tabulator-tables@5.5.4/dist/js/tabulator.min.js"></script>
+    <div id="tabulator-table"></div>
+
+     <!-- read only key created via `fluvio cloud access-key create tudi-table --topic tudi-analytics-tbl --consume `-->
+    <div>
+        <label for="access-key">Access Key:</label>
+        <input type="text" id="access-key" placeholder="q3K74r5Asmt6TpdmIXhFs7Le1X6adkGT" value="q3K74r5Asmt6TpdmIXhFs7Le1X6adkGT">
+        <button onclick="updateAccessKey()">Apply Access Key</button>
+    </div>
+
+    <script>
+        // Variable to store the Tabulator table instance
+        let table;
+        let ws;
+        // Array to accumulate received JSON objects
+        let dataArray = [];
+        let tableData = [];
+
+        function updateAccessKey() {
+            const accessKey = document.getElementById('access-key').value;
+            if (accessKey) {
+                const newWsUrl = `wss://infinyon.cloud/wsr/v1/simple/consume?access_key=${accessKey}&head=0`;
+                if (ws) {
+                    ws.close();
+                }
+                ws = new WebSocket(newWsUrl);
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    // data from a flushed table is an array of objects
+                    if (!table) {
+                        tableData = data;
+                        initializeTable();
+                    } else {
+                        // merge data by name
+                        refreshData(data, 'name');
+                    }
+                };
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+                ws.onclose = () => {
+                    console.log('WebSocket connection closed');
+                };
+            }
+        }
+
+        function removeProperties(obj, propertiesToRemove) {
+            // Create a new object with the same properties as the input object
+            const newObj = { ...obj };
+            propertiesToRemove.forEach(property => {
+                delete newObj[property];
+            });
+            return newObj;
+        }
+
+        function tableSetData() {
+            if (table && table.initialized) {
+                tableData = dataArray.map(obj => removeProperties(obj, ['guid', 'worker_id']));
+                table.setData(tableData);
+            }
+        }
+
+        // merge data replacing objects with the same unique field value
+        // refreshData(array, "guid")
+        function refreshData(newData, unique_field) {
+            // Loop through the new data array
+            newData.forEach(newObj => {
+                // Find the index of the object with the same unique field value
+                const index = dataArray.findIndex(obj => obj[unique_field] === newObj[unique_field]);
+                // If the object is found, update it
+                if (index !== -1) {
+                    console.log('updating', newObj, newObj[unique_field], dataArray[index]);
+                    dataArray[index].count += newObj.count;
+                    // dataArray[index] = newObj;
+                } else {
+                    // If the object is not found, add it to the array
+                    dataArray.push(newObj);
+                }
+            });
+            tableSetData();
+        }
+
+        // Function to initialize the Tabulator table
+        function initializeTable() {
+            table = new Tabulator("#tabulator-table", {
+                data: tableData, // Link table to data array
+                pagination: "local",
+                paginationSize: 100,
+                movableColumns: true,
+                resizableColumns: true,
+                layout:"fitColumns", //fit columns to width of table
+                // initialSort:[             //set the initial sort order of the data
+                //     {column:"id", dir:"asc"},
+                // ],
+                autoColumns: false, // Automatically generate columns from data
+                columns: [
+                    { title: "Event Name", field: "name" },
+                    { title: "Count", field: "count" },
+                ],
+            });
+        }
+    </script>
+</body>
+</html>

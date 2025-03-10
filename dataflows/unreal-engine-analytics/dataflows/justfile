@@ -1,0 +1,8 @@
+
+default:
+    just -l
+
+# clean run
+run:
+    rm -rf .sdf/
+    sdf run

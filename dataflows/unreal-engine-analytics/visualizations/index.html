@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        section {
+            margin-bottom: 40px;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .container section {
+            flex: 1 1 calc(50% - 20px);
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <h2>Unreal Engine: Infinyon Analytics Plugin</h2>
+        <p>This pase is visualizing data collected by the sample UE5 Tudi Analytics game via the Infinyon Analytics Plugin.  The fluvio cluster is using sdf dataflows to process the data.
+            The dataflow uses a generic sdf analytics package to parse the events, enhance them with added notations, and then output them via the Infinyon Web socket gateway.
+        </p>
+    </section>
+    <section id="session-xy">
+        <h2>Session player traces</h2>
+        <p>Individual game session traces are output here, colors are rotated per game session</p>
+        <iframe src="session-xy.html"></iframe>
+    </section>
+    <section id="event-table">
+        <h2>Event analysis table</h2>
+        <p>Events in this table are a combination of counting both direct UE Analytics events ("session_start", "sessioni_end"), as well as enriched events "map_fault" </p>
+        <iframe src="event-table.html"></iframe>
+    </section>
+</body>
+</html>

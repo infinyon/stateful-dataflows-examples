@@ -1,0 +1,40 @@
+apiVersion: 0.5.0
+meta:
+  name: ue-analytics-core
+  version: 0.0.2
+  namespace: fluvio
+
+# Version
+# 0.0.1 - initial version
+
+
+types:
+  attribute:
+    type: object
+    properties:
+      key:
+        type: string
+      val:
+        type: string
+
+  attribute-list:
+    type: list
+    items:
+      type: attribute
+
+  analytics-event:
+    type: object
+    properties:
+      event_name:
+        type: string
+      attributes:
+        type: attribute-list
+
+functions:
+  ue-evt-map:
+    operator: map
+    inputs:
+      - name: msg
+        type: bytes
+    output:
+      type: string
