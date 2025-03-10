@@ -1,0 +1,8 @@
+apiVersion: 0.1.0
+meta:
+  version: 0.4.3
+  name: bluesky-connector
+  type: http-source
+  topic: blue-sky-raw 
+http:
+  endpoint: wss://jetstream2.us-west.bsky.network/subscribe

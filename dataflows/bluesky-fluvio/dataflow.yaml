@@ -1,0 +1,107 @@
+apiVersion: 0.5.0
+meta:
+  name: bluesky-parser
+  version: 0.1.0
+  namespace: bluesky
+
+config:
+  converter: raw
+
+types:
+  event-raw:
+    type: object
+    properties:
+      did: 
+        type: string
+      time_us: 
+        type: u64
+      kind: 
+        type: string
+      commit: 
+        type: string
+topics:
+  blue-sky-raw:
+    schema:
+      value:
+        type: string
+  blue-sky-json:
+    schema:
+      value:
+        type: event-raw
+        converter: json
+
+services:
+  countkinds:
+    sources:
+      - type: topic
+        id: blue-sky-raw
+    states:
+      counter: 
+        type: keyed-state
+        properties:
+          key: 
+            type: string
+          value:
+            type: u32  
+    partition:
+      assign-key:
+        dependencies:
+          - name: regex
+            version: "1"
+        run: |
+          fn assignkind(input: String) -> Result<String> {
+            use regex::Regex;
+            let re = Regex::new(r#""kind"\s*:\s*"([^"]+)""#).unwrap();
+
+            if let Some(captures) = re.captures(&input) {
+                if let Some(kind_match) = captures.get(1) {
+                    return Ok(kind_match.as_str().to_string());
+                }
+            }
+
+            Ok("ERROR".to_string())
+          }
+      update-state:
+        run: |
+          fn add_counter(input: String) -> Result<()> {
+            counter().increment(1);
+            Ok(())
+          }
+  separate:
+    sources:
+      - type: topic
+        id: blue-sky-raw
+    transforms:
+      - operator: map 
+        dependencies:
+          - name: serde_json
+            version: "1.0.60"
+        run: |
+          fn filter_commit(raw: String) -> Result<EventRaw> {
+            use serde_json::Value;
+            use anyhow::{Result, anyhow};
+            use serde::{Deserialize, Serialize};
+
+            #[derive(Debug, Serialize, Deserialize)]
+            struct Input {
+                did: String,
+                time_us: u64,
+                kind: String,
+                commit: Option<Value>, 
+            }
+            let input: Input = serde_json::from_str(&raw).expect("Failed to parse JSON");
+            let commit_str = match &input.commit {
+                Some(commit) => serde_json::to_string(commit).expect("Failed to stringify 'commit'"),
+                None => "No commit field present".to_string(), 
+            };
+            
+            Ok(EventRaw{
+                did: input.did,
+                time_us: input.time_us,
+                kind: input.kind,
+                commit: commit_str,
+            })
+          }
+    sinks:
+      - type: topic
+        id: blue-sky-json

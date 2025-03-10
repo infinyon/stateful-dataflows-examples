@@ -1,0 +1,8 @@
+apiVersion: 0.1.0
+meta:
+  version: 0.4.3
+  name: bluesky-comment-connector
+  type: http-source
+  topic: blue-sky-raw-comment
+http:
+  endpoint: wss://jetstream2.us-east.bsky.network/subscribe?wantedCollections=app.bsky.feed.post
