@@ -71,10 +71,10 @@ topics:
     schema:
       value:
         type: trip
-  trip-aggregates:
+  trips-trigger:
     schema:
       value:
-        type: trip-aggregate
+        type: i64
 
 services:
 
@@ -173,7 +173,28 @@ services:
           - name: chrono
             version: "0.4.38"
         run: |
-          fn compute_aggregate() -> Result<TripAggregate> {
+          fn flush_trips_tbl() -> Result<i64> {
+            let now_milis = chrono::Utc::now().timestamp_millis();
+            Ok(now_milis)
+          }
+
+    sinks:
+      - type: topic
+        id: trips-trigger
+
+  send-averages-to-clickhouse:
+    sources:     
+      - type: topic
+        id: trips-trigger
+
+    states:
+      trips-tbl:
+        from: build-trips-tbl.trips-tbl
+
+    transforms:
+      - operator: map
+        run: |
+          fn compute_aggregate(ts_milis: i64) -> Result<TripAggregate> {
             let query = concat!(
               "SELECT ",
                 "count(*) as rides, ",
@@ -216,7 +237,3 @@ services:
               Err(anyhow::anyhow!("Trips query failed"))
             }
           }
-
-    sinks:
-      - type: topic
-        id: trip-aggregates
