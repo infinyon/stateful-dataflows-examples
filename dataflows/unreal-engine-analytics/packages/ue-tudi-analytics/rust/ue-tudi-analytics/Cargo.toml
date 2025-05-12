@@ -34,7 +34,7 @@ panic = "abort"
 [dependencies]
 ## GENERATED DEPENDENCIES
 serde =  { version = "1", features = ["std", "derive"]}
-sdfg = { version = "0.12.0" , features=[ "row"]  }
+sdfg = { version = "0.13" , features=[ "row"]  }
 ## END OF GENERATED DEPENDENCIES
 
 unreal-tudi-analytics = { path = "../../../../crates/unreal-tudi-analytics" }
