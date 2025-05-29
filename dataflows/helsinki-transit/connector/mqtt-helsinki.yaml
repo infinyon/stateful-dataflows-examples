@@ -10,16 +10,14 @@ mqtt:
   payload_output_type: json
 
 transforms:
-  - uses: infinyon/jolt@0.4.1
+  - uses: infinyon/jaq@0.1.0
     with:
-      spec:
-        - operation: shift
-          spec:
-            payload:
-              VP:
-                lat: "lat"
-                long: "long"
-                veh: "vehicle"
-                route: "route"
-                spd: "speed"
-                tst: "tst"
+      filter: |
+        {
+          "lat": .payload.VP.lat,
+          "long": .payload.VP.long,
+          "vehicle": .payload.VP.veh,
+          "route": .payload.VP.route,
+          "speed": .payload.VP.spd,
+          "tst": .payload.VP.tst
+        }

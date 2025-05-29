@@ -32,20 +32,33 @@ sdf run --ui
 * Using `sdf run` as opposed to `sdf deploy` will run the dataflow with an ephemeral worker, which will be cleaned up on exit.
 
 
-### 2. Start the mqtt connector:
+### 2. Download Jaq SmartModule
 
-In a new terminal change directory to `./connectors`, download the connector binary, and start connector:
+To pre-process helsinki events, we need to download jaq smartmodule. this only needs to be done once:
 
-```bash
-cd ./connectors
-fluvio hub smartmodule download infinyon/jolt@0.4.1
-cdk hub download infinyon/infinyon/mqtt-source@0.2.9
-cdk deploy start --ipkg infinyon-mqtt-source-0.2.9.ipkg -c mqtt-helsinki.yaml
+```
+$ make download-sm
 ```
 
-To see the events, run `fluvio consume helsinki`.
+### 3. Run MQTT connector 
+
+MQTT connector is used to get data from city of helsinki thru their MQTT broker.
+
+To start MQTT connector:
+
+```
+make cdk-start
+```
+
+You can inspect events by: `fluvio consume helsinki`.
 
 For additional context, checkout [connectors](./connectors/).
+
+You can shutdown the connector by running:
+
+```
+make cdk-shutdown
+```
 
 
 ### 3. Check the results
@@ -117,6 +130,7 @@ fluvio consume average-speed -O json
 :tada: Congratulations! You have just learned how to use the SQL interface to analyze the data and improve your dataflow based on your analysis.
 
 
+
 ### Clean-up
 
 Exit `sdf` terminal and clean-up. The `--force` flag removes the topics:
@@ -128,8 +142,60 @@ sdf clean --force
 Stop the connector:
 
 ```bash
-cdk deploy shutdown --name helsinki-mqtt
+make cdk-cleanup
+```
+
+## Running with MCP Client
+
+In order to access data using MCP client, you need to set up [Worker](https://www.fluvio.io/sdf/deployment) or use cloud worker.
+
+### To run the dataflow locally
+
+Make sure you quit out of `sdf run`.
+
+Deploy dataflow on local worker:
+
+```
+$ sdf deploy
+```
+
+This will output from local connector that have been deployed in previously.
+
+
+### Deploying to Cloud Worker
+
+In order to deploy to cloud worker, make sure you have set up [cloud](https://www.fluvio.io/docs/cloud/quickstart).
+
+The cloud setup should have setup the cloud profile for you. Ensure you have changed to cloud profile:
+
+```
+$ fluvio profile list
+```
+
+#### Set up cloud connectors
+
+Download smartmodule:
+
+```
+make download-sm
+```
+
+#### Deploy Dataflow
+
+Same as local worker, deploy dataflow 
+
+```
+$ sdf deploy
+```
+
+#### Clean update
+
+In the cloud, running MQTT will consume lots of credits.  To shutdown connector:
+
+```
+
 ```
 
 
+### 
 [Install SDF and Start a Cluster]: /README.MD#prerequisites
