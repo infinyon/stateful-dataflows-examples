@@ -13,7 +13,7 @@ jobs:
     checks:
       uses: ./.github/workflows/check.yml
       with:
-        sdf_version: sdf-beta11-dev
+        sdf_version: sdf-beta12-dev
         branch: ${{ github.ref }}
     done:
       name: Done
