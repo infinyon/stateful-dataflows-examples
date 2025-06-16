@@ -1,0 +1,13 @@
+{
+  "iban": "GB56DVTE70858022060685",
+  "timestamp": "2023-10-01T10:40:00",
+  "operation": {
+    "Deposit": {
+      "amount": 750,
+      "currency": "USD",
+      "account": {
+        "name": "Deb Davis"
+      }
+    }
+  }
+}

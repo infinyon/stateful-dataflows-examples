@@ -54,11 +54,14 @@ Use `fluvio consume` command to read from multiple streams in parallel:
 
 #### 2.1 Add Account
 
-Use fluvio produce to publish `add-account` events for `duncan` and `lucy` to the `admin-events` topic :
+Use fluvio produce to publish `add-account` events for `duncan`, `lucy`, `jim`, `sally`, and `deb` to the `admin-events` topic :
 
 ```bash
 fluvio produce admin-events --raw --file ./sample-data/add-account-duncan.json
 fluvio produce admin-events --raw --file ./sample-data/add-account-lucy.json
+fluvio produce admin-events --raw --file ./sample-data/add-account-jim.json
+fluvio produce admin-events --raw --file ./sample-data/add-account-sally.json
+fluvio produce admin-events --raw --file ./sample-data/add-account-deb.json
 ```
 
 Check the state in the `sdf` terminal:
@@ -84,11 +87,14 @@ fluvio consume credit-events -Bd -O json
 
 #### 2.2 Deposit
 
-Use fluvio produce to publish `deposit` events for `duncan` and `lucy` to the `business-events` topic :
+Use fluvio produce to publish `deposit` events for `duncan`, `lucy`, `jim`, `sally`, and `deb` to the `business-events` topic :
 
 ```bash
 fluvio produce business-events --raw --file ./sample-data/deposit-duncan.json
 fluvio produce business-events --raw --file ./sample-data/deposit-lucy.json
+fluvio produce business-events --raw --file ./sample-data/deposit-jim.json
+fluvio produce business-events --raw --file ./sample-data/deposit-sally.json
+fluvio produce business-events --raw --file ./sample-data/deposit-deb.json
 ```
 
 Check the state in `sdf` terminal:

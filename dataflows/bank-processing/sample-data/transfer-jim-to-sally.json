@@ -1,0 +1,30 @@
+{
+  "iban": "GB56DVTE70858022060683",
+  "timestamp": "2023-10-01T12:00:00",
+  "operation": {
+    "Transfer": {
+      "amount": 150,
+      "currency": "USD",
+      "from": {
+        "iban": "GB56DVTE70858022060683",
+        "account": {
+          "name": "Jim Johnson"
+        },
+        "bank": {
+          "swift": "CHASUS33",
+          "name": "JP Morgan Chase"
+        }
+      },
+      "to": {
+        "iban": "GB56DVTE70858022060684",
+        "account": {
+          "name": "Sally Smith"
+        },
+        "bank": {
+          "swift": "WFBIUS6S",
+          "name": "Wells Fargo"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "iban": "GB56DVTE70858022060683",
+  "timestamp": "2023-10-01T10:30:00",
+  "operation": {
+    "Deposit": {
+      "amount": 500,
+      "currency": "USD",
+      "account": {
+        "name": "Jim Johnson"
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "iban": "GB56DVTE70858022060683",
+  "timestamp": "2023-10-01T11:00:00",
+  "operation": {
+    "Withdrawal": {
+      "amount": 200,
+      "currency": "USD",
+      "account": {
+        "name": "Jim Johnson"
+      }
+    }
+  }
+}

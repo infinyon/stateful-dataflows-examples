@@ -1,0 +1,17 @@
+{
+  "iban": "GB56DVTE70858022060685",
+  "timestamp": "2023-10-01T10:15:24",
+  "operation": {
+    "AddAccount": {
+      "amount": 1200,
+      "currency": "USD",
+      "account": {
+        "name": "Deb Davis"
+      },
+      "bank": {
+        "swift": "CITIUS33",
+        "name": "Citibank"
+      }
+    }
+  }
+}
