@@ -82,3 +82,13 @@ Pre-built packages used in dataflows:
 
 ## References
 * [connectors](connectors.md)
+
+## Troubleshooting
+Stateful DataFlow workers continue to run even if you remove a fluvio cluster. If you delete a cluster and start a new one, or if you unintentionally start a dataflow in a cluster and need to clean up the workers, you can use the following command:
+
+```bash
+ps aux | grep sdf
+kill -9 <PID>
+rm -rf ~/.sdf/local/
+```
+In the above example `local` is the cluster name & profile name. If you have a different cluster name, replace `local` with your cluster name.
