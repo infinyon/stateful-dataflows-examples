@@ -13,7 +13,7 @@ This repository offers a comprehensive range of dataflow examples from basic to 
 * Install Fluvio and SDF
 
   ```bash
-  curl -fsS https://hub.infinyon.cloud/install/install.sh | bash fvm install sdf-beta10
+  curl -fsS https://hub.infinyon.cloud/install/install.sh | bash fvm install sdf-beta11
   ```
 
 * Run SDF setup to install dependencies

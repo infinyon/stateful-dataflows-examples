@@ -1,5 +1,5 @@
 # Build Environment
-docker build -t fluvio:sdf .
+docker build  --build-arg FLUVIO_VERSION=sdf-beta12 -t fluvio:sdf . 
 
 # Run SDF in Docker
 docker compose up -d

@@ -383,7 +383,7 @@ sdf clean --force
 ## Dockerfile
 To run the above with a container, a Dockerfile is included. The docker container will install all the required files and packages. The included shell script starts a fluvio cluster as well as the connectors required for the car dataflow to work. You can alter the consume command in the [run.sh](run.sh) to view different topics. The dataflow does take a long time to run.
 ```
-docker build -t carproc .
+docker build  --build-arg FLUVIO_VERSION=sdf-beta12  -t carproc .
 docker run carproc
 ```
 ### Expected Output
