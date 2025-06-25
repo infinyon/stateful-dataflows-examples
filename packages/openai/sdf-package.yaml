@@ -1,0 +1,77 @@
+apiVersion: 0.5.0
+
+meta:
+  name: openai
+  version: 0.1.0
+  namespace: example
+
+types:
+  openai-request:
+    type: object
+    properties:
+      model:
+        type: string
+      messages:
+        type: list
+        type-name: messages
+        items:
+          type: message
+
+  message:
+    type: object
+    properties:
+      role:
+        type: string
+      content:
+        type: string
+
+  openai-response:
+    type: object
+    properties:
+      id: 
+        type: string
+      object: 
+        type: string
+      created:
+        type: u64
+      model:
+        type: string
+      choices: 
+        type: list
+        type-name: choice-list
+        items:
+          type: choice
+      usage: 
+        type: usage
+
+
+  choice:
+    type: object
+    properties:
+      index: 
+        type: u64
+      message: 
+        type: message
+      finish-reason: 
+        type: string
+
+  usage:
+    type: object
+    properties:
+      prompt_tokens: 
+        type: u64
+      completion_tokens: 
+        type: u64
+      total_tokens: 
+        type: u64
+  
+
+functions:
+
+  chat:
+    operator: map
+    inputs:
+      - name: request 
+        type: openai-request
+    output:
+      type: openai-response

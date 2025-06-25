@@ -1,0 +1,43 @@
+[package]
+name = "openai"
+version = "0.0.0"
+edition = "2021"
+description = ""
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.wasm-debug]
+inherits = "dev"
+overflow-checks = false
+strip = true
+panic = "abort"
+
+[profile.wasm-release]
+inherits = "release"
+overflow-checks = false
+strip = true
+opt-level = 'z'
+codegen-units = 1
+panic = "abort"
+
+[profile.wasm-optimized]
+inherits = "release"
+overflow-checks = false
+strip = true
+opt-level = 3
+codegen-units = 1
+panic = "abort"
+
+
+
+[dependencies]
+## GENERATED DEPENDENCIES
+anyhow = "1"
+serde =  { version = "1", features = ["std", "derive"]}
+sdfg = { version = "0.8.1" , features=[ "row"]  }
+## END OF GENERATED DEPENDENCIES
+
+[dev-dependencies]
+sjdiff = "0.0.5"
+serde_json = "1.0"
